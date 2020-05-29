@@ -1,0 +1,27 @@
+@font-face {
+    font-family: Montserrat-Bold;
+    src: url("../fonts/Montserrat-Bold.otf");
+}
+@font-face {
+    font-family: Montserrat;
+    src: url("../fonts/Montserrat-Regular.otf");
+}
+p, input, div, label, span, button {
+    font-family: Montserrat,sans-serif;
+}
+h1, h2, h3, h4, h5, strong {
+    font-family: Montserrat-Bold,sans-serif;
+}
+.cnpc{
+    max-width: 80%;
+    height: auto;
+    max-height: 5em;
+    margin-top: 1rem;
+}
+
+.guinda {
+    background-color: #9D2449 !important;
+}
+.verde-oscuro {
+    background-color: #0C231E !important;
+}
