@@ -170,7 +170,7 @@ $(function() {
             //         window.captured=true;
             // });
             
-           
+            $('#stormSelection').appendTo('.esri-view-root')
 
             $('#mapa_ciclon').click(function() {
                 $('.js-screenshot-image').hide();
