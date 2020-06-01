@@ -8,7 +8,9 @@
         $paramsArray = Array(
         );
 
-        $queryStr = "SELECT ID as ID_CICLON, NOMBRE, TO_CHAR(FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, LLUVIA, OCEANO FROM CICLON";
+        $queryStr = "SELECT ID as ID_CICLON, NOMBRE, TO_CHAR(FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, LLUVIA, OCEANO, 
+        CASE WHEN FECHA_INICIO is not null AND FECHA_INICIO <= sysdate AND FECHA_FIN is not null then 1 else 0 END AS PASADO, 
+        CASE WHEN FECHA_INICIO is not null AND FECHA_INICIO <= sysdate AND FECHA_FIN is null then 1 else 0 END AS ACTIVO FROM CICLON";
         
         $query = oci_parse($conn, $queryStr);
 

@@ -1,6 +1,7 @@
 <?php
     session_start();
     require_once("pagina_fns.php");
+    require_once("consulta.php");
     #Validando sesión...
     // if(!isset($_SESSION["username"])) {
 	// 	$_SESSION['username'] = $ar["username"];
@@ -38,16 +39,17 @@
                 <div class="content">
                     <div class="options">
                         <ol>
-                            <li><s>Arthur </s></li>
-                            <li><s>Bertha</s></li>
-                            <li> Cristóbal </li>
-                            <li> Dolly </li>
-                            <li> Edouard </li>
-                            <li> Fay </li>
-                            <li> Gonzalo</li>
-                            <li> Hanna</li>
-                            <li> Isaías</li>
-                            <li> Josephine</li>
+                            <?php foreach (getEventos() as $key => $e) {
+                                if ($e["OCEANO"] != "A"){
+                                    continue;
+                                }
+                                if ($e["PASADO"]) { ?>
+                                    <li><s><?=$e["NOMBRE"]?></s></li>
+                                <?php } 
+                                else { ?>
+                                    <li><?=$e["NOMBRE"]?></li>
+                                <?php } ?>
+                            <?php } ?>
                         </ol>
                     </div>
                 </div>
@@ -55,16 +57,16 @@
                 <div class="content">
                     <div class="options">
                         <ol>
-                            <li><s>Arthur </s></li>
-                            <li><s>Bertha</s></li>
-                            <li> Cristóbal </li>
-                            <li> Dolly </li>
-                            <li> Edouard </li>
-                            <li> Fay </li>
-                            <li> Gonzalo</li>
-                            <li> Hanna</li>
-                            <li> Isaías</li>
-                            <li> Josephine</li>
+                            <?php foreach (getEventos() as $key => $e) {
+                                if ($e["OCEANO"] != "P"){
+                                    continue;
+                                }
+                                if ($e["PASADO"]) { ?>
+                                    <li><s><?=$e["NOMBRE"]?></s></li>
+                                <?php } else { ?>
+                                    <li><?=$e["NOMBRE"]?></li>
+                                <?php } ?>
+                            <?php } ?>
                         </ol>
                     </div>
                 </div>
