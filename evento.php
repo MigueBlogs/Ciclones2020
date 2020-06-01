@@ -1,6 +1,7 @@
 <?php
     session_start();
     require_once("pagina_fns.php");
+    require_once("evento_fns.php");
     #Validando sesión...
     // if(!isset($_SESSION["username"])) {
 	// 	$_SESSION['username'] = $ar["username"];
@@ -135,7 +136,7 @@
             </div>
         </div>
     </div>
-    
+    <script src="js/funciones.js"></script>
 </body>
 
 
