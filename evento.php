@@ -2,6 +2,7 @@
     session_start();
     require_once("pagina_fns.php");
     require_once("evento_fns.php");
+    require_once("consulta.php");
     #Validando sesión...
     // if(!isset($_SESSION["username"])) {
 	// 	$_SESSION['username'] = $ar["username"];
@@ -35,9 +36,9 @@
     <div class="row main-container" style="margin-top: 70px;">
         <div class="adjust col d-flex justify-content-center">Selecciona el evento 
                 <select>
-                    <option value="1">Arthur</option>
-                    <option value="2">Bertha</option>
-                    <option value="3">Cristóbal</option>
+                <?php foreach (getEventos() as $key => $e) { ?>
+                    <option value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
+                <?php } ?>
                 </select>
         </div>
         <div class="w-100"></div>
