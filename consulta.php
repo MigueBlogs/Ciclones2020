@@ -8,10 +8,10 @@
         $paramsArray = Array(
         );
 
-        $queryStr = "SELECT C.ID ID_CICLON, C.NOMBRE NOMBRE, TO_CHAR(C.FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(C.FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, C.LLUVIA LLUVIA, 
-        D.ID ID_DECLARATORIA, D.ID_ESTADO ID_ESTADO, D.TIPO TIPO, D.URL URL 
-        FROM CICLON C, DECLARATORIA D 
-        WHERE C.ID = D.ID_CICLON(+)";
+        $queryStr = "SELECT C.ID ID_CICLON, C.NOMBRE NOMBRE, TO_CHAR(C.FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(C.FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, C.LLUVIA LLUVIA, C.OCEANO OCEANO, 
+        D.ID ID_DECLARATORIA, D.ID_ESTADO ID_ESTADO, E.NOMBRE ESTADO, D.TIPO TIPO, D.URL URL 
+        FROM CICLON C, DECLARATORIA D, ESTADO E 
+        WHERE C.ID = D.ID_CICLON(+) AND D.ID_ESTADO = E.ID_ESTADO";
         
         $query = oci_parse($conn, $queryStr);
 
@@ -35,10 +35,37 @@
         $paramsArray = Array(
         );
 
-        $queryStr = "SELECT C.ID ID_CICLON, C.NOMBRE NOMBRE, TO_CHAR(C.FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(C.FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, C.LLUVIA LLUVIA, 
-        D.ID ID_DECLARATORIA, D.ID_ESTADO ID_ESTADO, D.TIPO TIPO, D.URL URL 
-        FROM CICLON C, DECLARATORIA D 
-        WHERE C.ID = D.ID_CICLON(+) AND C.FECHA_INICIO <= sysdate AND C.FECHA_FIN is null";
+        $queryStr = "SELECT C.ID ID_CICLON, C.NOMBRE NOMBRE, TO_CHAR(C.FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(C.FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, C.LLUVIA LLUVIA, C.OCEANO OCEANO, 
+        D.ID ID_DECLARATORIA, D.ID_ESTADO ID_ESTADO, E.NOMBRE ESTADO, D.TIPO TIPO, D.URL URL 
+        FROM CICLON C, DECLARATORIA D, ESTADO E 
+        WHERE C.ID = D.ID_CICLON(+) AND D.ID_ESTADO = E.ID_ESTADO AND C.FECHA_INICIO <= sysdate AND C.FECHA_FIN is null";
+        
+        $query = oci_parse($conn, $queryStr);
+
+        foreach ($paramsArray as $key => $value) {
+            oci_bind_by_name($query, $key, $paramsArray[$key]);
+        }
+
+        oci_execute($query);
+        $todos = Array();
+
+        while ( ($row = oci_fetch_assoc($query)) != false) {
+            $todos[] = $row;
+        }
+        dbClose($conn, $query);
+        return $todos;
+    }
+
+    function getEventosPasados(){
+        $conn = dbConnect(user, pass, server);
+
+        $paramsArray = Array(
+        );
+
+        $queryStr = "SELECT C.ID ID_CICLON, C.NOMBRE NOMBRE, TO_CHAR(C.FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(C.FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, C.LLUVIA LLUVIA, C.OCEANO OCEANO, 
+        D.ID ID_DECLARATORIA, D.ID_ESTADO ID_ESTADO, E.NOMBRE ESTADO, D.TIPO TIPO, D.URL URL 
+        FROM CICLON C, DECLARATORIA D, ESTADO E 
+        WHERE C.ID = D.ID_CICLON(+) AND D.ID_ESTADO = E.ID_ESTADO AND C.FECHA_INICIO <= sysdate AND C.FECHA_FIN is not null";
         
         $query = oci_parse($conn, $queryStr);
 
