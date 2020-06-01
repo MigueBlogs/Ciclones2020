@@ -326,7 +326,7 @@ $(function() {
 
             $('#tablaEditar').show();
             $('#loading_table').hide();
-            loadEdo([]);
+            //loadEdo([]);
 
             $("#stormsActive").on("change", function() {
                 require([

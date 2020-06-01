@@ -8,11 +8,11 @@
                 <ul>
                     <li><a href="http://www.preparados.gob.mx" target="_blank"><img src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/chimali.png" alt="CNPC"></a></li>
                     <li><a href="index.php">Inicio</a></li>
-                    <li><a href="consulta.php">Consulta</a></li>
+                    <li><a href="evento.php">Editar evento</a></li>
                     <?php
                         if(isset($_SESSION['username'])) {
                     ?>
-                        <li><a href="alta.php" class="sessionActive">Nuevo</a></li>
+                        <!-- <li><a href="alta.php" class="sessionActive">Nuevo</a></li> -->
                         <li><a href="logout.php" class="sessionActive logout">Salir</a></li>
                     <?php
                         }

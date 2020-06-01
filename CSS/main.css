@@ -33,7 +33,7 @@ h1, h2, h3, h4, h5, strong {
     left: 80vw;
     padding: .5em;
     position: absolute;
-    top: 30px;
+    top: 50px;
     z-index: 1;
 }
 
@@ -45,7 +45,7 @@ h1, h2, h3, h4, h5, strong {
     background-color: #777;
     color: white;
     cursor: pointer;
-    padding: 18px;
+    padding: .5em;
     width: 100%;
     border: none;
     text-align: left;
@@ -62,4 +62,10 @@ h1, h2, h3, h4, h5, strong {
     display: none;
     overflow: hidden;
     background-color: #f1f1f1;
+  }
+
+  @media(max-width: 500px) {
+    #dataSection{
+        position: sticky;
+    }
   }

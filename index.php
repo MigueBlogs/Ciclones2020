@@ -93,7 +93,7 @@
 		{{/each}}
 	</script>
 
-	<script id="autoresDefault-template" type="text/x-handlebars-template">
+	<!-- <script id="autoresDefault-template" type="text/x-handlebars-template">
 		{{#each autores as |autor|}}
 			{{#if @last}}
 				<span class="autor" data-autorId={{autor.idAutor}}>{{autor.nombre}}</span>
@@ -122,7 +122,7 @@
 			<li class="file-item"><span data-fileUrl="{{file.url}}" data-fileExt="{{file.ext}}">{{file.name}}</span><button data-fileUrl="{{file.url}}" class="deleteFile">Borrar</button></li>
 			{{/each}}
 		</ul>
-	</script>
+	</script> -->
     <script src="js/map.js"></script>	
     <script>
         var coll = document.getElementsByClassName("collapsible");
