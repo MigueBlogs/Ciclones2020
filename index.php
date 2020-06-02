@@ -51,9 +51,12 @@
         li.pasado:hover {
             color: #800040;
             cursor: pointer;
-
+        }
         li.pasado > *:nth-child(n+2) {
             font-size: 0.7rem;
+        }
+        ol {
+            padding-left: 15px;
         }
     </style>
 </head>
