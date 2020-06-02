@@ -134,6 +134,16 @@
                 <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Lluvia generada por este evento">
                 <small id="emailHelp" class="form-text text-muted">Ingresa la cantidad de lluvia en mms</small>
             </div>
+            <div class="form-group">
+                <label for="fecha_inicio">Fecha de inicio</label>
+                <input type="date" class="form-control" id="fecha_inicio" aria-describedby="fecha_inicio_help" placeholder="Fecha inicial del evento">
+                <small id="fecha_inicio_help" class="form-text text-muted">Ingresa la fecha en la que inició este evento</small>
+            </div>
+            <div class="form-group">
+                <label for="fecha_fin">Fecha término</label>
+                <input type="date" class="form-control" id="fecha_fin" aria-describedby="fecha_fin_help" placeholder="Fecha final del evento">
+                <small id="fecha_fin_help" class="form-text text-muted">Ingresa la fecha en la que terminó este evento</small>
+            </div>
             </div>
         </div>
     </div>
