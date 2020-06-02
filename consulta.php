@@ -109,7 +109,7 @@
         }
     }
 
-    function getDeclaratoriaPorID($id_ciclon) {
+    function getDeclaratoriasPorID($id_ciclon) {
         $conn = dbConnect(user, pass, server);
 
         $paramsArray = Array(
