@@ -54,7 +54,7 @@
                             </tr>
                         </thead>
                         <tbody></tbody>
-                        <tr id="filatest">
+                        <!-- <tr id="filatest">
                                 <th class="solid">
                                     <select id="Estado"> 
                                         <option value="1">Baja California Norte</option>
@@ -63,23 +63,18 @@
                                     </select>
                                 </th>
                                 <th class="solid">
-                                    
-                                        <select id="Region">
-                                            <option value="-1">Todo el Edo</option>
-                                            <option value="0">Centro</option>
-                                            <option value="1">Norte</option>
-                                            <option value="2">Noreste</option>
-                                            <option value="3">Este</option>
-                                            <option value="4">Sureste</option>
-                                            <option value="5">Sur</option>
-                                            <option value="6">Suroeste</option>
-                                            <option value="7">Oeste</option>
-                                            <option value="8">Noroeste</option>
-                                        </select>
-                                        <button id="filatest" type="button" class="btn btn-outline-danger btn-sm botoncito" title="Elimina una por una las filas"><ion-icon name="close"></ion-icon></button>
-                                        <button id="filatest" type="button" class="btn btn-outline-info btn-sm rotate-90"><ion-icon name="swap"></ion-icon></button>
+                                    <div class="row">
+                                        <div class="w-100"></div>
+                                        <div class=" adjust col-9 form-group">
+                                            <input type="text" class="form-control enlace" id="enlace'+cont+'" aria-describedby="emailHelp" placeholder="Pega aquí el enlace de la declaratoria">
+                                        </div>
+                                        <div class=" adjust col">
+                                            <button id="filatest" type="button" class="btn btn-outline-danger btn-sm botoncito" title="Elimina una por una las filas"><ion-icon name="close"></ion-icon></button>
+                                            <button id="filatest" type="button" class="btn btn-outline-info btn-sm rotate-90"><ion-icon name="swap"></ion-icon></button>
+                                        </div>
+                                    </div>
                                 </th>
-                        </tr>
+                        </tr> -->
                     </table>
                     <button  id="bt_add1" type="button" class="btn btn-outline-info btn-sm" title="Agregar una región"><ion-icon name="add"></ion-icon></button>
                 </div>
@@ -121,19 +116,19 @@
                     </table>
                     <button id="bt_add2" type="button" class="btn btn-outline-info btn-sm" title="Agregar una región"><ion-icon name="add"></ion-icon></button>
                 </div>
-                <center>
+                <!-- <center>
                 <button class="btn btn-outline-success" id="GuardaTabla">Guardar datos</button>	
-                </center>
+                </center> -->
                 </div>	
             </div>
         </div>
         <div class="adjust col">
             <div id="information">
-            <div class="form-group">
-                <label for="exampleInputEmail1">Cantidad de lluvia</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Lluvia generada por este evento">
-                <small id="emailHelp" class="form-text text-muted">Ingresa la cantidad de lluvia en mms</small>
-            </div>
+                <div class="form-group">
+                    <label for="lluvia">Cantidad de lluvia</label>
+                    <input type="number" class="form-control" id="lluvia" aria-describedby="emailHelp" placeholder="Lluvia generada por este evento">
+                    <small id="lluviaHelp" class="form-text text-muted">Ingresa la cantidad de lluvia en mms</small>
+                </div>
             </div>
         </div>
     </div>

@@ -366,9 +366,6 @@ $(function() {
                     });
 
                     var coneActive = activeCones.filter(function(activeCone) { if(activeCone["layerid"] == layerid) return activeCone; })[0];
-                    console.log(coneActive["stormname"]);
-
-                    //Busca en la lista de atlántico y pacífico, si lo encuentra lo pinta de verde.
 
 
                     var geometryService = new GeometryService({ url: "http://rmgir.proyectomesoamerica.org/server/rest/services/Utilities/Geometry/GeometryServer" });
