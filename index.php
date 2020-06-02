@@ -33,6 +33,23 @@
         li.activo > *:nth-child(n+2) {
             font-size: 0.7rem;
         }
+        li.pasado {
+            color: gray;
+        }
+        li.activo {
+            cursor: context-menu;
+        }
+        li.siguiente {
+            color: lightgray;
+        }
+        li.siguiente:hover {
+            color: unset;
+            cursor: context-menu;
+        }
+        li.pasado:hover {
+            color: #800040;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -50,7 +67,7 @@
                                     continue;
                                 }
                                 if ($e["PASADO"]) { ?>
-                                    <li><s><?=$e["NOMBRE"]?></s></li>
+                                    <li class="pasado"><s><?=$e["NOMBRE"]?></s></li>
                                 <?php } 
                                 else if ($e["ACTIVO"]) { ?>
                                     <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
@@ -74,7 +91,7 @@
                                         <?php } ?>
                                     </li>
                                 <?php } else { ?>
-                                    <li><?=$e["NOMBRE"]?></li>
+                                    <li class="siguiente"><?=$e["NOMBRE"]?></li>
                                 <?php } ?>
                             <?php } ?>
                         </ol>
@@ -89,7 +106,7 @@
                                     continue;
                                 }
                                 if ($e["PASADO"]) { ?>
-                                    <li><s><?=$e["NOMBRE"]?></s></li>
+                                    <li class="pasado"><s><?=$e["NOMBRE"]?></s></li>
                                 <?php } 
                                 else if ($e["ACTIVO"]) { ?>
                                     <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
@@ -113,7 +130,7 @@
                                         <?php } ?>
                                     </li>
                                 <?php } else { ?>
-                                    <li><?=$e["NOMBRE"]?></li>
+                                    <li class="siguiente"><?=$e["NOMBRE"]?></li>
                                 <?php } ?>
                             <?php } ?>
                         </ol>
@@ -190,6 +207,10 @@
             }
         });
         }
+        $('.collapsible').on('click', function(){
+            let other = $('.collapsible').not(this);
+            other.next().hide();
+        })
     </script>
 </body>
 </html>
