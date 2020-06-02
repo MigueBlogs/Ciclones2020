@@ -182,7 +182,7 @@
             </div>
         </div>
     </div>
-    <script src="js/funciones.js"></script>
+    <script src="js/evento.js"></script>
 </body>
 
 
