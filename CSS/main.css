@@ -64,6 +64,29 @@ h1, h2, h3, h4, h5, strong {
     background-color: #f1f1f1;
   }
 
+  li.activo > *:nth-child(n+2) {
+    font-size: 0.7rem;
+    }
+    li.pasado {
+        color: gray;
+    }
+    li.activo {
+        cursor: context-menu;
+    }
+    li.siguiente {
+        color: lightgray;
+    }
+    li.siguiente:hover {
+        color: unset;
+        cursor: context-menu;
+    }
+    li.pasado:hover {
+        color: #800040;
+        cursor: pointer;
+    }
+    li.pasado > *:nth-child(n+2) {
+        font-size: 0.7rem;
+    }
   @media(max-width: 500px) {
     #dataSection{
         position: sticky;

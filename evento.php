@@ -33,13 +33,53 @@
 </head>
 <body>
     <?php includeNav(); ?>
+    <!-- Menú del Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div style="background-color: #35695D; color:white" class="modal-header">
+            <h5 class="modal-title"  id="exampleModalLabel">Menú de Inicio</h5>
+            </div>
+            <div class="modal-body">
+            Elige la opción deseada:
+            <div class="form-check">
+                <input  class="form-check-input" type="radio" name="choiceRatios" id="nuevoEvento" value="nuevo">
+                <label class="form-check-label" for="nuevoEvento">
+                Insertar un nuevo evento (no listado)
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="choiceRatios" id="editarEvento" value="editar">
+                <label class="form-check-label" for="editarEvento">
+                Editar un evento previsto (listado)
+                    <select id="events" style="display:none;">
+                    <?php foreach (getEventos() as $key => $e) { ?>
+                        <option value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
+                    <?php } ?>
+                    </select>
+                </label>
+            </div>
+            <br>
+            <div id="activeEvents"></div>
+            </div>
+            <div class="modal-footer">
+            <small>Este listado es referente al publicado por el <a target="_blank" href="https://www.nhc.noaa.gov/aboutnames.shtml">NHC</a></small>
+            <button id="next" style="border-color:unset;" type="button" disabled class=" btn btn-primary guinda" data-dismiss="modal">Continuar</button>
+            </div>
+        </div>
+        </div>
+    </div>
     <div class="row main-container" style="margin-top: 70px;">
-        <div class="adjust col d-flex justify-content-center">Selecciona el evento 
-                <select>
-                <?php foreach (getEventos() as $key => $e) { ?>
-                    <option value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
-                <?php } ?>
-                </select>
+        <div class="adjust col d-flex justify-content-center">
+            <div id="caseEdit">Estás editando el ciclón tropical <span id="nombreEvento" class="font-weight-bold"></span>
+            </div> 
+            <div id="caseNew" style="width:100%;">
+                <div class="form-group" >
+                    <label for="nombreEvento">Nombre del evento</label>
+                    <input type="text" class="form-control" id="nombreEvento" aria-describedby="Nombre-Evento" placeholder="Ingresa el nombre del evento">
+                    
+                </div>
+            </div>   
         </div>
         <div class="w-100"></div>
         <div class=" adjust col">
@@ -89,7 +129,7 @@
                             </tr>
                         </thead>
                         <tbody></tbody>
-                            <!--<tr id="filatest">
+                        <!--<tr id="filatest">
                             <th class="solid">
                                     <select id="NivelDeAlerta"> 
                                         <option value="1" style="background-color: red; ">ROJA</option>
@@ -126,8 +166,8 @@
             <div id="information">
             <div class="form-group">
                 <label for="exampleInputEmail1">Cantidad de lluvia</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Lluvia generada por este evento">
-                <small id="emailHelp" class="form-text text-muted">Ingresa la cantidad de lluvia en mms</small>
+                <input type="number" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Lluvia generada por este evento">
+                <small id="emailHelp" class="form-text text-muted">Ingresa la cantidad de lluvia en mm</small>
             </div>
             <div class="form-group">
                 <label for="fecha_inicio">Fecha de inicio</label>

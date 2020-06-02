@@ -1,5 +1,26 @@
 $(function(){
-    
+    //functions for modal
+    $('#exampleModal').modal('show');
+    $('input:radio[name=choiceRatios]').on("change", function() {
+        if (this.value == 'nuevo') {
+            $("#events").hide();
+            $("#next").removeAttr("disabled");
+            $("#caseEdit").hide();
+            $("#caseNew").show();
+        }
+        else if (this.value == 'editar') {
+            $("#events").show();
+            $("#next").attr("disabled","");
+            $("#caseEdit").show();
+            $("#caseNew").hide();
+        }
+    });
+
+    $("#events").on("change",function(){
+        $("#next").removeAttr("disabled");
+        $("#nombreEvento").append($("#events option:selected").text());
+    });
+
     var cont =1;
     function agregar(nameTable){
     cont++;
