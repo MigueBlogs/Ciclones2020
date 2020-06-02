@@ -27,7 +27,13 @@
 	<script src="./lib/handlebars.js"></script>
     <!-- ARCGIS MAP's -->
 	<link rel="stylesheet" href="https://js.arcgis.com/4.11/esri/css/main.css">
-	<script src="https://js.arcgis.com/4.11/"></script>
+    <script src="https://js.arcgis.com/4.11/"></script>
+    
+    <style>
+        li.activo > *:nth-child(n+2) {
+            font-size: 0.7rem;
+        }
+    </style>
 </head>
 <body>
     <?php includeNav(); ?>
@@ -46,7 +52,28 @@
                                 if ($e["PASADO"]) { ?>
                                     <li><s><?=$e["NOMBRE"]?></s></li>
                                 <?php } 
-                                else { ?>
+                                else if ($e["ACTIVO"]) { ?>
+                                    <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
+                                        <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
+                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"N/A"?></p>
+                                        <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
+                                        if (empty($decl)) { ?>
+                                            <p>Sin declaratorias aún</p>    
+                                        <?php }
+                                        else { ?>
+                                            <ul>
+                                                <?php 
+                                                foreach ($decl as $key => $d) { ?>
+                                                <li>
+                                                    <p>Declaratoria de <?=$d["TIPO"]=="E"?"Emergencia":"Desastre"?></p>
+                                                    <p>Estado: <?=$d["ESTADO"]?></p>
+                                                    <p>Enlace <a href="<?=$d["URL"]?>">aquí</a></p>
+                                                </li>
+                                                <?php } ?>
+                                                </ul>
+                                        <?php } ?>
+                                    </li>
+                                <?php } else { ?>
                                     <li><?=$e["NOMBRE"]?></li>
                                 <?php } ?>
                             <?php } ?>
@@ -63,6 +90,28 @@
                                 }
                                 if ($e["PASADO"]) { ?>
                                     <li><s><?=$e["NOMBRE"]?></s></li>
+                                <?php } 
+                                else if ($e["ACTIVO"]) { ?>
+                                    <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
+                                        <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
+                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"N/A"?></p>
+                                        <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
+                                        if (empty($decl)) { ?>
+                                            <p>Sin declaratorias aún</p>
+                                        <?php }
+                                        else { ?>
+                                            <ul>
+                                                <?php 
+                                                foreach ($decl as $key => $d) { ?>
+                                                <li>
+                                                    <p>Declaratoria de <?=$d["TIPO"]=="E"?"Emergencia":"Desastre"?></p>
+                                                    <p>Estado: <?=$d["ESTADO"]?></p>
+                                                    <p>Enlace <a href="<?=$d["URL"]?>">aquí</a></p>
+                                                </li>
+                                                <?php } ?>
+                                                </ul>
+                                        <?php } ?>
+                                    </li>
                                 <?php } else { ?>
                                     <li><?=$e["NOMBRE"]?></li>
                                 <?php } ?>
