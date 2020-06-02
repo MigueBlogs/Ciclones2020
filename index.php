@@ -30,6 +30,35 @@
     <!-- ARCGIS MAP's -->
 	<link rel="stylesheet" href="https://js.arcgis.com/4.11/esri/css/main.css">
     <script src="https://js.arcgis.com/4.11/"></script>
+    
+    <style>
+        li.activo > *:nth-child(n+2) {
+            font-size: 0.7rem;
+        }
+        li.pasado {
+            color: gray;
+        }
+        li.activo {
+            cursor: context-menu;
+        }
+        li.siguiente {
+            color: lightgray;
+        }
+        li.siguiente:hover {
+            color: unset;
+            cursor: context-menu;
+        }
+        li.pasado:hover {
+            color: #800040;
+            cursor: pointer;
+        }
+        li.pasado > *:nth-child(n+2) {
+            font-size: 0.7rem;
+        }
+        ol {
+            padding-left: 15px;
+        }
+    </style>
 </head>
 <body>
     <?php includeNav(); ?>
