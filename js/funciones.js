@@ -55,4 +55,17 @@ $(function(){
     }
     $("#bt_add1").click(function(){ agregar('tablaEdos1'); });
     $("#bt_add2").click(function(){ agregar('tablaEdos2'); });
+
+    $(".buttonInfo").on('click',function(){
+        $(this).siblings(".boxInfo").show('slow');
+        $(this).siblings(".buttonClose").show();
+        $(this).hide();
+    });
+
+    $(".buttonClose").on('click',function(){
+        $(this).siblings(".boxInfo").hide('slow');
+        $(this).siblings(".buttonInfo").show();
+        $(this).hide();
+    });
+   
 });

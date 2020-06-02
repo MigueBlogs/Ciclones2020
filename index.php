@@ -22,7 +22,9 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <!-- Styles -->
     <link rel="stylesheet" href="css/main.css">
-	<link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <!--JS IONICON-->
+	<script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
     <!-- Handlebars -->
 	<script src="./lib/handlebars.js"></script>
     <!-- ARCGIS MAP's -->
@@ -49,6 +51,9 @@
         li.pasado:hover {
             color: #800040;
             cursor: pointer;
+
+        li.pasado > *:nth-child(n+2) {
+            font-size: 0.7rem;
         }
     </style>
 </head>
@@ -63,11 +68,38 @@
                     <div class="options">
                         <ol>
                             <?php foreach (getEventos() as $key => $e) {
+                                #print_r($e);
                                 if ($e["OCEANO"] != "A"){
                                     continue;
                                 }
                                 if ($e["PASADO"]) { ?>
-                                    <li class="pasado"><s><?=$e["NOMBRE"]?></s></li>
+                                    <li class="pasado"><s><?=$e["NOMBRE"]?></s>
+                                        <ion-icon class="buttonInfo" name="chevron-down"></ion-icon>
+                                        <ion-icon style="display:none;" class="buttonClose" name="chevron-up"></ion-icon>
+                                        <div class="boxInfo" style="display:none;">
+                                            <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
+                                            <p>Fecha de fin: <?=$e["FECHA_FIN"]?></p>
+                                            <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"N/A"?></p>
+                                            <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
+                                            if (empty($decl)) { ?>
+                                                <p>Sin declaratorias registradas</p> 
+                                                <br>   
+                                            <?php }
+                                            else { ?>
+                                                <ul>
+                                                    <?php 
+                                                    foreach ($decl as $key => $d) { ?>
+                                                    <li>
+                                                        <p>Declaratoria de <?=$d["TIPO"]=="E"?"Emergencia":"Desastre"?></p>
+                                                        <p>Estado: <?=$d["ESTADO"]?></p>
+                                                        <p>Enlace <a href="<?=$d["URL"]?>">aquí</a></p>
+                                                    </li>
+                                                    <br>
+                                                    <?php } ?>
+                                                    </ul>
+                                            <?php } ?>
+                                        </div>
+                                    </li>
                                 <?php } 
                                 else if ($e["ACTIVO"]) { ?>
                                     <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
@@ -106,8 +138,34 @@
                                     continue;
                                 }
                                 if ($e["PASADO"]) { ?>
-                                    <li class="pasado"><s><?=$e["NOMBRE"]?></s></li>
-                                <?php } 
+                                    <li class="pasado"><s><?=$e["NOMBRE"]?></s>
+                                        <ion-icon class="buttonInfo" name="chevron-down"></ion-icon>
+                                        <ion-icon style="display:none;" class="buttonClose" name="chevron-up"></ion-icon>
+                                        <div class="boxInfo" style="display:none;">
+                                            <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
+                                            <p>Fecha de fin: <?=$e["FECHA_FIN"]?></p>
+                                            <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"N/A"?></p>
+                                            <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
+                                            if (empty($decl)) { ?>
+                                                <p>Sin declaratorias registradas</p> 
+                                                <br>   
+                                            <?php }
+                                            else { ?>
+                                                <ul>
+                                                    <?php 
+                                                    foreach ($decl as $key => $d) { ?>
+                                                    <li>
+                                                        <p>Declaratoria de <?=$d["TIPO"]=="E"?"Emergencia":"Desastre"?></p>
+                                                        <p>Estado: <?=$d["ESTADO"]?></p>
+                                                        <p>Enlace <a href="<?=$d["URL"]?>">aquí</a></p>
+                                                    </li>
+                                                    <br>
+                                                    <?php } ?>
+                                                    </ul>
+                                            <?php } ?>
+                                        </div>
+                                    </li>
+                                <?php }  
                                 else if ($e["ACTIVO"]) { ?>
                                     <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
                                         <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
@@ -192,6 +250,7 @@
 		</ul>
 	</script> -->
     <script src="js/map.js"></script>	
+    <script src="js/funciones.js"></script>
     <script>
         var coll = document.getElementsByClassName("collapsible");
         var i;
