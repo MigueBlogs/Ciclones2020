@@ -116,7 +116,7 @@
                                 </th>
                         </tr> -->
                     </table>
-                    <button  id="bt_add1" type="button" class="btn btn-outline-info btn-sm" title="Agregar una región"><ion-icon name="add"></ion-icon></button>
+                    <button  id="bt_add1" type="button" class="btn btn-outline-info btn-sm" title="Agregar una declaratoria"><ion-icon name="add"></ion-icon></button>
                 </div>
                 <div class="solid" style="background-color: #DBBE99">Declaratoria de desastre</div>
                 <div class="solid">
@@ -154,7 +154,7 @@
                             </th>
                         </tr>-->
                     </table>
-                    <button id="bt_add2" type="button" class="btn btn-outline-info btn-sm" title="Agregar una región"><ion-icon name="add"></ion-icon></button>
+                    <button id="bt_add2" type="button" class="btn btn-outline-info btn-sm" title="Agregar una declaratoria"><ion-icon name="add"></ion-icon></button>
                 </div>
                 <!-- <center>
                 <button class="btn btn-outline-success" id="GuardaTabla">Guardar datos</button>	
