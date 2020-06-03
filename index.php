@@ -182,6 +182,7 @@
             </div>
         </div>			
     </div>
+    <button id="botonTop" type="button" class="boton-volver" style="display: none;"><ion-icon name="arrow-up-outline"></ion-icon></button>
     <script id="stormsActive-template" type="text/x-handlebars-template">
 		{{#each storms as |storm|}}
 			{{#if @first}}
@@ -243,7 +244,34 @@
         $('.collapsible').on('click', function(){
             let other = $('.collapsible').not(this);
             other.next().hide();
-        })
+            if ($('.collapsible.active').length == 0){
+                $('#dataSection').css('height', '');
+                $('#dataSection').css('width', '');
+            }
+            else {
+                if ($(window).width() > 500) {
+                    $('#dataSection').css('height', '70vh');
+                    $('#dataSection').css('width', '20vw');
+                }
+            }
+        });
+        window.onscroll = function() {scrollFunction()};
+        
+        function scrollFunction() {
+            if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+                $('#botonTop').show();
+            } else {
+                $('#botonTop').hide();
+            }
+        }
+
+        $('#botonTop').on('click', function () {
+            $('html, body').animate({
+                scrollTop: 0
+            }, 750, function() {
+                $('#botonTop').hide();
+            });
+        }); 
     </script>
 </body>
 </html>
