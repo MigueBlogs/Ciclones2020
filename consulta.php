@@ -2,6 +2,38 @@
     require_once("db_global.php");
     require_once("db_fns.php");
 
+    if(isset($_POST['obtenerEvento']) && isset($_POST["id"])){
+        getEventoByID($_POST['id']);
+    }
+    if(isset($_POST['obtenerDeclaratorias']) && isset($_POST["id"])){
+        echo json_encode(getDeclaratoriasPorID($_POST['id']));
+    }
+
+    function getEventoByID($id_evento){
+        $conn = dbConnect(user, pass, server);
+
+        $paramsArray = Array(
+            ":id"=>$id_evento
+        );
+
+        $queryStr = "SELECT ID as ID_CICLON, NOMBRE, TO_CHAR(FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, LLUVIA, OCEANO FROM CICLON WHERE ID = :id";
+        
+        $query = oci_parse($conn, $queryStr);
+
+        foreach ($paramsArray as $key => $value) {
+            oci_bind_by_name($query, $key, $paramsArray[$key]);
+        }
+
+        oci_execute($query);
+        $todos = null;
+
+        while ( ($row = oci_fetch_assoc($query)) != false) {
+            $todos = $row;
+        }
+        dbClose($conn, $query);
+        echo json_encode($todos);
+    }
+
     function getEventos(){
         $conn = dbConnect(user, pass, server);
 

@@ -71,7 +71,7 @@
     </div>
     <div class="row main-container" style="margin-top: 70px;">
         <div class="adjust col d-flex justify-content-center">
-            <div id="caseEdit">Estás editando el ciclón tropical <span id="nombreEvento" class="font-weight-bold"></span>
+            <div id="caseEdit">Estás editando el ciclón tropical <span id="nombreEvento" class="font-weight-bold"></span>, en el océano <span id="oceano" class="font-weight-bold"></span>
             </div> 
             <div id="caseNew" style="width:100%;">
                 <div class="form-group" >
@@ -165,9 +165,9 @@
         <div class="adjust col">
             <div id="information">
             <div class="form-group">
-                <label for="exampleInputEmail1">Cantidad de lluvia</label>
-                <input type="number" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Lluvia generada por este evento">
-                <small id="emailHelp" class="form-text text-muted">Ingresa la cantidad de lluvia en mm</small>
+                <label for="lluvias">Cantidad de lluvia</label>
+                <input type="number" class="form-control" id="lluvias"  placeholder="Lluvia generada por este evento">
+                <small id="lluviasHelp" class="form-text text-muted">Ingresa la cantidad de lluvia en mm</small>
             </div>
             <div class="form-group">
                 <label for="fecha_inicio">Fecha de inicio</label>

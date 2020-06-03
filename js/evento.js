@@ -16,10 +16,48 @@ $(function(){
         }
     });
 
-    $("#events").on("change",function(){
+    $("#events").on("click",function(){
         $("#next").removeAttr("disabled");
+        $("#nombreEvento").text('');
         $("#nombreEvento").append($("#events option:selected").text());
+        
     });
+
+    //consulta la base de datos para extraer info sel evento seleccionado
+    $("#next").on('click',function(){
+        if($("#editarEvento").is(":checked")){
+            var params = {
+                obtenerEvento:true,
+                id: $("#events option:selected").val()
+            };
+            $.post( "./consulta.php",params, function( data ) {
+                console.log(data);
+                $("#fecha_inicio").val(data["FECHA_INICIO"]);
+                $("#fecha_fin").val(data["FECHA_FIN"]);
+                $("#lluvias").val(data["LLUVIA"]);
+                if(data["OCEANO"]=='A'){
+                    $("#oceano").text("Atlántico")
+                }else{
+                    $("#oceano").text("Pacífico")
+                }
+            }, "json")
+            .fail(function() {
+                console.log( "error al consultar evento" );
+            });
+            var paramsD = {
+                obtenerDeclaratorias:true,
+                id: $("#events option:selected").val()
+            };
+            $.post( "./consulta.php",paramsD, function( data ) {
+                console.log(data);
+            }, "json")
+            .fail(function() {
+                console.log( "error al consultar declaratorias" );
+            });
+        };
+    });
+    
+
     var cont =1;
     function agregar(nameTable){
     cont++;
