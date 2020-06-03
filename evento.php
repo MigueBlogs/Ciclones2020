@@ -124,7 +124,7 @@
                     </table>
                     <button  id="bt_add1" type="button" class="btn btn-outline-info btn-sm" title="Agregar una declaratoria"><ion-icon name="add"></ion-icon></button>
                 </div>
-                <div class="solid" style="background-color: #DBBE99">Declaratoria de desastre</div>
+                <div class="solid" style="background-color: #DBBE99">Declaratoria de Desastre</div>
                 <div class="solid">
                 <div class="solid">
                     <table id="tablaEdos2" style=" border-collapse: collapse; width: 100%; text-align: center;">
