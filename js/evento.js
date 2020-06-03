@@ -1,4 +1,4 @@
-let failed1 = false, failed2 = false;
+let failed1 = false, failed2 = false, failed3 = false;
 function asyncFunction1 (item, r) {
     setTimeout(() => {
         item["editaDeclaratoria"] = 1;
@@ -45,7 +45,29 @@ function asyncFunction2 (item, r) {
         });
     }, 10);
 }
-
+function asyncFunction3 (item, r) {
+    setTimeout(() => {
+        //item["eliminaDeclaratoria"] = 1;
+        $.post("consulta.php",{eliminaDeclaratoria:true, id:item}, function(result) {
+            if (result == 1) {
+                // caso que se actualizó la declaratoria correctamente
+                console.log("Declaratoria eliminada correctamente!");
+            }
+            else {
+                console.log("La declaratoria no se pudo eliminar");
+                failed3 = true;
+            }
+        }, 'json')
+        .fail(function(result) {
+            failed3 = true;
+            console.log(result);
+        })
+        .always(function(){
+            // regresa el promise (significa que ya termina esta función)
+            r();
+        });
+    }, 1);
+}
 $(function(){
     //functions for modal
     $('#exampleModal').modal('show');
@@ -143,20 +165,25 @@ $(function(){
         }, "json");
         
         $('#'+nameTable).append(fila);
+        
         $(".botonborrar").click(function(event){
             event.stopPropagation();
             event.stopImmediatePropagation();
             eliminar(this.id); 
         });
         window.eliminar =function(id_fila){
+            
             $('#'+id_fila).remove();
         };
         $(".switch").click(function(event){
             event.stopPropagation();
             event.stopImmediatePropagation();
             change(this.id)}
+            
         )
     }
+    var porEliminar = [];
+    //solo se agrega el array a los editados ya existentes
     function agregarEditado(nameTable, estado, url, id_decl){
         cont++;
         var fila='<tr id="fila'+cont+'">\
@@ -182,6 +209,7 @@ $(function(){
         $(".botonborrar").click(function(event){
             event.stopPropagation();
             event.stopImmediatePropagation();
+            porEliminar.push($("#"+this.id).children().val());
             eliminar(this.id); 
         });
         window.eliminar =function(id_fila){
@@ -219,7 +247,7 @@ $(function(){
     $('#guardarDatos').on('click', function(){
         // Cuando se edita un evento
         if($("#editarEvento").is(":checked")) {
-
+            
             let lluvias = $('#lluvias').val().replace(/\D/, '');
             let fecha_inicio = $('#fecha_inicio').val()=="" ? null : $('#fecha_inicio').val();
             let fecha_fin = $('#fecha_fin').val()=="" ? null : $('#fecha_fin').val();
@@ -274,7 +302,7 @@ $(function(){
             // editar primero el evento
             data = {editaEvento: 1, id: $("#events option:selected").val(), inicio:fecha_inicio, fin: fecha_fin, lluvias: lluvias};
             $.post("consulta.php", data, function(result) {
-                failed1 = false, failed2 = false;
+                failed1 = false,  failed2 = false, failed3 = false;
                 if (result == 1) {
                     // caso que se editó el evento correctamente
 
@@ -306,6 +334,13 @@ $(function(){
                             asyncFunction2(value, resolve);
                         })
                     })
+                    //eliminar declaratorias
+                    let requests3 = porEliminar.map((value) => {
+                        return new Promise((resolve) => {
+                            //console.log(value);
+                            asyncFunction3(value, resolve);
+                        })
+                    })
                     // $.each(decl_agregar, function(index, value ) {
                     //     value["agregaDeclaratoria"] = 1;
                     //     value["ciclon"] = $("#events option:selected").val();
@@ -322,10 +357,10 @@ $(function(){
                     //         alert( "error" );
                     //     });
                     // });
-                    Promise.all([requests1, requests2].map(Promise.all, Promise)).then(() => {
-                        console.log(failed1, failed2);
+                    Promise.all([requests1, requests2, requests3].map(Promise.all, Promise)).then(() => {
+                        console.log(failed1, failed2, failed3);
                         
-                        if (failed1 || failed2) {
+                        if (failed1 || failed2 || failed3) {
                             alert("Algunos datos no se pudieron actualizar correctamente. Por favor inténtalo de nuevo.");
                         }
                         else {

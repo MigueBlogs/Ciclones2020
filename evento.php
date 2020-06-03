@@ -189,7 +189,7 @@
             </div>
         </div>
         <div class="w-100 row justify-content-center">
-            <button class="btn btn-primary guinda" id="guardarDatos">Guardar cambios</button>
+            <button class="btn btn-primary guinda" id="guardarDatos" style="border-color:unset;">Guardar cambios</button>
         </div>
     </div>
     <script src="js/evento.js"></script>

@@ -44,6 +44,16 @@
             echo 0;
         }
     }
+    else if(isset($_POST['eliminaDeclaratoria']) && isset($_POST["id"])){
+        // echo 0; // Test
+        
+        if (borraDeclaratoria($_POST["id"])){
+            echo 1;
+        }
+        else {
+            echo 0;
+        }
+    }
     else if(isset($_POST['editaDeclaratoria']) && isset($_POST["id_declaratoria"]) && isset($_POST["estado"]) && isset($_POST["tipo"]) && isset($_POST["url"])){
         // echo 1; // Test
 
