@@ -222,7 +222,7 @@
             ":lluvia"=>$lluvia
         );
 
-        $queryStr = "INSERT INTO CICLON(NOMBRE,OCEANO,FECHA_INICIO,FECHA_FIN,LLUVIA) VALUES (:nombre,:oceano,:inicio,:fin,:lluvia)";
+        $queryStr = "INSERT INTO CICLON(NOMBRE,OCEANO,FECHA_INICIO,FECHA_FIN,LLUVIA) VALUES (:nombre,:oceano,TO_DATE(:inicio, 'YYYY-MM-DD'),TO_DATE(:fin, 'YYYY-MM-DD'),:lluvia)";
         
         $query = oci_parse($conn, $queryStr);
 
