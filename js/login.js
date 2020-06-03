@@ -21,7 +21,7 @@ $(function() {
                     var status = data["status"];
                     if(status != 1) {
                         var message = data["message"];
-                        $("#message").text(message);
+                        $("#message").html(message);
                         $("form")[0].reset();
 
                         clearTimeout(loginErrorEvent);
@@ -31,7 +31,7 @@ $(function() {
                         }, 5000);
                     } else if(status == 1) {
                         //window.location.href = "http://www.preparados.gob.mx/macrosimulacro/cortes-info.php"; //For Deploy
-                        window.location.href = "./dashboard.php";
+                        window.location.href = "./evento.php";
                     }
 
                 },

@@ -15,7 +15,7 @@
             login($username, $pwd);
             ActHora($username);
         }else{
-            echo json_encode(["status" => "2", "message" => "Ya se había iniciado una sesión. Por favor, cierra la sesión activa e intenta nuevamente."]);
+            echo json_encode(["status" => "2", "message" => "Ya se había iniciado una sesión. Por favor, entra <a href='./logout.php'>aquí</a> para cerrar la sesión activa e intenta nuevamente."]);
         };
     };
 

@@ -2,15 +2,7 @@
     session_start();
     require_once("pagina_fns.php");
     require_once("consulta.php");
-    #Validando sesión...
-    // if(!isset($_SESSION["username"])) {
-	// 	$_SESSION['username'] = $ar["username"];
-	// 	$host  = $_SERVER['HTTP_HOST'];
-	// 	$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-	// 	$extra = 'login.php';
-    //     header("Location: http://$host$uri/$extra");
-    //     die(); // detiene la ejecución de código subsecuente
-    // }
+    
 ?>
 <!DOCTYPE html>
 <html lang="es">
