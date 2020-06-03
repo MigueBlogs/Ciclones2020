@@ -1,3 +1,51 @@
+let failed1 = false, failed2 = false;
+function asyncFunction1 (item, r) {
+    setTimeout(() => {
+        item["editaDeclaratoria"] = 1;
+        $.post("consulta.php", item, function(result) {
+            if (result == 1) {
+                // caso que se actualizó la declaratoria correctamente
+                console.log("Declaratoria editada");
+            }
+            else {
+                console.log("Declaratoria no editada");
+                failed1 = true;
+            }
+        }, 'json')
+        .fail(function(result) {
+            failed1 = true;
+            console.log(result);
+        })
+        .always(function(){
+            // regresa el promise (significa que ya termina esta función)
+            r();
+        });
+    }, 1);
+}
+function asyncFunction2 (item, r) {
+    setTimeout(() => {
+        item["agregaDeclaratoria"] = 1;
+        item["ciclon"] = $("#events option:selected").val();
+        $.post("consulta.php", item, function(result) {
+            if (result == 1) {
+                // caso que se actualizó la declaratoria correctamente
+                console.log("Declaratoria agregada");
+            }
+            else {
+                failed2 = true;
+            }
+        }, 'json')
+        .fail(function(result) {
+            failed2 = true;
+            console.log(result);
+        })
+        .always(function(){
+            // regresa el promise (significa que ya termina esta función)
+            r();
+        });
+    }, 10);
+}
+
 $(function(){
     //functions for modal
     $('#exampleModal').modal('show');
@@ -52,10 +100,10 @@ $(function(){
                 console.log(data);
                 data.forEach(e => {
                     if (e.TIPO == "E"){
-                        agregarEditado('tablaEdos1', e.ID_ESTADO, e.URL);
+                        agregarEditado('tablaEdos1', e.ID_ESTADO, e.URL, e.ID_DECLARATORIA);
                     }
                     else {
-                        agregarEditado('tablaEdos2', e.ID_ESTADO, e.URL);
+                        agregarEditado('tablaEdos2', e.ID_ESTADO, e.URL, e.ID_DECLARATORIA);
                     }
                     
                 });
@@ -109,18 +157,19 @@ $(function(){
             change(this.id)}
         )
     }
-    function agregarEditado(nameTable, estado, url){
+    function agregarEditado(nameTable, estado, url, id_decl){
         cont++;
         var fila='<tr id="fila'+cont+'">\
+                <input type="hidden" id="decl'+nameTable+cont+'">\
                 <th class="solid">\
-                    <select id="Estado" class="edosFila'+cont+'">\
+                    <select id="Estado'+nameTable+cont+'" class="edosFila'+cont+'">\
                     </select>\
                 </th>\
                 <th class="solid">\
                     <div class="row">\
                         <div class="w-100"></div>\
                         <div class=" adjust col-9">\
-                            <input type="text" class="form-control enlace" id="enlace'+cont+'" aria-describedby="link" placeholder="Pega aquí el enlace de la declaratoria">\
+                            <input type="text" class="form-control enlace" id="enlace'+nameTable+cont+'" aria-describedby="link" placeholder="Pega aquí el enlace de la declaratoria">\
                         </div>\
                         <div class=" adjust col">\
                             <button id="fila'+cont+'" type="button" class="btn btn-outline-danger btn-sm botonborrar" title="Elimina una por una las filas"><ion-icon name="close"></ion-icon></button>\
@@ -129,14 +178,6 @@ $(function(){
                     </div>\
                 </th>\
             </tr>';
-        $.post( "./evento_fns.php",{ obtenerEstados: true }, function( data ) {
-            $.each(data,function(key, value){
-                $('.edosFila'+cont).append('<option value=' + value.id_estado + '>' + value.estado + '</option>');
-            });
-            $('#fila'+cont+' select').val(estado);
-            $('#enlace'+cont).val(url).text(url);
-        }, "json");
-        
         $('#'+nameTable).append(fila);
         $(".botonborrar").click(function(event){
             event.stopPropagation();
@@ -151,6 +192,15 @@ $(function(){
             event.stopImmediatePropagation();
             change(this.id)}
         )
+        let tmp = cont;  // <---- ES NECESARIO PARA QUE FUNCIONE EL POST
+        $.post( "./evento_fns.php",{ obtenerEstados: true }, function( data ) {
+            $.each(data,function(key, value){
+                $("#Estado"+nameTable+tmp).append('<option value=' + value.id_estado + '>' + value.estado + '</option>');
+            });            
+            $("#Estado"+nameTable+tmp).val(estado);
+            $('#enlace'+nameTable+tmp).val(url).text(url);
+            $('#decl'+nameTable+tmp).val(id_decl);
+        }, "json");
     }
     window.change = function(id_fila){
 		var filaAct = document.getElementById(id_fila);
@@ -166,4 +216,227 @@ $(function(){
     }
     $("#bt_add1").click(function(){ agregar('tablaEdos1'); });
     $("#bt_add2").click(function(){ agregar('tablaEdos2'); });
+    $('#guardarDatos').on('click', function(){
+        // Cuando se edita un evento
+        if($("#editarEvento").is(":checked")) {
+
+            let lluvias = $('#lluvias').val().replace(/\D/, '');
+            let fecha_inicio = $('#fecha_inicio').val()=="" ? null : $('#fecha_inicio').val();
+            let fecha_fin = $('#fecha_fin').val()=="" ? null : $('#fecha_fin').val();
+
+            let declaratorias1 = $('#tablaEdos1 tbody tr');
+            let declaratorias2 = $('#tablaEdos2 tbody tr');
+            let decl_agregar = [];
+            let decl_editar = [];
+
+            let vacio = false;
+            // verificar que no estén vacías. También separar si es para editar o para insertar
+            $.each(declaratorias1, function(index, value) {
+                let tmp = $(value).find("input[type=text]").val().trim();
+                if (tmp == "" || vacio){
+                    vacio = true;
+                    return;
+                }
+                let dec = {estado: $(value).find('select').val(), tipo: "E", url: tmp};
+                tmp = $(value).find("input[type=hidden]");
+                if (tmp.length > 0){
+                    // agregar como para editar (y no como insertar)
+                    dec["id_declaratoria"] = tmp.val();
+                    decl_editar.push(dec);
+                }
+                else {
+                    decl_agregar.push(dec);
+                }
+            });
+            $.each(declaratorias2, function(index, value) {
+                let tmp = $(value).find("input[type=text]").val().trim();
+                if (tmp == "" || vacio){
+                    vacio = true;
+                    return;
+                }
+                let dec = {estado: $(value).find('select').val(), tipo: "D", url: tmp};
+                tmp = $(value).find("input[type=hidden]");
+                if (tmp.length > 0){
+                    // agregar como para editar (y no como insertar)
+                    dec["id_declaratoria"] = tmp.val();
+                    decl_editar.push(dec);
+                }
+                else {
+                    decl_agregar.push(dec);
+                }
+            });
+            
+            if (vacio) {
+                alert("Completa el campo de enlace para cada declaratoria");
+                return;
+            }
+
+            // editar primero el evento
+            data = {editaEvento: 1, id: $("#events option:selected").val(), inicio:fecha_inicio, fin: fecha_fin, lluvias: lluvias};
+            $.post("consulta.php", data, function(result) {
+                failed1 = false, failed2 = false;
+                if (result == 1) {
+                    // caso que se editó el evento correctamente
+
+                    // editar las declaratorias que ya existían
+                    let requests1 = decl_editar.map((value) => {
+                        return new Promise((resolve) => {
+                            asyncFunction1(value, resolve);
+                        })
+                    })
+                    // $.each(decl_editar, function(index, value ) {
+                    //     value["editaDeclaratoria"] = 1;
+                    //     $.post("consulta.php", value, function(result) {
+                    //         if (result == 1) {
+                    //             // caso que se actualizó la declaratoria correctamente
+                    //         }
+                    //         else {
+                    //             failed1 = true;
+                    //         }
+                      
+                    //     }, 'json')
+                    //     .fail(function() {
+                    //         alert( "error" );
+                    //     });
+                    // });
+                    
+                    // insertar las nuevas declaratorias
+                    let requests2 = decl_agregar.map((value) => {
+                        return new Promise((resolve) => {
+                            asyncFunction2(value, resolve);
+                        })
+                    })
+                    // $.each(decl_agregar, function(index, value ) {
+                    //     value["agregaDeclaratoria"] = 1;
+                    //     value["ciclon"] = $("#events option:selected").val();
+                    //     $.post("consulta.php", value, function(result) {
+                    //         if (result == 1) {
+                    //             // caso que se insertó la declaratoria correctamente
+                    //         }
+                    //         else {
+                    //             failed2 = true;
+                    //         }
+                      
+                    //     }, 'json')
+                    //     .fail(function() {
+                    //         alert( "error" );
+                    //     });
+                    // });
+                    Promise.all([requests1, requests2].map(Promise.all, Promise)).then(() => {
+                        console.log(failed1, failed2);
+                        
+                        if (failed1 || failed2) {
+                            alert("Algunos datos no se pudieron actualizar correctamente. Por favor inténtalo de nuevo.");
+                        }
+                        else {
+                            alert("Evento editado correctamente");
+                        }
+                        window.location.href = "evento.php";
+                    });
+                }
+                else {
+                    alert("No se pudo editar el evento correctamente");
+                }
+            }, 'json')
+              .fail(function(result) {
+                alert("Error de conexión con el servidor" );
+                console.log(result);                
+              });
+
+        }
+        // ---------------------------------------------------------------------------------------------------------------
+        // Cuando se agrega un evento
+        else {
+            // Verificar que tenga nombre
+            let nombre = $('#nombreCiclon').val().trim();
+            if (nombre == "") {
+                alert("Ingresa el nombre del evento primero.");
+                return;
+            }
+            let oceano = $('#nuevo-oceano').val();
+            let lluvias = $('#lluvias').val().replace(/\D/, '');
+            let fecha_inicio = $('#fecha_inicio').val()=="" ? null : $('#fecha_inicio').val();
+            let fecha_fin = $('#fecha_fin').val()=="" ? null : $('#fecha_fin').val();
+
+            // Verificar que todas las URL tengan valor
+            let declaratorias1 = $('#tablaEdos1 tbody tr');
+            let declaratorias2 = $('#tablaEdos2 tbody tr');
+            let declaratorias = [];
+            
+            let vacio = false;
+
+            $.each(declaratorias1, function(index, value) {
+                let tmp = $(value).find("input").val().trim();
+                if (tmp == "" || vacio){
+                    vacio = true;
+                    return;
+                }
+                let dec = {estado: $(value).find('select').val(), tipo: "E", url: tmp};
+                declaratorias.push(dec);
+            });
+            $.each(declaratorias2, function(index, value) {
+                let tmp = $(value).find("input").val().trim();
+                if (tmp == "" || vacio){
+                    vacio = true;
+                    return;
+                }
+                let dec = {estado: $(value).find('select').val(), tipo: "D", url: tmp};
+                declaratorias.push(dec);
+            });
+            
+            if (vacio) {
+                alert("Completa el campo de enlace para cada declaratoria");
+                return;
+            }
+
+            // primero se crea el evento
+            let data = {agregaEvento:1, nombre:nombre, oceano:oceano, lluvias:lluvias, inicio:fecha_inicio, fin:fecha_fin};
+            
+            $.post("consulta.php", data, function(result) {
+                let failed = false;
+                // caso que sí se creo exitosamente
+                if (result == 1){
+                    // obtener su id (porque agregarlo no nos puede regresar el id)
+                    $.post("consulta.php", {obtenerEvento:1, nombre:nombre}, function(result) {
+                        let id_ciclon = result.ID_CICLON;
+                        // agregar cada declaratoria (si existen)
+                        $.each(declaratorias, function( index, value ) {
+                            value["agregaDeclaratoria"] = 1;
+                            value["ciclon"] = id_ciclon;
+                            $.post("consulta.php", value, function(result) {
+                                if (result == 1){
+                                    // caso que se agregó la declaratoria exitosamente
+                                    console.log("Declaratoria subida");
+                                }
+                                else {
+                                    failed = true;
+                                }
+                            }, 'json')
+                            .fail(function() {
+                                failed= true;
+                            });
+                        });
+                        alert("Evento agregado exitosamente");
+                        if (failed){
+                            alert("No se pudieron agregar la(s) declaratoria(s). Te pedimos editar el evento a continuación.")
+                        }
+                        window.location.href = "evento.php";
+                    }, 'json')
+                    .fail(function() {
+                        alert("Evento agregado exitosamente");
+                        alert("No se pudieron agregar la(s) declaratoria(s). Te pedimos editar el evento a continuación.")
+                        window.location.href = "evento.php";
+                    });
+                    
+                }
+                else {
+                    alert("Hubo un error al agregar el evento");
+                }
+            }, 'json')
+              .fail(function(result) {
+                alert("Error en la conexión al servidor");
+                console.log(result);
+              });
+        }
+    })
 });

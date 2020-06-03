@@ -75,9 +75,15 @@
             </div> 
             <div id="caseNew" style="width:100%;">
                 <div class="form-group" >
-                    <label for="nombreEvento">Nombre del evento</label>
-                    <input type="text" class="form-control" id="nombreEvento" aria-describedby="Nombre-Evento" placeholder="Ingresa el nombre del evento">
-                    
+                    <label for="nombreCiclon">Nombre del evento</label>
+                    <input type="text" class="form-control" id="nombreCiclon" aria-describedby="Nombre-Evento" placeholder="Ingresa el nombre del evento">
+                </div>
+                <div class="form-group" >
+                    <label for="oceano">Océano donde se formó</label>
+                    <select id="nuevo-oceano">
+                        <option value="A">Atlántico</option>
+                        <option value="P">Pacífico</option>
+                    </select>
                 </div>
             </div>   
         </div>
@@ -157,10 +163,11 @@
                     <button id="bt_add2" type="button" class="btn btn-outline-info btn-sm" title="Agregar una declaratoria"><ion-icon name="add"></ion-icon></button>
                 </div>
                 <!-- <center>
-                <button class="btn btn-outline-success" id="GuardaTabla">Guardar datos</button>	
+                    <button class="btn btn-outline-success" id="GuardaTabla">Guardar datos</button>	
                 </center> -->
-                </div>	
+            </div>	
             </div>
+            <p class="row justify-content-center">Dejar vacío si no hay declaratorias</p>
         </div>
         <div class="adjust col">
             <div id="information">
@@ -180,6 +187,9 @@
                 <small id="fecha_fin_help" class="form-text text-muted">Ingresa la fecha en la que terminó este evento</small>
             </div>
             </div>
+        </div>
+        <div class="w-100 row justify-content-center">
+            <button class="btn btn-primary guinda" id="guardarDatos">Guardar cambios</button>
         </div>
     </div>
     <script src="js/evento.js"></script>

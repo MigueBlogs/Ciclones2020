@@ -5,8 +5,55 @@
     if(isset($_POST['obtenerEvento']) && isset($_POST["id"])){
         getEventoByID($_POST['id']);
     }
-    if(isset($_POST['obtenerDeclaratorias']) && isset($_POST["id"])){
+    else if(isset($_POST['obtenerEvento']) && isset($_POST["nombre"])){
+        // echo json_encode(array("ID_CICLON"=>1));  // test
+        echo json_encode(getEventoByNombre($_POST['nombre']));
+        return;
+    }
+    else if(isset($_POST['obtenerDeclaratorias']) && isset($_POST["id"])){
         echo json_encode(getDeclaratoriasPorID($_POST['id']));
+    }
+
+    else if(isset($_POST['editaEvento']) && isset($_POST["id"])){
+        // echo 1; // Test
+
+        if (editaEvento($_POST["id"], $_POST["inicio"], $_POST["fin"], $_POST["lluvias"])){
+            echo 1;
+        }
+        else {
+            echo 0;
+        }
+    }
+    else if(isset($_POST['agregaEvento']) && isset($_POST["nombre"]) && isset($_POST["oceano"])){
+        // echo 1; // TEST
+        
+        if (agregaEvento($_POST["nombre"], $_POST["oceano"], $_POST["inicio"], $_POST["fin"], $_POST["lluvias"])){
+            echo 1;
+        }
+        else {
+            echo 0;
+        }
+    }
+    else if(isset($_POST['agregaDeclaratoria']) && isset($_POST["ciclon"]) && isset($_POST["estado"]) && isset($_POST["tipo"]) && isset($_POST["url"])){
+        // echo 0; // Test
+        
+        if (agregaDeclaratoria($_POST["ciclon"], $_POST["estado"], $_POST["tipo"], $_POST["url"])){
+            echo 1;
+        }
+        else {
+            echo 0;
+        }
+    }
+    else if(isset($_POST['editaDeclaratoria']) && isset($_POST["id_declaratoria"]) && isset($_POST["estado"]) && isset($_POST["tipo"]) && isset($_POST["url"])){
+        // echo 1; // Test
+
+        if (editaDeclaratoria($_POST["id_declaratoria"], $_POST["estado"], $_POST["tipo"], $_POST["url"])){
+            echo 1;
+        }
+        else {
+            echo 0;
+        }
+        return;
     }
 
     function getEventoByID($id_evento){
@@ -32,6 +79,30 @@
         }
         dbClose($conn, $query);
         echo json_encode($todos);
+    }
+    function getEventoByNombre($nombre){
+        $conn = dbConnect(user, pass, server);
+
+        $paramsArray = Array(
+            ":nombre"=>$nombre
+        );
+
+        $queryStr = "SELECT ID as ID_CICLON, NOMBRE, TO_CHAR(FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, LLUVIA, OCEANO FROM CICLON WHERE NOMBRE = :nombre";
+        
+        $query = oci_parse($conn, $queryStr);
+
+        foreach ($paramsArray as $key => $value) {
+            oci_bind_by_name($query, $key, $paramsArray[$key]);
+        }
+
+        oci_execute($query);
+        $todos = null;
+
+        while ( ($row = oci_fetch_assoc($query)) != false) {
+            $todos = $row;
+        }
+        dbClose($conn, $query);
+        return $todos;
     }
 
     function getEventos(){
@@ -121,7 +192,37 @@
             ":lluvia"=>$lluvia
         );
 
-        $queryStr = "UPDATE CICLON SET FECHA_INICIO = :fecha_inicio, FECHA_FIN = :fecha_fin, LLUVIA = :lluvia WHERE ID = :id";
+        $queryStr = "UPDATE CICLON SET FECHA_INICIO = TO_DATE(:fecha_inicio, 'YYYY-MM-DD'), FECHA_FIN = TO_DATE(:fecha_fin, 'YYYY-MM-DD'), LLUVIA = :lluvia WHERE ID = :id";
+        
+        $query = oci_parse($conn, $queryStr);
+
+        foreach ($paramsArray as $key => $value) {
+            oci_bind_by_name($query, $key, $paramsArray[$key]);
+        }
+
+        if (oci_execute($query, OCI_NO_AUTO_COMMIT)){
+            oci_commit($conn);
+            dbClose($conn, $query);
+            return True;
+        }
+        else {
+            oci_rollback($conn);
+            dbClose($conn, $query);
+            return False;
+        }
+    }
+    function agregaEvento($nombre, $oceano, $fecha_inicio=null, $fecha_fin=null, $lluvia=null) {
+        $conn = dbConnect(user, pass, server);
+
+        $paramsArray = Array(
+            ":nombre"=>$nombre,
+            ":oceano"=>$oceano,
+            ":inicio"=>$fecha_inicio,
+            ":fin"=>$fecha_fin,
+            ":lluvia"=>$lluvia
+        );
+
+        $queryStr = "INSERT INTO CICLON(NOMBRE,OCEANO,FECHA_INICIO,FECHA_FIN,LLUVIA) VALUES (:nombre,:oceano,:inicio,:fin,:lluvia)";
         
         $query = oci_parse($conn, $queryStr);
 
@@ -207,7 +308,7 @@
             ":url"=>$url
         );
 
-        $queryStr = "UPDATE DECLARATORIA SET ID_ESTADO = :id_estado, TIPO = :tipo, URL = :url WHERE ID_CICLON = :id_ciclon";
+        $queryStr = "UPDATE DECLARATORIA SET ID_ESTADO = :id_estado, TIPO = :tipo, URL = :url WHERE ID = :id_dec";
         
         $query = oci_parse($conn, $queryStr);
 
