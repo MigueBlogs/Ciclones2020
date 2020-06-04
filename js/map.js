@@ -171,7 +171,7 @@ $(function() {
             // });
             
             $('#stormSelection').appendTo('.esri-view-root');
-            //$('#dataSection').appendTo('.esri-view-root');
+            //$('#dataSection').appendTo('.esri-view-root'); // arruina la vista en mobil
             $('#mapa_ciclon').click(function() {
                 $('.js-screenshot-image').hide();
                 $('#uploadImg').show();
