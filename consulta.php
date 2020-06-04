@@ -222,6 +222,33 @@
             return False;
         }
     }
+
+    function borraEvento($id_evento){
+        $conn = dbConnect(user, pass, server);
+
+        $paramsArray = Array(
+            ":id"=>$id_evento
+        );
+
+        $queryStr = "DELETE FROM CICLON WHERE ID = :id";
+        
+        $query = oci_parse($conn, $queryStr);
+
+        foreach ($paramsArray as $key => $value) {
+            oci_bind_by_name($query, $key, $paramsArray[$key]);
+        }
+
+        if (oci_execute($query, OCI_NO_AUTO_COMMIT)){
+            oci_commit($conn);
+            dbClose($conn, $query);
+            return True;
+        }
+        else {
+            oci_rollback($conn);
+            dbClose($conn, $query);
+            return False;
+        }
+    }
     function agregaEvento($nombre, $oceano, $fecha_inicio=null, $fecha_fin=null, $lluvia=null) {
         $conn = dbConnect(user, pass, server);
 

@@ -28,9 +28,17 @@
     <div id="mapaDiv" style="margin-top: 70px;">
         <div id="map-container">
             <div id="stormSelection">
-                <div class="title">Ciclón tropical</div>
+                <div class="title">Ciclón tropical en el Pacífico</div>
                 <div class="options">
                     <select name="stormsActive" id="stormsActive">
+                        <option value="">Cargando</option>
+                    </select>
+                </div>
+            </div>
+            <div id="stormSelection2">
+                <div class="title">Ciclón tropical en el Atlántico</div>
+                <div class="options">
+                    <select name="stormsActive2" id="stormsActive2">
                         <option value="">Cargando</option>
                     </select>
                 </div>
@@ -55,7 +63,7 @@
                                         <ion-icon style="display:none;" class="buttonClose" name="chevron-up"></ion-icon>
                                         <div class="boxInfo" style="display:none;">
                                             <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
-                                            <p>Fecha de fin: <?=$e["FECHA_FIN"]?></p>
+                                            <p>Fecha término: <?=$e["FECHA_FIN"]?></p>
                                             <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
                                             <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                             if (empty($decl)) { ?>
@@ -120,7 +128,7 @@
                                         <ion-icon style="display:none;" class="buttonClose" name="chevron-up"></ion-icon>
                                         <div class="boxInfo" style="display:none;">
                                             <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
-                                            <p>Fecha de fin: <?=$e["FECHA_FIN"]?></p>
+                                            <p>Fecha término: <?=$e["FECHA_FIN"]?></p>
                                             <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
                                             <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                             if (empty($decl)) { ?>
@@ -174,7 +182,17 @@
             </div>		
     </div>
     <button id="botonTop" type="button" class="boton-volver" style="display: none;"><ion-icon name="arrow-up-outline"></ion-icon></button>
-    <script id="stormsActive-template" type="text/x-handlebars-template">
+    <script id="stormsActiveEP-template" type="text/x-handlebars-template">
+		{{#each storms as |storm|}}
+			{{#if @first}}
+				<option value="">Selecciona</option>
+			{{/if}}
+			<option value="{{storm.stormname}}" data-layerid="{{storm.layerid}}">{{storm.stormname}}</option>
+		{{else}}
+			<option value="">Sin ciclones tropicales</option>
+		{{/each}}
+    </script>
+    <script id="stormsActiveAT-template" type="text/x-handlebars-template">
 		{{#each storms as |storm|}}
 			{{#if @first}}
 				<option value="">Selecciona</option>
