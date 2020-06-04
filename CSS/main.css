@@ -31,7 +31,7 @@ h1, h2, h3, h4, h5, strong {
     border-radius: 5px;
     box-sizing: border-box;
     padding: .5em;
-    top: 40px;
+    top: 70px;
     z-index: 1;
     overflow: auto;
     float: right;
@@ -127,6 +127,12 @@ h1, h2, h3, h4, h5, strong {
         width: 100%;
         display: block;
         overflow: unset;
+        height:unset !important;
+    }
+    #map-container{
+        width: 100%;
+        height: calc(100vh) !important;
+        position: unset !important;
     }
     #map-container #stormSelection2{
         background:#fff;

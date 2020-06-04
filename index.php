@@ -179,7 +179,19 @@
                         </ol>
                     </div>
                 </div>
-            </div>		
+            </div>	
+        <div id="map-container">
+            <div id="stormSelection">
+                <div class="title">Ciclón tropical</div>
+                <div class="options">
+                    <select name="stormsActive" id="stormsActive">
+                        <option value="">Cargando</option>
+                    </select>
+                </div>
+            </div>
+            <div id="map">
+            </div>
+        </div>	
     </div>
     <button id="botonTop" type="button" class="boton-volver" style="display: none;"><ion-icon name="arrow-up-outline"></ion-icon></button>
     <script id="stormsActiveEP-template" type="text/x-handlebars-template">
