@@ -26,53 +26,29 @@
 <body>
     <?php includeNav(); ?>
     <div id="mapaDiv" style="margin-top: 70px;">
-    <div id="dataSection">
-                <div class="title">Ciclones tropicales</div>
-                <button type="button" class="collapsible">Atlántico</button>
-                <div class="content">
-                    <div class="options">
-                        <ol>
-                            <?php foreach (getEventos() as $key => $e) {
-                                #print_r($e);
-                                if ($e["OCEANO"] != "A"){
-                                    continue;
-                                }
-                                if ($e["PASADO"]) { ?>
-                                    <li class="pasado"><s><?=$e["NOMBRE"]?></s>
-                                        <ion-icon class="buttonInfo" name="chevron-down"></ion-icon>
-                                        <ion-icon style="display:none;" class="buttonClose" name="chevron-up"></ion-icon>
-                                        <div class="boxInfo" style="display:none;">
-                                            <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
-                                            <p>Fecha de fin: <?=$e["FECHA_FIN"]?></p>
-                                            <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
-                                            <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
-                                            if (empty($decl)) { ?>
-                                                <p>Sin declaratorias registradas</p> 
-                                                <br>   
-                                            <?php }
-                                            else { ?>
-                                                <ul>
-                                                    <?php 
-                                                    foreach ($decl as $key => $d) { ?>
-                                                    <li>
-                                                        <p>Declaratoria de <?=$d["TIPO"]=="E"?"Emergencia":"Desastre"?></p>
-                                                        <p>Estado: <?=$d["ESTADO"]?></p>
-                                                        <p>Enlace <a target="_blank" href="<?=$d["URL"]?>">aquí</a></p>
-                                                    </li>
-                                                    <br>
-                                                    <?php } ?>
-                                                    </ul>
-                                            <?php } ?>
-                                        </div>
-                                    </li>
-                                <?php } 
-                                else if ($e["ACTIVO"]) { ?>
-                                    <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
+        <div id="dataSection">
+            <div class="title">Ciclones tropicales</div>
+            <button type="button" class="collapsible">Atlántico</button>
+            <div class="content">
+                <div class="options">
+                    <ol>
+                        <?php foreach (getEventos() as $key => $e) {
+                            #print_r($e);
+                            if ($e["OCEANO"] != "A"){
+                                continue;
+                            }
+                            if ($e["PASADO"]) { ?>
+                                <li class="pasado"><s><?=$e["NOMBRE"]?></s>
+                                    <ion-icon class="buttonInfo" name="chevron-down"></ion-icon>
+                                    <ion-icon style="display:none;" class="buttonClose" name="chevron-up"></ion-icon>
+                                    <div class="boxInfo" style="display:none;">
                                         <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
+                                        <p>Fecha término: <?=$e["FECHA_FIN"]?></p>
                                         <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
                                         <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                         if (empty($decl)) { ?>
-                                            <p>Sin declaratorias aún</p>    
+                                            <p>Sin declaratorias registradas</p> 
+                                            <br>   
                                         <?php }
                                         else { ?>
                                             <ul>
@@ -83,61 +59,61 @@
                                                     <p>Estado: <?=$d["ESTADO"]?></p>
                                                     <p>Enlace <a target="_blank" href="<?=$d["URL"]?>">aquí</a></p>
                                                 </li>
+                                                <br>
                                                 <?php } ?>
                                                 </ul>
                                         <?php } ?>
-                                    </li>
-                                <?php } else { ?>
-                                    <li class="siguiente"><?=$e["NOMBRE"]?></li>
-                                <?php } ?>
-                            <?php } ?>
-                        </ol>
-                    </div>
-                </div>
-                <button type="button" class="collapsible">Pacífico</button>
-                <div class="content">
-                    <div class="options">
-                        <ol>
-                            <?php foreach (getEventos() as $key => $e) {
-                                if ($e["OCEANO"] != "P"){
-                                    continue;
-                                }
-                                if ($e["PASADO"]) { ?>
-                                    <li class="pasado"><s><?=$e["NOMBRE"]?></s>
-                                        <ion-icon class="buttonInfo" name="chevron-down"></ion-icon>
-                                        <ion-icon style="display:none;" class="buttonClose" name="chevron-up"></ion-icon>
-                                        <div class="boxInfo" style="display:none;">
-                                            <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
-                                            <p>Fecha de fin: <?=$e["FECHA_FIN"]?></p>
-                                            <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
-                                            <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
-                                            if (empty($decl)) { ?>
-                                                <p>Sin declaratorias registradas</p> 
-                                                <br>   
-                                            <?php }
-                                            else { ?>
-                                                <ul>
-                                                    <?php 
-                                                    foreach ($decl as $key => $d) { ?>
-                                                    <li>
-                                                        <p>Declaratoria de <?=$d["TIPO"]=="E"?"Emergencia":"Desastre"?></p>
-                                                        <p>Estado: <?=$d["ESTADO"]?></p>
-                                                        <p>Enlace <a href="<?=$d["URL"]?>">aquí</a></p>
-                                                    </li>
-                                                    <br>
-                                                    <?php } ?>
-                                                    </ul>
+                                    </div>
+                                </li>
+                            <?php } 
+                            else if ($e["ACTIVO"]) { ?>
+                                <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
+                                    <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
+                                    <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
+                                    <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
+                                    if (empty($decl)) { ?>
+                                        <p>Sin declaratorias aún</p>    
+                                    <?php }
+                                    else { ?>
+                                        <ul>
+                                            <?php 
+                                            foreach ($decl as $key => $d) { ?>
+                                            <li>
+                                                <p>Declaratoria de <?=$d["TIPO"]=="E"?"Emergencia":"Desastre"?></p>
+                                                <p>Estado: <?=$d["ESTADO"]?></p>
+                                                <p>Enlace <a target="_blank" href="<?=$d["URL"]?>">aquí</a></p>
+                                            </li>
                                             <?php } ?>
-                                        </div>
-                                    </li>
-                                <?php }  
-                                else if ($e["ACTIVO"]) { ?>
-                                    <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
+                                            </ul>
+                                    <?php } ?>
+                                </li>
+                            <?php } else { ?>
+                                <li class="siguiente"><?=$e["NOMBRE"]?></li>
+                            <?php } ?>
+                        <?php } ?>
+                    </ol>
+                </div>
+            </div>
+            <button type="button" class="collapsible">Pacífico</button>
+            <div class="content">
+                <div class="options">
+                    <ol>
+                        <?php foreach (getEventos() as $key => $e) {
+                            if ($e["OCEANO"] != "P"){
+                                continue;
+                            }
+                            if ($e["PASADO"]) { ?>
+                                <li class="pasado"><s><?=$e["NOMBRE"]?></s>
+                                    <ion-icon class="buttonInfo" name="chevron-down"></ion-icon>
+                                    <ion-icon style="display:none;" class="buttonClose" name="chevron-up"></ion-icon>
+                                    <div class="boxInfo" style="display:none;">
                                         <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
+                                        <p>Fecha término: <?=$e["FECHA_FIN"]?></p>
                                         <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
                                         <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                         if (empty($decl)) { ?>
-                                            <p>Sin declaratorias aún</p>
+                                            <p>Sin declaratorias registradas</p> 
+                                            <br>   
                                         <?php }
                                         else { ?>
                                             <ul>
@@ -148,33 +124,76 @@
                                                     <p>Estado: <?=$d["ESTADO"]?></p>
                                                     <p>Enlace <a href="<?=$d["URL"]?>">aquí</a></p>
                                                 </li>
+                                                <br>
                                                 <?php } ?>
                                                 </ul>
                                         <?php } ?>
-                                    </li>
-                                <?php } else { ?>
-                                    <li class="siguiente"><?=$e["NOMBRE"]?></li>
-                                <?php } ?>
+                                    </div>
+                                </li>
+                            <?php }  
+                            else if ($e["ACTIVO"]) { ?>
+                                <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
+                                    <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
+                                    <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
+                                    <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
+                                    if (empty($decl)) { ?>
+                                        <p>Sin declaratorias aún</p>
+                                    <?php }
+                                    else { ?>
+                                        <ul>
+                                            <?php 
+                                            foreach ($decl as $key => $d) { ?>
+                                            <li>
+                                                <p>Declaratoria de <?=$d["TIPO"]=="E"?"Emergencia":"Desastre"?></p>
+                                                <p>Estado: <?=$d["ESTADO"]?></p>
+                                                <p>Enlace <a href="<?=$d["URL"]?>">aquí</a></p>
+                                            </li>
+                                            <?php } ?>
+                                            </ul>
+                                    <?php } ?>
+                                </li>
+                            <?php } else { ?>
+                                <li class="siguiente"><?=$e["NOMBRE"]?></li>
                             <?php } ?>
-                        </ol>
-                    </div>
+                        <?php } ?>
+                    </ol>
                 </div>
-            </div>	
+            </div>
+        </div>
         <div id="map-container">
             <div id="stormSelection">
-                <div class="title">Ciclón tropical</div>
+                <div class="title">Ciclón tropical en el Pacífico</div>
                 <div class="options">
                     <select name="stormsActive" id="stormsActive">
                         <option value="">Cargando</option>
                     </select>
                 </div>
             </div>
+            <div id="stormSelection2">
+                <div class="title">Ciclón tropical en el Atlántico</div>
+                <div class="options">
+                    <select name="stormsActive2" id="stormsActive2">
+                        <option value="">Cargando</option>
+                    </select>
+                </div>
+            </div>
             <div id="map">
             </div>
-        </div>	
+        </div>
+        	
     </div>
     <button id="botonTop" type="button" class="boton-volver" style="display: none;"><ion-icon name="arrow-up-outline"></ion-icon></button>
-    <script id="stormsActive-template" type="text/x-handlebars-template">
+    <script id="stormsActiveEP-template" type="text/x-handlebars-template">
+		{{#each storms as |storm|}}
+			{{#if @first}}
+				<option value="">Selecciona</option>
+			{{/if}}
+			<option value="{{storm.stormname}}" data-layerid="{{storm.layerid}}">{{storm.stormname}}</option>
+		{{else}}
+			<option value="">Sin ciclones tropicales</option>
+		{{/each}}
+    </script>
+    <script id="stormsActiveAT-template" type="text/x-handlebars-template">
 		{{#each storms as |storm|}}
 			{{#if @first}}
 				<option value="">Selecciona</option>

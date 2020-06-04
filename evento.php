@@ -53,9 +53,17 @@
                 <label class="form-check-label" for="editarEvento">
                 Editar un evento previsto (listado)
                     <select id="events" style="display:none;">
-                    <?php foreach (getEventos() as $key => $e) { ?>
-                        <option value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
-                    <?php } ?>
+                    <optgroup label="Atlántico">
+                        <?php foreach (getEventosAT() as $key => $e) { ?>
+                            <option value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
+                        <?php } ?>
+                    </optgroup>
+                    <optgroup label="Pacífico">
+                        <?php foreach (getEventosEP() as $key => $e) { ?>
+                            <option value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
+                        <?php } ?>
+                    </optgroup>
+                    
                     </select>
                 </label>
             </div>
@@ -217,6 +225,12 @@
             <button class="btn btn-primary guinda" id="guardarDatos" style="border-color:unset;">Guardar cambios</button>
 
             <button style="display:none;" class="btn btn-primary" id="asignar" style="border-color:unset;">Asignar a otro evento</button>
+        </div>
+        <div class="w-100 row justify-content-center">
+            <button class="btn btn-primary guinda" id="borrarEvento" style="border-color:unset; display:none;">Eliminar evento</button>
+            <div class="w-100 row justify-content-center" style="display:none;">
+                <p>Esta acción no se puede revertir, ni se podrán recuperar los datos previamente guardados</p>
+            </div>
         </div>
     </div>
     <script src="js/evento.js"></script>

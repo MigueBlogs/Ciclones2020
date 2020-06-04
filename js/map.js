@@ -144,33 +144,9 @@ $(function() {
               }),
               "top-right"
             );
-
-            // the button that triggers screen shot
-            // const screenshotBtn = document.getElementById("capture");
-
-            // var area = {
-            //     x: 200,
-            //     y: 30,
-            //     width: 400,
-            //     height: 300
-            //   };
-           
-            // screenshotBtn.addEventListener("click", function() {    
-            //     $('#capture').hide();
-            //     $('#mapa_ciclon').show();
-            //     view
-            //         .takeScreenshot({ format: "png", quality:100 })
-            //         .then(function(screenshot) {
-            //           showPreview(screenshot);
-            //   });
-            //         if(guardadoGlobal){
-            //             $("#pdfError").hide();
-            //             $("#pdf").show();
-            //         }
-            //         window.captured=true;
-            // });
             
             $('#stormSelection').appendTo('.esri-view-root');
+            $('#stormSelection2').appendTo('.esri-view-root');
             //$('#dataSection').appendTo('.esri-view-root'); // arruina la vista en mobil
             $('#mapa_ciclon').click(function() {
                 $('.js-screenshot-image').hide();
@@ -295,7 +271,8 @@ $(function() {
         });
 
         var activeConesPromises = [];
-        var activeCones = [];
+        var activeConesAT = [];
+        var activeConesEP = [];
         conesLayers.forEach(function(layer) {
             activeConesPromises.push(layer.queryFeatures());
         });
@@ -309,26 +286,43 @@ $(function() {
                 if(resultIdx < conesLayers.length && result["features"].length) {
                     // debugger;
                     var eventActive = result["features"][0]["layer"]["id"].split("_")[0];
-                    activeCones.push({
-                        stormname: result["features"][0]["attributes"]["stormname"],
-                        stormtype: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["stormtype"],
-                        geometry: result["features"][0]["geometry"],
-                        maxwind: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["maxwind"],
-                        layerid: conesLayers[resultIdx]["id"]
-                    });
+                    if (getSea(conesLayers[resultIdx]["id"]) == "EP"){
+                        activeConesEP.push({
+                            stormname: result["features"][0]["attributes"]["stormname"],
+                            stormtype: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["stormtype"],
+                            geometry: result["features"][0]["geometry"],
+                            maxwind: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["maxwind"],
+                            layerid: conesLayers[resultIdx]["id"]
+                        });
+                    }
+                    else {
+                        activeConesAT.push({
+                            stormname: result["features"][0]["attributes"]["stormname"],
+                            stormtype: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["stormtype"],
+                            geometry: result["features"][0]["geometry"],
+                            maxwind: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["maxwind"],
+                            layerid: conesLayers[resultIdx]["id"]
+                        });
+                    }
                 }
             });
 
-            var templateSource = $("#stormsActive-template").html();
+            var templateSource = $("#stormsActiveEP-template").html();
             var template = Handlebars.compile(templateSource);
-            var outputHTML = template({storms: activeCones});
+            var outputHTML = template({storms: activeConesEP});
             $("#stormsActive").html(outputHTML);
+
+            var templateSource2 = $("#stormsActiveAT-template").html();
+            var template2 = Handlebars.compile(templateSource2);
+            var outputHTML2 = template({storms: activeConesAT});
+            $("#stormsActive2").html(outputHTML2);
 
             $('#tablaEditar').show();
             $('#loading_table').hide();
             //loadEdo([]);
 
-            $("#stormsActive").on("change", function() {
+            $("#stormsActive, #stormsActive2").on("change", function() {
+                let select = $(this);
                 require([
                     "esri/tasks/GeometryService",
                     "esri/tasks/support/ProjectParameters"
@@ -336,8 +330,10 @@ $(function() {
                     GeometryService,
                     ProjectParameters
                 ) {
-                    var layerid = $("#stormsActive option:selected").attr("data-layerid");
-
+                    
+                    var layerid = $(select).children("option:selected").attr("data-layerid");
+                    console.log(layerid);
+                    
                     //si no hay Evento en la selección
                     if(!layerid) {
                         $("#type").text("");
@@ -345,8 +341,8 @@ $(function() {
                         $("#name").text("");
                         $(".TitleOceano").text("");
                         $(".TitleTipo").text('');
-                        $('#tablaEdos1 > tbody').html("");
-	                    $('#tablaEdos2 > tbody').html("");
+                        // $('#tablaEdos1 > tbody').html("");
+	                    // $('#tablaEdos2 > tbody').html("");
                         $("#regiones").hide();
                         $("#mostrar").hide();
                         $('#tablaEditar').show();
@@ -365,31 +361,57 @@ $(function() {
                         else if(layer["id"].indexOf("AT") != -1 || layer["id"].indexOf("EP") != -1) layer.visible = false;
                     });
 
-                    var coneActive = activeCones.filter(function(activeCone) { if(activeCone["layerid"] == layerid) return activeCone; })[0];
+                    var coneActive = activeConesAT.filter(function(activeConesAT) { if(activeConesAT["layerid"] == layerid) return activeConesAT; })[0];
+                    
+                    var coneActive2 = activeConesEP.filter(function(activeConesEP) { if(activeConesEP["layerid"] == layerid) return activeConesEP; })[0];
 
 
                     var geometryService = new GeometryService({ url: "http://rmgir.proyectomesoamerica.org/server/rest/services/Utilities/Geometry/GeometryServer" });
-                    var params = new ProjectParameters({
-                        geometries: [coneActive["geometry"]["extent"]],
-                        outSpatialReference: mapView["spatialReference"]
-                    });
+                    if (coneActive) {
+                        var params = new ProjectParameters({
+                            geometries: [coneActive["geometry"]["extent"]],
+                            outSpatialReference: mapView["spatialReference"]
+                        });
 
-                    geometryService.project(params).then(function(result) {
-                        mapView.goTo(result[0]);
+                        geometryService.project(params).then(function(result) {
+                            mapView.goTo(result[0]);
 
-                        var tipoHuracan = getCicloneType(coneActive["stormtype"], coneActive["maxwind"]);
-                        $("#type").text(tipoHuracan);
-                        $("#type").attr("data-typeId", getIdCicloneTypeId(tipoHuracan));
-                        $("#name").text(coneActive["stormname"]);
-                        $("#sea").text(getSea(coneActive["layerid"]) + " / ");
-                        $("#sea").attr("data-ocean", (getSea(coneActive["layerid"]) == "EP" ? "P" : "A"));
-                        tituloSecundario();
-                        const oceano = getSea(coneActive["layerid"]) == "EP" ? "PACÍFICO" : "ATLÁNTICO"; 
-                        $(".TitleOceano").text(oceano);
-                        //queryRegions(map, mapView, [coneActive["geometry"]], "FID");
-                        var zoomComplete = new Event("eventSelected");
-                        document.dispatchEvent(zoomComplete);
-                    });
+                            var tipoHuracan = getCicloneType(coneActive["stormtype"], coneActive["maxwind"]);
+                            $("#type").text(tipoHuracan);
+                            $("#type").attr("data-typeId", getIdCicloneTypeId(tipoHuracan));
+                            $("#name").text(coneActive["stormname"]);
+                            $("#sea").text(getSea(coneActive["layerid"]) + " / ");
+                            $("#sea").attr("data-ocean", (getSea(coneActive["layerid"]) == "EP" ? "P" : "A"));
+                            tituloSecundario();
+                            const oceano = getSea(coneActive["layerid"]) == "EP" ? "PACÍFICO" : "ATLÁNTICO"; 
+                            $(".TitleOceano").text(oceano);
+                            //queryRegions(map, mapView, [coneActive["geometry"]], "FID");
+                            var zoomComplete = new Event("eventSelected");
+                            document.dispatchEvent(zoomComplete);
+                        });
+                    }
+                    if (coneActive2) {
+                        var params2 = new ProjectParameters({
+                            geometries: [coneActive2["geometry"]["extent"]],
+                            outSpatialReference: mapView["spatialReference"]
+                        });
+                        geometryService.project(params2).then(function(result) {
+                            mapView.goTo(result[0]);
+
+                            var tipoHuracan = getCicloneType(coneActive2["stormtype"], coneActive2["maxwind"]);
+                            $("#type").text(tipoHuracan);
+                            $("#type").attr("data-typeId", getIdCicloneTypeId(tipoHuracan));
+                            $("#name").text(coneActive2["stormname"]);
+                            $("#sea").text(getSea(coneActive2["layerid"]) + " / ");
+                            $("#sea").attr("data-ocean", (getSea(coneActive2["layerid"]) == "EP" ? "P" : "A"));
+                            tituloSecundario();
+                            const oceano = getSea(coneActive2["layerid"]) == "EP" ? "PACÍFICO" : "ATLÁNTICO"; 
+                            $(".TitleOceano").text(oceano);
+                            //queryRegions(map, mapView, [coneActive2["geometry"]], "FID");
+                            var zoomComplete = new Event("eventSelected");
+                            document.dispatchEvent(zoomComplete);
+                        });
+                    }
                 })
             });
         });
@@ -721,7 +743,8 @@ $(function() {
                     refreshInterval: 60,
                     showLabels: true,
                     outFields: ["*"],
-                    visible: false
+                    visible: false,
+                    ocean: "P"
                 };
 
                 if(type == "forecastPoints") {
@@ -750,7 +773,8 @@ $(function() {
                     refreshInterval: 60,
                     showLabels: true,
                     outFields: ["*"],
-                    visible: false
+                    visible: false,
+                    ocean: "A"
                 };
 
                 if(type == "forecastPoints") {
