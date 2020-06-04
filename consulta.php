@@ -67,7 +67,7 @@
     else if(isset($_POST['editaDeclaratoria']) && isset($_POST["id_declaratoria"]) && isset($_POST["estado"]) && isset($_POST["tipo"]) && isset($_POST["url"])){
         // echo 1; // Test
 
-        if (editaDeclaratoria($_POST["id_declaratoria"], $_POST["estado"], $_POST["tipo"], $_POST["url"])){
+        if (editaDeclaratoria($_POST["id_declaratoria"], $_POST["estado"], $_POST["tipo"], $_POST["url"], $_POST["ciclon"])){
             echo 1;
         }
         else {
@@ -403,17 +403,18 @@
             return False;
         }
     }
-    function editaDeclaratoria($id_dec, $id_estado, $tipo, $url){
+    function editaDeclaratoria($id_dec, $id_estado, $tipo, $url, $id_evento){
         $conn = dbConnect(user, pass, server);
 
         $paramsArray = Array(
             ":id_dec"=>$id_dec,
+            ":id_evento"=>$id_evento,
             ":id_estado"=>$id_estado,
             ":tipo"=>$tipo,
             ":url"=>$url
         );
 
-        $queryStr = "UPDATE DECLARATORIA SET ID_ESTADO = :id_estado, TIPO = :tipo, URL = :url WHERE ID = :id_dec";
+        $queryStr = "UPDATE DECLARATORIA SET ID_ESTADO = :id_estado, TIPO = :tipo, URL = :url, id_ciclon=:id_evento WHERE ID = :id_dec";
         
         $query = oci_parse($conn, $queryStr);
 

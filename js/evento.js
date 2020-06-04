@@ -2,6 +2,12 @@ let failed1 = false, failed2 = false, failed3 = false;
 function asyncFunction1 (item, r) {
     setTimeout(() => {
         item["editaDeclaratoria"] = 1;
+        if($("#porAsignar option:selected").val() != ''){
+            item["ciclon"] = $("#porAsignar option:selected").val();
+        }else{
+            item["ciclon"] = $("#events option:selected").val();
+        }
+
         $.post("consulta.php", item, function(result) {
             if (result == 1) {
                 // caso que se actualizó la declaratoria correctamente
@@ -486,7 +492,7 @@ $(function(){
             $("#confirmarAsignacion").removeAttr("disabled");
         });
         //repito todo lo de edita evento con la diferencia de indicarle hacia que ID de evento se asigna
-        $("confirmarAsignacion").on('click',function(){
+        $("#confirmarAsignacion").on('click',function(){
             //obtengo el ID del evento por asignar
             var IDevento = $("#porAsignar option:selected").val();
             let lluvias = $('#lluvias').val().replace(/\D/, '');
@@ -497,7 +503,7 @@ $(function(){
             let declaratorias2 = $('#tablaEdos2 tbody tr');
             let decl_agregar = [];
             let decl_editar = [];
-
+            console.log("aqui toy perro");
             let vacio = false;
             // verificar que no estén vacías. También separar si es para editar o para insertar
             $.each(declaratorias1, function(index, value) {
@@ -585,13 +591,13 @@ $(function(){
                 }
             }, 'json')
               .fail(function(result) {
-                alert("Error de conexión con el servidor" );
+                alert("Error de conexión con el servidor al asignar" );
                 console.log(result);                
               });
         });
         //elimino evento del que provenía la asignación
     });
-    })
+
     $('#borrarEvento').on('click', function(){
         if (confirm("¿Estás seguro de eliminar este evento?. No se podrá revertir esta acción.")){
             data = {eliminaEvento:1, confirma:1, id:$("#events option:selected").val()};
