@@ -122,8 +122,8 @@
         );
 
         $queryStr = "SELECT ID as ID_CICLON, NOMBRE, TO_CHAR(FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, LLUVIA, OCEANO, 
-        CASE WHEN FECHA_INICIO is not null AND FECHA_INICIO <= sysdate AND FECHA_FIN is not null AND FECHA_FIN > sysdate then 1 else 0 END AS PASADO, 
-        CASE WHEN FECHA_INICIO is not null AND FECHA_INICIO <= sysdate AND FECHA_FIN is null then 1 else 0 END AS ACTIVO FROM CICLON 
+        CASE WHEN FECHA_INICIO is not null AND FECHA_INICIO <= trunc(sysdate) AND FECHA_FIN is not null AND FECHA_FIN < trunc(sysdate) then 1 else 0 END AS PASADO, 
+        CASE WHEN FECHA_INICIO is not null AND FECHA_INICIO <= trunc(sysdate) AND FECHA_FIN is null OR trunc(sysdate) <= FECHA_FIN then 1 else 0 END AS ACTIVO FROM CICLON 
         ORDER BY FECHA_INICIO, ID";
         
         $query = oci_parse($conn, $queryStr);
