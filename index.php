@@ -27,7 +27,18 @@
     <?php includeNav(); ?>
     <div id="mapaDiv" style="margin-top: 70px;">
         <div id="map-container">
-            <div id="dataSection">
+            <div id="stormSelection">
+                <div class="title">Ciclón tropical</div>
+                <div class="options">
+                    <select name="stormsActive" id="stormsActive">
+                        <option value="">Cargando</option>
+                    </select>
+                </div>
+            </div>
+            <div id="map">
+            </div>
+        </div>
+        <div id="dataSection">
                 <div class="title">Ciclones tropicales</div>
                 <button type="button" class="collapsible">Atlántico</button>
                 <div class="content">
@@ -45,7 +56,7 @@
                                         <div class="boxInfo" style="display:none;">
                                             <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
                                             <p>Fecha de fin: <?=$e["FECHA_FIN"]?></p>
-                                            <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"N/A"?></p>
+                                            <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
                                             <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                             if (empty($decl)) { ?>
                                                 <p>Sin declaratorias registradas</p> 
@@ -70,7 +81,7 @@
                                 else if ($e["ACTIVO"]) { ?>
                                     <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
                                         <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
-                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"N/A"?></p>
+                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
                                         <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                         if (empty($decl)) { ?>
                                             <p>Sin declaratorias aún</p>    
@@ -110,7 +121,7 @@
                                         <div class="boxInfo" style="display:none;">
                                             <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
                                             <p>Fecha de fin: <?=$e["FECHA_FIN"]?></p>
-                                            <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"N/A"?></p>
+                                            <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
                                             <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                             if (empty($decl)) { ?>
                                                 <p>Sin declaratorias registradas</p> 
@@ -135,7 +146,7 @@
                                 else if ($e["ACTIVO"]) { ?>
                                     <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
                                         <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
-                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"N/A"?></p>
+                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
                                         <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                         if (empty($decl)) { ?>
                                             <p>Sin declaratorias aún</p>
@@ -160,19 +171,7 @@
                         </ol>
                     </div>
                 </div>
-            </div>
-            <div id="stormSelection">
-                <div class="title">Ciclón tropical</div>
-                <div class="options">
-                    <select name="stormsActive" id="stormsActive">
-                        <option value="">Cargando</option>
-                    </select>
-                </div>
-            </div>
-            <div id="map">
-
-            </div>
-        </div>			
+            </div>		
     </div>
     <button id="botonTop" type="button" class="boton-volver" style="display: none;"><ion-icon name="arrow-up-outline"></ion-icon></button>
     <script id="stormsActive-template" type="text/x-handlebars-template">
@@ -236,16 +235,16 @@
         $('.collapsible').on('click', function(){
             let other = $('.collapsible').not(this);
             other.next().hide();
-            if ($('.collapsible.active').length == 0){
-                $('#dataSection').css('height', '');
-                $('#dataSection').css('width', '');
-            }
-            else {
-                if ($(window).width() > 500) {
-                    $('#dataSection').css('height', '70vh');
-                    $('#dataSection').css('width', '20vw');
-                }
-            }
+            // if ($('.collapsible.active').length == 0){
+            //     $('#dataSection').css('height', '');
+            //     $('#dataSection').css('width', '');
+            // }
+            // else {
+            //     if ($(window).width() > 500) {
+            //         // $('#dataSection').css('height', '100vh');
+            //         // $('#dataSection').css('width', '15px');
+            //     }
+            // }
         });
         window.onscroll = function() {scrollFunction()};
         

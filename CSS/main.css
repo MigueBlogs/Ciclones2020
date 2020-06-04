@@ -30,12 +30,13 @@ h1, h2, h3, h4, h5, strong {
     background: #fff;
     border-radius: 5px;
     box-sizing: border-box;
-    left: 80vw;
     padding: .5em;
-    position: absolute;
-    top: 50px;
+    top: 40px;
     z-index: 1;
     overflow: auto;
+    float: right;
+    height: calc(100vh - 70px) !important;
+    width: 15%;
 }
 
 #botonTop {
@@ -57,6 +58,8 @@ h1, h2, h3, h4, h5, strong {
 
 #map-container{
     height: calc(100vh - 70px) !important;
+    width: 85%;
+    position: absolute !important;
 }
 
 .collapsible {
