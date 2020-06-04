@@ -70,6 +70,30 @@
         </div>
         </div>
     </div>
+    <!-- modal para confirmar selección -->
+    <div class="modal fade" id="seleccionaEventoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div style="background-color: #35695D; color:white" class="modal-header">
+            <h5 class="modal-title"  id="exampleModalLabel">Menú de Inicio</h5>
+            </div>
+            <div class="modal-body">
+            Elige el evento al que deseas evolucionar:
+            <select id="porAsignar">
+                    <?php foreach (getEventos() as $key => $e) { ?>
+                        <option value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
+                    <?php } ?>
+            </select>
+            <br>
+            <div id="activeEvents"></div>
+            </div>
+            <div class="modal-footer">
+            <button id="confirmarAsignacion" style="border-color:unset;" type="button" disabled class=" btn btn-primary guinda" data-dismiss="modal">Continuar</button>
+            <a style="border-color:unset;" class="verde-oscuro btn btn-primary guinda" href="index.php">Cancelar</a>
+            </div>
+        </div>
+        </div>
+    </div>
     <div class="row main-container" style="margin-top: 70px;">
         <div class="adjust col d-flex justify-content-center">
             <div id="caseEdit">Estás editando el ciclón tropical <span id="nombreEvento" class="font-weight-bold"></span>, en el océano <span id="oceano" class="font-weight-bold"></span>
@@ -191,6 +215,8 @@
         </div>
         <div class="w-100 row justify-content-center">
             <button class="btn btn-primary guinda" id="guardarDatos" style="border-color:unset;">Guardar cambios</button>
+
+            <button style="display:none;" class="btn btn-primary" id="asignar" style="border-color:unset;">Asignar a otro evento</button>
         </div>
     </div>
     <script src="js/evento.js"></script>

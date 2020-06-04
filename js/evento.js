@@ -77,12 +77,14 @@ $(function(){
             $("#next").removeAttr("disabled");
             $("#caseEdit").hide();
             $("#caseNew").show();
+            $("#asignar").hide();
         }
         else if (this.value == 'editar') {
             $("#events").show();
             $("#next").attr("disabled","");
             $("#caseEdit").show();
             $("#caseNew").hide();
+            $("#asignar").show();
         }
     });
 
@@ -473,5 +475,118 @@ $(function(){
                 console.log(result);
               });
         }
-    })
+    });
+    //cuando se asigna un evento a otro
+    $('#asignar').on('click', function(){
+        //elige a que otro evento quieres asignar
+        $('#seleccionaEventoModal').modal('show');
+        $("#porAsignar").on("click",function(){
+            $("#confirmarAsignacion").removeAttr("disabled");
+        });
+        //repito todo lo de edita evento con la diferencia de indicarle hacia que ID de evento se asigna
+        $("confirmarAsignacion").on('click',function(){
+            //obtengo el ID del evento por asignar
+            var IDevento = $("#porAsignar option:selected").val();
+            let lluvias = $('#lluvias').val().replace(/\D/, '');
+            let fecha_inicio = $('#fecha_inicio').val()=="" ? null : $('#fecha_inicio').val();
+            let fecha_fin = $('#fecha_fin').val()=="" ? null : $('#fecha_fin').val();
+
+            let declaratorias1 = $('#tablaEdos1 tbody tr');
+            let declaratorias2 = $('#tablaEdos2 tbody tr');
+            let decl_agregar = [];
+            let decl_editar = [];
+
+            let vacio = false;
+            // verificar que no estén vacías. También separar si es para editar o para insertar
+            $.each(declaratorias1, function(index, value) {
+                let tmp = $(value).find("input[type=text]").val().trim();
+                if (tmp == "" || vacio){
+                    vacio = true;
+                    return;
+                }
+                let dec = {estado: $(value).find('select').val(), tipo: "E", url: tmp};
+                tmp = $(value).find("input[type=hidden]");
+                if (tmp.length > 0){
+                    // agregar como para editar (y no como insertar)
+                    dec["id_declaratoria"] = tmp.val();
+                    decl_editar.push(dec);
+                }
+                else {
+                    decl_agregar.push(dec);
+                }
+            });
+            $.each(declaratorias2, function(index, value) {
+                let tmp = $(value).find("input[type=text]").val().trim();
+                if (tmp == "" || vacio){
+                    vacio = true;
+                    return;
+                }
+                let dec = {estado: $(value).find('select').val(), tipo: "D", url: tmp};
+                tmp = $(value).find("input[type=hidden]");
+                if (tmp.length > 0){
+                    // agregar como para editar (y no como insertar)
+                    dec["id_declaratoria"] = tmp.val();
+                    decl_editar.push(dec);
+                }
+                else {
+                    decl_agregar.push(dec);
+                }
+            });
+            
+            if (vacio) {
+                alert("Completa el campo de enlace para cada declaratoria");
+                return;
+            }
+
+            // editar primero el evento
+            data = {editaEvento: 1, id: IDevento, inicio:fecha_inicio, fin: fecha_fin, lluvias: lluvias};
+            $.post("consulta.php", data, function(result) {
+                failed1 = false,  failed2 = false, failed3 = false;
+                if (result == 1) {
+                    // caso que se editó el evento correctamente
+
+                    // editar las declaratorias que ya existían
+                    let requests1 = decl_editar.map((value) => {
+                        return new Promise((resolve) => {
+                            asyncFunction1(value, resolve);
+                        })
+                    })
+                    
+                    // insertar las nuevas declaratorias
+                    let requests2 = decl_agregar.map((value) => {
+                        return new Promise((resolve) => {
+                            asyncFunction2(value, resolve);
+                        })
+                    })
+                    //eliminar declaratorias
+                    let requests3 = porEliminar.map((value) => {
+                        return new Promise((resolve) => {
+                            //console.log(value);
+                            asyncFunction3(value, resolve);
+                        })
+                    })
+
+                    Promise.all([requests1, requests2, requests3].map(Promise.all, Promise)).then(() => {
+                        console.log(failed1, failed2, failed3);
+                        
+                        if (failed1 || failed2 || failed3) {
+                            alert("Algunos datos no se pudieron actualizar correctamente. Por favor inténtalo de nuevo.");
+                        }
+                        else {
+                            alert("Evento asignado correctamente");
+                        }
+                        window.location.href = "evento.php";
+                    });
+                }
+                else {
+                    alert("No se pudo asignar el evento correctamente");
+                }
+            }, 'json')
+              .fail(function(result) {
+                alert("Error de conexión con el servidor" );
+                console.log(result);                
+              });
+        });
+        //elimino evento del que provenía la asignación
+    });
 });
