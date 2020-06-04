@@ -98,11 +98,11 @@ $(function(){
         $("#next").removeAttr("disabled");
         $("#nombreEvento").text('');
         $("#nombreEvento").append($("#events option:selected").text());
-        
     });
 
     //consulta la base de datos para extraer info sel evento seleccionado
     $("#next").on('click',function(){
+        $('#porAsignar option[value='+$("#events option:selected").val()+']').attr("disabled","");
         if($("#editarEvento").is(":checked")){
             $('#borrarEvento').show().siblings().show();
 
@@ -112,7 +112,6 @@ $(function(){
             };
             $.post( "./consulta.php",params, function( data ) {
                 console.log(data);
-                $('#nombreEvento').text(data["NOMBRE"]);
                 $("#fecha_inicio").val(data["FECHA_INICIO"]);
                 $("#fecha_fin").val(data["FECHA_FIN"]);
                 $("#lluvias").val(data["LLUVIA"]);
@@ -493,7 +492,7 @@ $(function(){
             $("#confirmarAsignacion").removeAttr("disabled");
         });
         //repito todo lo de edita evento con la diferencia de indicarle hacia que ID de evento se asigna
-        $("#confirmarAsignacion").on('click',function(){
+        $("confirmarAsignacion").on('click',function(){
             //obtengo el ID del evento por asignar
             var IDevento = $("#porAsignar option:selected").val();
             let lluvias = $('#lluvias').val().replace(/\D/, '');
@@ -504,7 +503,7 @@ $(function(){
             let declaratorias2 = $('#tablaEdos2 tbody tr');
             let decl_agregar = [];
             let decl_editar = [];
-            console.log("aqui toy perro");
+            
             let vacio = false;
             // verificar que no estén vacías. También separar si es para editar o para insertar
             $.each(declaratorias1, function(index, value) {
