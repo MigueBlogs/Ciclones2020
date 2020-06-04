@@ -65,6 +65,7 @@
             <div class="modal-footer">
             <small>Este listado es referente al publicado por el <a target="_blank" href="https://www.nhc.noaa.gov/aboutnames.shtml">NHC</a></small>
             <button id="next" style="border-color:unset;" type="button" disabled class=" btn btn-primary guinda" data-dismiss="modal">Continuar</button>
+            <a style="border-color:unset;" class=" btn btn-primary guinda" href="index.php">Cancelar</a>
             </div>
         </div>
         </div>
