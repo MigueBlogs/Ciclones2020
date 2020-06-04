@@ -121,6 +121,16 @@ h1, h2, h3, h4, h5, strong {
     ol {
     padding-left: 15px;
     }
+
+    optgroup[label="Atlántico"]
+    {
+    background-color: aquamarine;
+    }
+
+    optgroup[label="Pacífico"]
+    {
+    background-color: mediumaquamarine;
+    }
   @media(max-width: 500px) {
     #dataSection{
         position: unset;

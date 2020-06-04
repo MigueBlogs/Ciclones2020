@@ -53,17 +53,16 @@
                 <label class="form-check-label" for="editarEvento">
                 Editar un evento previsto (listado)
                     <select id="events" style="display:none;">
-                    <optgroup label="Atlántico">
+                        <optgroup style="background-color: aquamarine;" label="Atlántico ▼">
                         <?php foreach (getEventosAT() as $key => $e) { ?>
-                            <option value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
+                            <option style="background-color: white;" value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
                         <?php } ?>
-                    </optgroup>
-                    <optgroup label="Pacífico">
-                        <?php foreach (getEventosEP() as $key => $e) { ?>
-                            <option value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
-                        <?php } ?>
-                    </optgroup>
-                    
+                        </optgroup>
+                        <optgroup  style="background-color: mediumaquamarine;" label="Pacífico ▼">
+                            <?php foreach (getEventosEP() as $key => $e) { ?>
+                                <option style="background-color: white;" value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
+                            <?php } ?>
+                        </optgroup>
                     </select>
                 </label>
             </div>
@@ -88,9 +87,16 @@
             <div class="modal-body">
             Elige el evento al que deseas evolucionar:
             <select id="porAsignar">
-                    <?php foreach (getEventos() as $key => $e) { ?>
-                        <option value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
+                <optgroup style="background-color: aquamarine;" label="Atlántico ▼">
+                    <?php foreach (getEventosAT() as $key => $e) { ?>
+                        <option style="background-color: white;" value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
                     <?php } ?>
+                </optgroup>
+                <optgroup  style="background-color: mediumaquamarine;" label="Pacífico ▼">
+                    <?php foreach (getEventosEP() as $key => $e) { ?>
+                        <option style="background-color: white;" value="<?=$e["ID_CICLON"]?>"><?=$e["NOMBRE"]?></option>
+                    <?php } ?>
+                </optgroup>
             </select>
             <br>
             <div id="activeEvents"></div>
