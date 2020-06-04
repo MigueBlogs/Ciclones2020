@@ -96,6 +96,8 @@ $(function(){
     //consulta la base de datos para extraer info sel evento seleccionado
     $("#next").on('click',function(){
         if($("#editarEvento").is(":checked")){
+            $('#borrarEvento').show().siblings().show();
+
             var params = {
                 obtenerEvento:true,
                 id: $("#events option:selected").val()
@@ -472,6 +474,25 @@ $(function(){
                 alert("Error en la conexión al servidor");
                 console.log(result);
               });
+        }
+    })
+    $('#borrarEvento').on('click', function(){
+        if (confirm("¿Estás seguro de eliminar este evento?. No se podrá revertir esta acción.")){
+            data = {eliminaEvento:1, confirma:1, id:$("#events option:selected").val()};
+            $.post( "consulta.php", data, function(result) {
+                if (result == 1) {
+                    // se elimina el evento correctamente
+                    alert("Evento eliminado correctamente");
+                    window.location.href = "evento.php";
+                }
+                else {
+                    alert("No se pudo eliminar este evento. Inténtalo nuevamente en otra ocasión");
+                }
+            }, 'json')
+            .fail(function(result) {
+                console.log(result);
+                alert( "Hubo un problema de conexión con el servidor" );
+            });
         }
     })
 });

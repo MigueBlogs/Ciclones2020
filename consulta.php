@@ -24,6 +24,16 @@
             echo 0;
         }
     }
+    else if(isset($_POST['eliminaEvento']) && isset($_POST["confirma"]) && isset($_POST["id"])){
+        // echo 0; // Test
+        
+        if (borraEvento($_POST["id"])){
+            echo 1;
+        }
+        else {
+            echo 0;
+        }
+    }
     else if(isset($_POST['agregaEvento']) && isset($_POST["nombre"]) && isset($_POST["oceano"])){
         // echo 1; // TEST
         
@@ -142,6 +152,62 @@
         return $todos;
     }
 
+    function getEventosAT(){
+        $conn = dbConnect(user, pass, server);
+
+        $paramsArray = Array(
+        );
+
+        $queryStr = "SELECT ID as ID_CICLON, NOMBRE, TO_CHAR(FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, LLUVIA, OCEANO, 
+        CASE WHEN FECHA_INICIO is not null AND FECHA_INICIO <= trunc(sysdate) AND FECHA_FIN is not null AND FECHA_FIN < trunc(sysdate) then 1 else 0 END AS PASADO, 
+        CASE WHEN FECHA_INICIO is not null AND FECHA_INICIO <= trunc(sysdate) AND FECHA_FIN is null OR trunc(sysdate) <= FECHA_FIN then 1 else 0 END AS ACTIVO FROM CICLON 
+        WHERE OCEANO = 'A' 
+        ORDER BY FECHA_INICIO, ID";
+        
+        $query = oci_parse($conn, $queryStr);
+
+        foreach ($paramsArray as $key => $value) {
+            oci_bind_by_name($query, $key, $paramsArray[$key]);
+        }
+
+        oci_execute($query);
+        $todos = Array();
+
+        while ( ($row = oci_fetch_assoc($query)) != false) {
+            $todos[] = $row;
+        }
+        dbClose($conn, $query);
+        return $todos;
+    }
+
+    function getEventosEP(){
+        $conn = dbConnect(user, pass, server);
+
+        $paramsArray = Array(
+        );
+
+        $queryStr = "SELECT ID as ID_CICLON, NOMBRE, TO_CHAR(FECHA_INICIO, 'YYYY-MM-DD') FECHA_INICIO, TO_CHAR(FECHA_FIN, 'YYYY-MM-DD') FECHA_FIN, LLUVIA, OCEANO, 
+        CASE WHEN FECHA_INICIO is not null AND FECHA_INICIO <= trunc(sysdate) AND FECHA_FIN is not null AND FECHA_FIN < trunc(sysdate) then 1 else 0 END AS PASADO, 
+        CASE WHEN FECHA_INICIO is not null AND FECHA_INICIO <= trunc(sysdate) AND FECHA_FIN is null OR trunc(sysdate) <= FECHA_FIN then 1 else 0 END AS ACTIVO FROM CICLON 
+        WHERE OCEANO = 'P' 
+        ORDER BY FECHA_INICIO, ID";
+        
+        $query = oci_parse($conn, $queryStr);
+
+        foreach ($paramsArray as $key => $value) {
+            oci_bind_by_name($query, $key, $paramsArray[$key]);
+        }
+
+        oci_execute($query);
+        $todos = Array();
+
+        while ( ($row = oci_fetch_assoc($query)) != false) {
+            $todos[] = $row;
+        }
+        dbClose($conn, $query);
+        return $todos;
+    }
+
     function getEventosActivos(){
         $conn = dbConnect(user, pass, server);
 
@@ -241,6 +307,7 @@
         if (oci_execute($query, OCI_NO_AUTO_COMMIT)){
             oci_commit($conn);
             dbClose($conn, $query);
+            borraDeclaratoriaByCiclon($id_evento);
             return True;
         }
         else {
@@ -374,6 +441,32 @@
         );
 
         $queryStr = "DELETE FROM DECLARATORIA WHERE ID = :id_dec";
+        
+        $query = oci_parse($conn, $queryStr);
+
+        foreach ($paramsArray as $key => $value) {
+            oci_bind_by_name($query, $key, $paramsArray[$key]);
+        }
+
+        if (oci_execute($query, OCI_NO_AUTO_COMMIT)){
+            oci_commit($conn);
+            dbClose($conn, $query);
+            return True;
+        }
+        else {
+            oci_rollback($conn);
+            dbClose($conn, $query);
+            return False;
+        }
+    }
+    function borraDeclaratoriaByCiclon($id_evento){
+        $conn = dbConnect(user, pass, server);
+
+        $paramsArray = Array(
+            ":id_ciclon"=>$id_evento
+        );
+
+        $queryStr = "DELETE FROM DECLARATORIA WHERE ID_CICLON = :id_ciclon";
         
         $query = oci_parse($conn, $queryStr);
 
