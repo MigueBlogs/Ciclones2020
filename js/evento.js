@@ -112,6 +112,7 @@ $(function(){
             };
             $.post( "./consulta.php",params, function( data ) {
                 console.log(data);
+                $('#nombreEvento').text(data["NOMBRE"]);
                 $("#fecha_inicio").val(data["FECHA_INICIO"]);
                 $("#fecha_fin").val(data["FECHA_FIN"]);
                 $("#lluvias").val(data["LLUVIA"]);

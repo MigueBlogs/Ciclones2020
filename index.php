@@ -122,7 +122,7 @@
                                                 <li>
                                                     <p>Declaratoria de <?=$d["TIPO"]=="E"?"Emergencia":"Desastre"?></p>
                                                     <p>Estado: <?=$d["ESTADO"]?></p>
-                                                    <p>Enlace <a href="<?=$d["URL"]?>">aquí</a></p>
+                                                    <p>Enlace <a target="_blank" href="<?=$d["URL"]?>">aquí</a></p>
                                                 </li>
                                                 <br>
                                                 <?php } ?>
@@ -146,7 +146,7 @@
                                             <li>
                                                 <p>Declaratoria de <?=$d["TIPO"]=="E"?"Emergencia":"Desastre"?></p>
                                                 <p>Estado: <?=$d["ESTADO"]?></p>
-                                                <p>Enlace <a href="<?=$d["URL"]?>">aquí</a></p>
+                                                <p>Enlace <a target="_blank" href="<?=$d["URL"]?>">aquí</a></p>
                                             </li>
                                             <?php } ?>
                                             </ul>
