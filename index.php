@@ -251,20 +251,20 @@
             }
         });
         }
-        $('.collapsible').on('click', function(){
-            let other = $('.collapsible').not(this);
-            other.next().hide();
-            // if ($('.collapsible.active').length == 0){
-            //     $('#dataSection').css('height', '');
-            //     $('#dataSection').css('width', '');
-            // }
-            // else {
-            //     if ($(window).width() > 500) {
-            //         // $('#dataSection').css('height', '100vh');
-            //         // $('#dataSection').css('width', '15px');
-            //     }
-            // }
-        });
+        // $('.collapsible').on('click', function(){
+        //     let other = $('.collapsible').not(this);
+        //     other.next().hide();
+        //     // if ($('.collapsible.active').length == 0){
+        //     //     $('#dataSection').css('height', '');
+        //     //     $('#dataSection').css('width', '');
+        //     // }
+        //     // else {
+        //     //     if ($(window).width() > 500) {
+        //     //         // $('#dataSection').css('height', '100vh');
+        //     //         // $('#dataSection').css('width', '15px');
+        //     //     }
+        //     // }
+        // });
         window.onscroll = function() {scrollFunction()};
         
         function scrollFunction() {
