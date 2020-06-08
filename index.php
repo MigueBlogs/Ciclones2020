@@ -164,7 +164,7 @@
             <div id="stormSelection">
                 <div class="title">Ciclón tropical en el Pacífico</div>
                 <div class="options">
-                    <select name="stormsActive" id="stormsActive">
+                    <select name="stormsActive" id="stormsActive" ocean="P">
                         <option value="">Cargando</option>
                     </select>
                 </div>
@@ -172,7 +172,7 @@
             <div id="stormSelection2">
                 <div class="title">Ciclón tropical en el Atlántico</div>
                 <div class="options">
-                    <select name="stormsActive2" id="stormsActive2">
+                    <select name="stormsActive2" id="stormsActive2" ocean="A">
                         <option value="">Cargando</option>
                     </select>
                 </div>

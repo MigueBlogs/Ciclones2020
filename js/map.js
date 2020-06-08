@@ -332,7 +332,6 @@ $(function() {
                 ) {
                     
                     var layerid = $(select).children("option:selected").attr("data-layerid");
-                    console.log(layerid);
                     
                     //si no hay Evento en la selección
                     if(!layerid) {
@@ -346,6 +345,15 @@ $(function() {
                         $("#regiones").hide();
                         $("#mostrar").hide();
                         $('#tablaEditar').show();
+                        let ocean = $(select).attr("ocean");
+                        map.allLayers.map(function(layer) {
+                            if (ocean == "A" && layer["id"].indexOf("AT") != -1){
+                                layer.visible = false;
+                            }
+                            else if (ocean == "P" && layer["id"].indexOf("EP") != -1){
+                                layer.visible = false;
+                            }
+                        });
                         return;
                     }else{//si existe el evento muestra la tabla correspondiente
                         $("#regiones").hide();
