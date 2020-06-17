@@ -1,4 +1,5 @@
 var captured=false;
+var map;
 window.captured;
 $(function() {
     function loadMap(container) {
@@ -15,7 +16,7 @@ $(function() {
         ) {
             esriConfig.request.proxyUrl = "http://rmgir.cenapred.gob.mx/proxy/proxy.php";
 
-            var map = new Map({
+            map = new Map({
                 basemap: "hybrid"
             });
             const redProp = {
@@ -542,6 +543,12 @@ $(function() {
     }
 
     function loadCiclones(map) {
+        const area_inestabilidad_EP = {
+            // capa de inestabilidad en pacífico
+            "name": "EP_Area_5d",
+            "area": "https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/NHC_E_Pac_trop_cyclones_active/MapServer/3",
+            "text": "https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/NHC_E_Pac_trop_cyclones_active/MapServer/2",            
+        };
         const activeHurricanesEPUrls = [
             {
                 "name": "EP1",
@@ -799,6 +806,27 @@ $(function() {
                 addFeatureLayer(map, layers[type], properties);
             });
         });
+        // para la capa de inestabilidad
+        let properties_area = {
+            id: "EP_Area_5d_area",  
+            opacity: 0.8,
+            refreshInterval: 60,
+            showLabels: true,
+            outFields: ["*"],
+            visible: true,
+            ocean: "P"
+        };
+        let properties_label = {
+            id: "EP_Area_5d_label",  
+            opacity: 1.0,
+            refreshInterval: 60,
+            showLabels: true,
+            outFields: ["*"],
+            visible: true,
+            ocean: "P"
+        };
+        addFeatureLayer(map, area_inestabilidad_EP["area"], properties_area);
+        addFeatureLayer(map, area_inestabilidad_EP["text"], properties_label);
     }
 
     function changeColoredRegions(map) {
