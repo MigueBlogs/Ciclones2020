@@ -810,7 +810,7 @@ $(function() {
         let labelClass = {
             // Content
             labelExpressionInfo: {
-              expression: "$feature.prob5day"
+              expression: "'5 días: ' + $feature.prob5day"
             },
             
             // Appearance
