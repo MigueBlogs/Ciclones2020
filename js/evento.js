@@ -1,12 +1,9 @@
 let failed1 = false, failed2 = false, failed3 = false;
+let id_evento_evolucionar = null;
 function asyncFunction1 (item, r) {
     setTimeout(() => {
         item["editaDeclaratoria"] = 1;
-        if($("#porAsignar option:selected").val() != ''){
-            item["ciclon"] = $("#porAsignar option:selected").val();
-        }else{
-            item["ciclon"] = $("#events option:selected").val();
-        }
+        item["ciclon"] = id_evento_evolucionar || $("#events option:selected").val();
 
         $.post("consulta.php", item, function(result) {
             if (result == 1) {
@@ -31,7 +28,8 @@ function asyncFunction1 (item, r) {
 function asyncFunction2 (item, r) {
     setTimeout(() => {
         item["agregaDeclaratoria"] = 1;
-        item["ciclon"] = $("#events option:selected").val();
+        //item["ciclon"] = $("#events option:selected").val();
+        item["ciclon"] = id_evento_evolucionar || $("#events option:selected").val();
         $.post("consulta.php", item, function(result) {
             if (result == 1) {
                 // caso que se actualizó la declaratoria correctamente
@@ -322,22 +320,6 @@ $(function(){
                             asyncFunction1(value, resolve);
                         })
                     })
-                    // $.each(decl_editar, function(index, value ) {
-                    //     value["editaDeclaratoria"] = 1;
-                    //     $.post("consulta.php", value, function(result) {
-                    //         if (result == 1) {
-                    //             // caso que se actualizó la declaratoria correctamente
-                    //         }
-                    //         else {
-                    //             failed1 = true;
-                    //         }
-                      
-                    //     }, 'json')
-                    //     .fail(function() {
-                    //         alert( "error" );
-                    //     });
-                    // });
-                    
                     // insertar las nuevas declaratorias
                     let requests2 = decl_agregar.map((value) => {
                         return new Promise((resolve) => {
@@ -351,22 +333,7 @@ $(function(){
                             asyncFunction3(value, resolve);
                         })
                     })
-                    // $.each(decl_agregar, function(index, value ) {
-                    //     value["agregaDeclaratoria"] = 1;
-                    //     value["ciclon"] = $("#events option:selected").val();
-                    //     $.post("consulta.php", value, function(result) {
-                    //         if (result == 1) {
-                    //             // caso que se insertó la declaratoria correctamente
-                    //         }
-                    //         else {
-                    //             failed2 = true;
-                    //         }
-                      
-                    //     }, 'json')
-                    //     .fail(function() {
-                    //         alert( "error" );
-                    //     });
-                    // });
+                    // esperar a que todos terminen
                     Promise.all([requests1, requests2, requests3].map(Promise.all, Promise)).then(() => {
                         console.log(failed1, failed2, failed3);
                         
@@ -492,9 +459,10 @@ $(function(){
             $("#confirmarAsignacion").removeAttr("disabled");
         });
         //repito todo lo de edita evento con la diferencia de indicarle hacia que ID de evento se asigna
-        $("confirmarAsignacion").on('click',function(){
+        $("#confirmarAsignacion").on('click',function(){
             //obtengo el ID del evento por asignar
             var IDevento = $("#porAsignar option:selected").val();
+            id_evento_evolucionar = IDevento;
             let lluvias = $('#lluvias').val().replace(/\D/, '');
             let fecha_inicio = $('#fecha_inicio').val()=="" ? null : $('#fecha_inicio').val();
             let fecha_fin = $('#fecha_fin').val()=="" ? null : $('#fecha_fin').val();
