@@ -807,6 +807,32 @@ $(function() {
             });
         });
         // para la capa de inestabilidad
+        let labelClass = {
+            // Content
+            labelExpressionInfo: {
+              expression: "$feature.prob5day"
+            },
+            
+            // Appearance
+            symbol: {
+              type: "text",
+              color: "white",
+              haloColor: [30, 70, 190],
+              haloSize: 1,
+              font: {
+                family: "Montserrat",
+                style: "normal",
+                weight: "bold",
+                size: 10
+              }
+            },
+            
+            // Placement
+            labelPlacement: "above-center",
+           
+            // Visibility
+            // where: "ELEVATION > 2000"
+        };
         let properties_area = {
             id: "EP_Area_5d_area",  
             opacity: 0.8,
@@ -814,7 +840,8 @@ $(function() {
             showLabels: true,
             outFields: ["*"],
             visible: true,
-            ocean: "P"
+            ocean: "P",
+            labelingInfo: [labelClass]
         };
         let properties_label = {
             id: "EP_Area_5d_label",  
