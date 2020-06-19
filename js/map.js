@@ -821,7 +821,7 @@ $(function() {
         let labelClass = {
             // Content
             labelExpressionInfo: {
-              expression: "'5 días: ' + $feature.prob5day"
+              expression: "'Probabilidad de formación a 5 días: ' + $feature.prob5day"
             },
             
             // Appearance
