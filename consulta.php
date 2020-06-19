@@ -356,7 +356,8 @@
 
         $queryStr = "SELECT D.ID ID_DECLARATORIA, D.ID_ESTADO ID_ESTADO, E.NOMBRE ESTADO, D.TIPO TIPO, D.URL URL 
         FROM DECLARATORIA D, ESTADO E 
-        WHERE :id = D.ID_CICLON(+) AND D.ID_ESTADO = E.ID_ESTADO";
+        WHERE :id = D.ID_CICLON(+) AND D.ID_ESTADO = E.ID_ESTADO 
+        ORDER BY ESTADO, ID_DECLARATORIA";
         
         $query = oci_parse($conn, $queryStr);
 
