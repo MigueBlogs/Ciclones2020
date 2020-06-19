@@ -7,12 +7,14 @@ $(function() {
             "esri/Map",
             "esri/views/MapView",
             "esri/config",
-            "esri/widgets/Fullscreen"
+            "esri/widgets/Fullscreen",
+            "esri/widgets/Home"
         ], function(
             Map,
             MapView,
             esriConfig,
-            Fullscreen
+            Fullscreen,
+            Home
         ) {
             esriConfig.request.proxyUrl = "http://rmgir.cenapred.gob.mx/proxy/proxy.php";
 
@@ -124,7 +126,10 @@ $(function() {
                 container: container,
                 map: map,
                 center: [-101.608429, 23.200961],
-                zoom: 5
+                zoom: 5,
+                constraints: {
+                    rotationEnabled: false
+                }
             });
 
             view["ui"]["components"] = ["attributtion"];
@@ -138,6 +143,12 @@ $(function() {
                     searchCicloneCones(map, view);
                 });
             });
+            var homeWidget = new Home({
+                view: view
+            });
+              
+            // adds the home widget to the top right corner of the MapView
+            view.ui.add(homeWidget, "top-right");
             view.ui.add(
               new Fullscreen({
                 view: view
@@ -828,10 +839,10 @@ $(function() {
             },
             
             // Placement
-            labelPlacement: "above-center",
+            labelPlacement: "always-horizontal", // porque es geometría
            
             // Visibility
-            // where: "ELEVATION > 2000"
+            // where: ""
         };
         let properties_area = {
             id: "EP_Area_5d_area",  

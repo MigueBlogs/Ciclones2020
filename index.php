@@ -44,7 +44,7 @@
                                     <div class="boxInfo" style="display:none;">
                                         <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
                                         <p>Fecha término: <?=$e["FECHA_FIN"]?></p>
-                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
+                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]." L/m"."<sup>2</sup>":"Sin registro"?></p>
                                         <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                         if (empty($decl)) { ?>
                                             <p>Sin declaratorias registradas</p> 
@@ -69,7 +69,7 @@
                             else if ($e["ACTIVO"]) { ?>
                                 <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
                                     <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
-                                    <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
+                                    <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]." L/m"."<sup>2</sup>":"Sin registro"?></p>
                                     <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                     if (empty($decl)) { ?>
                                         <p>Sin declaratorias aún</p>    
@@ -109,7 +109,7 @@
                                     <div class="boxInfo" style="display:none;">
                                         <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
                                         <p>Fecha término: <?=$e["FECHA_FIN"]?></p>
-                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
+                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]." L/m"."<sup>2</sup>":"Sin registro"?></p>
                                         <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                         if (empty($decl)) { ?>
                                             <p>Sin declaratorias registradas</p> 
@@ -134,7 +134,7 @@
                             else if ($e["ACTIVO"]) { ?>
                                 <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
                                     <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
-                                    <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]."mm":"Sin registro"?></p>
+                                    <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]." L/m"."<sup>2</sup>":"Sin registro"?></p>
                                     <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                     if (empty($decl)) { ?>
                                         <p>Sin declaratorias aún</p>
@@ -283,5 +283,6 @@
             });
         }); 
     </script>
+    <script src="js/nubes.js"></script>
 </body>
 </html>
