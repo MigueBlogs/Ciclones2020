@@ -359,6 +359,9 @@ $(function() {
                         $('#tablaEditar').show();
                         let ocean = $(select).attr("ocean");
                         map.allLayers.map(function(layer) {
+                            if (layer["id"] == "EP_Area_5d_area" || layer["id"] == "EP_Area_5d_label"){
+                                return;
+                            }
                             if (ocean == "A" && layer["id"].indexOf("AT") != -1){
                                 layer.visible = false;
                             }
@@ -377,6 +380,9 @@ $(function() {
                     var event = layerid.split("_")[0];
 
                     map.allLayers.map(function(layer) {
+                        if (layer["id"] == "EP_Area_5d_area" || layer["id"] == "EP_Area_5d_label"){
+                            return;
+                        }
                         if(layer["id"].indexOf(event) != -1) layer.visible = true;
                         else if(layer["id"].indexOf("AT") != -1 || layer["id"].indexOf("EP") != -1) layer.visible = false;
                     });
