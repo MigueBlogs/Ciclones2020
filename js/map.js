@@ -1,4 +1,5 @@
 var captured=false;
+var map;
 window.captured;
 
 var clickDraw;
@@ -44,7 +45,10 @@ $(function() {
                 container: container,
                 map: map,
                 center: [-101.608429, 23.200961],
-                zoom: 5
+                zoom: 5,
+                constraints: {
+                    rotationEnabled: false
+                }
             });
             view.when(function(event){
                 //debugger
@@ -111,6 +115,12 @@ $(function() {
                     searchCicloneCones(map, view);
                 });
             });
+            var homeWidget = new Home({
+                view: view
+            });
+              
+            // adds the home widget to the top right corner of the MapView
+            view.ui.add(homeWidget, "top-right");
             view.ui.add(
               new Fullscreen({
                 view: view
@@ -544,6 +554,9 @@ $(function() {
                         $('#tablaEditar').show();
                         let ocean = $(select).attr("ocean");
                         map.allLayers.map(function(layer) {
+                            if (layer["id"] == "EP_Area_5d_area" || layer["id"] == "EP_Area_5d_label"){
+                                return;
+                            }
                             if (ocean == "A" && layer["id"].indexOf("AT") != -1){
                                 layer.visible = false;
                             }
@@ -562,6 +575,9 @@ $(function() {
                     var event = layerid.split("_")[0];
 
                     map.allLayers.map(function(layer) {
+                        if (layer["id"] == "EP_Area_5d_area" || layer["id"] == "EP_Area_5d_label"){
+                            return;
+                        }
                         if(layer["id"].indexOf(event) != -1) layer.visible = true;
                         else if(layer["id"].indexOf("AT") != -1 || layer["id"].indexOf("EP") != -1) layer.visible = false;
                     });
@@ -739,6 +755,12 @@ $(function() {
     }
 
     function loadCiclones(map) {
+        const area_inestabilidad_EP = {
+            // capa de inestabilidad en pacífico
+            "name": "EP_Area_5d",
+            "area": "https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/NHC_E_Pac_trop_cyclones_active/MapServer/3",
+            "text": "https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/NHC_E_Pac_trop_cyclones_active/MapServer/2",            
+        };
         const activeHurricanesEPUrls = [
             {
                 "name": "EP1",
@@ -996,6 +1018,54 @@ $(function() {
                 addFeatureLayer(map, layers[type], properties);
             });
         });
+        // para la capa de inestabilidad
+        let labelClass = {
+            // Content
+            labelExpressionInfo: {
+              expression: "'Probabilidad de formación a 5 días: ' + $feature.prob5day"
+            },
+            
+            // Appearance
+            symbol: {
+              type: "text",
+              color: "white",
+              haloColor: [30, 70, 190],
+              haloSize: 1,
+              font: {
+                family: "Montserrat",
+                style: "normal",
+                weight: "bold",
+                size: 10
+              }
+            },
+            
+            // Placement
+            labelPlacement: "always-horizontal", // porque es geometría
+           
+            // Visibility
+            // where: ""
+        };
+        let properties_area = {
+            id: "EP_Area_5d_area",  
+            opacity: 0.8,
+            refreshInterval: 60,
+            showLabels: true,
+            outFields: ["*"],
+            visible: true,
+            ocean: "P",
+            labelingInfo: [labelClass]
+        };
+        let properties_label = {
+            id: "EP_Area_5d_label",  
+            opacity: 1.0,
+            refreshInterval: 60,
+            showLabels: true,
+            outFields: ["*"],
+            visible: true,
+            ocean: "P"
+        };
+        addFeatureLayer(map, area_inestabilidad_EP["area"], properties_area);
+        addFeatureLayer(map, area_inestabilidad_EP["text"], properties_label);
     }
 
     function changeColoredRegions(map) {
