@@ -20,8 +20,11 @@
     <!-- Handlebars -->
 	<script src="./lib/handlebars.js"></script>
     <!-- ARCGIS MAP's -->
-	<link rel="stylesheet" href="https://js.arcgis.com/4.11/esri/css/main.css">
-    <script src="https://js.arcgis.com/4.11/"></script>
+	<link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.15/"></script>
+    <!-- <script type="text/javascript" src="http://js.arcgis.com/3.20/"></script>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.20/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="http://js.arcgis.com/3.20/esri/css/esri.css"> -->
 </head>
 <body>
     <?php includeNav(); ?>
@@ -160,6 +163,21 @@
                 </div>
             </div>
         </div>
+        <div id="toolbar">
+                <div class="toolbar-container">
+                <div id="analisis">
+                    <div id="shapes">
+                    <span class="icon-Circle" id="Circle" title="Círculo">
+                    <button>circulo</button></span>
+                    <span class="icon-Mancha" id="FreehandPolygon" title="Mano alzada"></span>
+                    <span class="icon-Triangle" id="Polygon" title="Polígono"></span>
+                    </div>
+                    <span class="icon-Eraser" id="BtnLimpiar" title="Limpiar" onclick="limpiarGeometria();"></span>
+                </div>
+                <span class="icon-Selection" id="identifyLayers" title="Identificar"></span>
+                <div class="message"></div>
+                </div>
+            </div>
         <div id="map-container">
             <div id="stormSelection">
                 <div class="title">Ciclón tropical en el Pacífico</div>
@@ -236,6 +254,9 @@
 	</script> -->
     <script src="js/map.js"></script>	
     <script src="js/funciones.js"></script>
+    <!-- <script src="js/TOC.js"></script> -->
+    <script src="js/analisis.js"></script>
+    <!-- <script src="js/principal.js"></script> -->
     <script>
         var coll = document.getElementsByClassName("collapsible");
         var i;

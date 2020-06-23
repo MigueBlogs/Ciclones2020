@@ -1,130 +1,104 @@
 var captured=false;
 window.captured;
+
+var clickDraw;
+var overDraw;
+var dragDraw;
+var dragStartDraw;
+var dragEndDraw;
+var drawVertex;
+var endGraphic;
+var lastVertex;
+
+var exceptLayers = ["PoblacionITER"];
+
 $(function() {
+
+
     function loadMap(container) {
         require([
             "esri/Map",
             "esri/views/MapView",
             "esri/config",
-            "esri/widgets/Fullscreen"
+            "esri/widgets/Fullscreen",
+            "esri/layers/GraphicsLayer",
+            "esri/widgets/Sketch",
+            "esri/layers/ImageryLayer",
+            "esri/layers/support/MapImage"
         ], function(
             Map,
             MapView,
             esriConfig,
-            Fullscreen
+            Fullscreen,
+            GraphicsLayer,
+            Sketch,
+            ImageryLayer,
+            MapImage
         ) {
             esriConfig.request.proxyUrl = "http://rmgir.cenapred.gob.mx/proxy/proxy.php";
-
+            const layer = new GraphicsLayer();
             var map = new Map({
                 basemap: "hybrid"
             });
-            const redProp = {
-                id: "statesRed",
-                opacity: 0,
-                outFields: ["*"],
-                renderer: {
-                    type: "simple",
-                    symbol: {
-                              type: "simple-fill",  
-                              color: "red",
-                              style: "solid",
-                              outline: {  
-                                color: "white",
-                                width: 0.5},
-                            },
-                        },
-                definitionExpression: "1 = 0"
-            };
-            const orangeProp = {
-                id: "statesOrange",
-                opacity: 0,
-                showLabels: true,
-                outFields: ["*"],
-                renderer: {
-                    type: "simple",
-                    symbol: {
-                              type: "simple-fill", 
-                              color: "#FFA500",
-                              style: "solid",
-                              outline: { 
-                                color: "white",
-                                width: 0.5
-                                },
-                            },
-                        },
-                definitionExpression: "1 = 0"
-            };
-
-            const yellowProp = {
-                id: "statesYellow",
-                opacity: 0,
-                showLabels: true,
-                outFields: ["*"],
-                renderer: {
-                    type: "simple",
-                    symbol: {
-                              type: "simple-fill",
-                              color: "#FFFF00",
-                              style: "solid",
-                              outline: { 
-                                color: "white",
-                                width: 0.5
-                                },
-                            },
-                        },
-                definitionExpression: "1 = 0"
-            };
-            const greenProp = {
-                id: "statesGreen",
-                opacity: 0,
-                showLabels: true,
-                outFields: ["*"],
-                renderer: {
-                    type: "simple",
-                    symbol: {
-                              type: "simple-fill",
-                              color: "#38BF34",
-                              style: "solid",
-                              outline: { 
-                                color: "white",
-                                width: 0.5
-                                },
-                            },
-                        },
-                definitionExpression: "1 = 0"
-            };
-            const blueProp = {
-                id: "statesBlue",
-                opacity: 0,
-                showLabels: true,
-                outFields: ["*"],
-                renderer: {
-                    type: "simple",
-                    symbol: {
-                              type: "simple-fill", 
-                              color: "#4F81BC",
-                              style: "solid",
-                              outline: {  
-                                color: "white",
-                                width: 0.5
-                                },
-                            },
-                        },
-                definitionExpression: "1 = 0"
-            };
-            $("#GuardaTabla").click(function() { changeColoredRegions(map); });
-            const url = "http://rmgir.proyectomesoamerica.org/server/rest/services/DGPC/Regionalizacion_SIAT_CT/MapServer/0";
-            addFeatureLayer(map, url, redProp);
-            addFeatureLayer(map, url, orangeProp);
-            addFeatureLayer(map, url, yellowProp);
-            addFeatureLayer(map, url, greenProp);
-            addFeatureLayer(map, url, blueProp);
             var view = new MapView({
                 container: container,
                 map: map,
                 center: [-101.608429, 23.200961],
                 zoom: 5
             });
+            view.when(function(event){
+                //debugger
+                console.log("ya cargué!!!!!!!!!!!!!!!!!");
+                var weather = new ImageryLayer({
+                    url: "https://satellitemaps.nesdis.noaa.gov/arcgis/rest/services/WST13_Last_24hr/ImageServer"
+                });
+                console.log(weather);
+                weather.opacity = 0.3;
+                //weather.refreshInterval = 1;
+                var temp =0;
+                // setInterval(function(){
+                //     temp = temp +1;
+                //     weather.timeOffset= {
+                //         value: temp,
+                //         unit: "hours"
+                //       }
+                //       console.log(weather);
+                //       debugger
+                // },1000);
+                map.add(weather);
+                
+                
+
+
+
+                // var imageUrl = 'http://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg',
+                //     imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
+                // mil.imageOverlay(imageUrl, imageBounds).addTo(map);
+            });
+
+            const sketch = new Sketch({
+                layer: layer,
+                view: view,
+                // graphic will be selected as soon as it is created
+                creationMode: "update"
+              });
+      
+              view.ui.add(sketch, "top-right");
+              sketch.on("create", function(event) {
+              // check if the create event's state has changed to complete indicating
+              // the graphic create operation is completed.
+              if (event.state === "complete") {
+                // remove the graphic from the layer. Sketch adds
+                // the completed graphic to the layer by default.
+                //layer.remove(event.graphic);
+            
+                // use the graphic.geometry to query features that intersect it
+                console.log(event.graphic.geometry);
+                realizarAnalisis(event.graphic.geometry, exceptLayers);
+              }
+            });
+            
+            
 
             view["ui"]["components"] = ["attributtion"];
             view.when(function() {
@@ -144,27 +118,250 @@ $(function() {
               }),
               "top-right"
             );
-            
-            $('#stormSelection').appendTo('.esri-view-root');
-            $('#stormSelection2').appendTo('.esri-view-root');
-            //$('#dataSection').appendTo('.esri-view-root'); // arruina la vista en mobil
-            $('#mapa_ciclon').click(function() {
-                $('.js-screenshot-image').hide();
-                $('#uploadImg').show();
-                $('#capture').show();
-                $('#mapa_ciclon').hide();
-                $('#mapaTemp').hide();
-                $('#customFileLangDiv').hide();
-                $('#map-container').show();
-                if(guardadoGlobal){
-                    $("#pdfError").show();
-                    $("#pdf").hide();
-                }  
-                 window.captured=false;
+            map.on("load", function (event){
+                
+                search = new Search({
+                  map: map
+                }, "ui-dijit-search");
+                search.startup();
+    
+                basemapGallery = new BasemapGallery({
+                showArcGISBasemaps: true,
+                map: map
+                }, "basemapGallery");
+                basemapGallery.startup();
+    
+                geoLocate = new LocateButton({
+                  map: map
+                }, "LocateButton");
+                geoLocate.startup();
+    
+                home = new HomeButton({
+                  map: map
+                }, "HomeButton");
+                home.startup();
+    
+                editToolbar = new Edit(map);
+                map.on("click", function(evt) {
+                  editToolbar.deactivate();
+                });
+    
+                map.on("mouse-move", showCoordinates);
+                map.on("mouse-drag", showCoordinates);
+                //showScale();
+                map.on("zoom-end", showScale);
+    
+                map.addLayer(bufferGraphics);
+    
+                //createGraphicsMenu();
+                initToolbar();
             });
-           
+            
+            function initToolbar() {
+            var totalDistance = 0;
+            var textSymbol;
+            var extraTextSymbol;
+            var point;
+            var extraPoint;
+            var distanceRequest;
+            var font = new Font("18px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLDER, "sans-serif");
+              tb = new Draw(view);
+              tb.on("draw-end", addGraphic);
+              //on(dom.byId("info"), "click", function (evt) {
+              $("#analisis span button").click(function (evt) {
+                  if (evt.target.id === "BtnLimpiar") {
+                    if(tb) tb.deactivate();
+                    map.enableMapNavigation();
+                    if(clickDraw) clickDraw.remove();
+                    if(overDraw) overDraw.remove();
+                    if(dragDraw) dragDraw.remove();
+                    if(dragStartDraw) dragStartDraw.remove();
+                    if(dragEndDraw) dragEndDraw.remove();
+                    if(locationEventClick) locationEventClick.remove();
+                    $("#toolbar span").removeClass("active");
+                    return;
+                  }
+                  $("#analisis span").removeClass("active");
+                  $(this).addClass("active");
+                  var dibujo = evt.target.id;
+                  map.graphics.clear();
+                  var tool = evt.target.id.toLowerCase();
+                  map.disableMapNavigation();
+                  if(tb) tb.deactivate();
+                  tb.activate(tool);
+                  drawVertex = [];
+                  // identify.remove();
+                  if(dibujo === "Polygon"){
+                    clickDraw = map.on("click", function(evt){
+                      drawVertex.push(evt.mapPoint);
+                      if (endGraphic) { //if an end label already exists remove it
+                        map.graphics.remove(endGraphic);
+                      }
+                      if(drawVertex.length >= 2){
+                        if(distanceRequest) distanceRequest.cancel();
+                        distanceParams.geometry1 = drawVertex[drawVertex.length - 2];
+                        distanceParams.geometry2 = drawVertex[drawVertex.length - 1];
+                        distanceParams.geodesic = true;
+                        point = new Point((distanceParams.geometry1.x + distanceParams.geometry2.x)/2, (distanceParams.geometry1.y + distanceParams.geometry2.y)/2, distanceParams.geometry1.spatialReference);
+                        distanceRequest = geometryService.distance(distanceParams, function(distance){
+                          totalDistance += distance;
+                          textSymbol = new TextSymbol(distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km", font, new Color([255, 255, 255]));
+                          textSymbol.horizontalAlignment = "center";
+                          textSymbol.verticalAlignment = "top";
+                          map.graphics.add(Graphic(point, textSymbol));
+                          console.log("Acumulado: ", totalDistance.toFixed(2));
+                        })
+                      }
+                      if(drawVertex.length >= 3){
+                        distanceParams.geometry1 = drawVertex[drawVertex.length - 1];
+                        distanceParams.geometry2 = drawVertex[0]
+                        distanceParams.geodesic = true;
+                        extraPoint = new Point((distanceParams.geometry1.x + distanceParams.geometry2.x)/2, (distanceParams.geometry1.y + distanceParams.geometry2.y)/2, distanceParams.geometry1.spatialReference);
+                        geometryService.distance(distanceParams, function(distance){
+                          extraTextSymbol = new TextSymbol(distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km", font, new Color([255, 255, 255]));
+                          extraTextSymbol.horizontalAlignment = "center";
+                          extraTextSymbol.verticalAlignment = "top";
+                          if (lastVertex) { //if an end label already exists remove it
+                            map.graphics.remove(lastVertex);
+                          }
+                          lastVertex = new Graphic(extraPoint, extraTextSymbol);
+                          map.graphics.add(lastVertex);
+                        });
+                      }
+                    });
+                    overDraw = map.on("mouse-move", function(evt){
+                      if(distanceRequest) distanceRequest.cancel();
+                      if(drawVertex.length >= 1){
+                        distanceParams.geometry1 = drawVertex[drawVertex.length - 1];
+                        distanceParams.geometry2 = evt.mapPoint;
+                        distanceParams.geodesic = true;
+                        point = new Point((distanceParams.geometry1.x + distanceParams.geometry2.x)/2, (distanceParams.geometry1.y + distanceParams.geometry2.y)/2, distanceParams.geometry1.spatialReference);
+                        distanceRequest = geometryService.distance(distanceParams, function(distance){
+                          textSymbol = new TextSymbol(distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km", font, new Color([255, 255, 255]));
+                          textSymbol.horizontalAlignment = "center";
+                          textSymbol.verticalAlignment = "top";
+                          if (endGraphic) { //if an end label already exists remove it
+                            map.graphics.remove(endGraphic);
+                          }
+                          endGraphic = new Graphic(point, textSymbol);
+                          map.graphics.add(endGraphic);
+                        })
+                      }
+                    });
+                  } else if(dibujo === "Circle"){
+                    dragStartDraw = map.on("mouse-drag-start", function(evt){
+                      drawVertex.push(evt.mapPoint);
+                    });
+                    dragEndDraw = map.on("mouse-drag-end", function(evt){
+                      if(distanceRequest) distanceRequest.cancel();
+                      if (endGraphic) { //if an end label already exists remove it
+                        map.graphics.remove(endGraphic);
+                      }
+                      distanceParams.geometry1 = drawVertex[0];
+                      distanceParams.geometry2 = evt.mapPoint;
+                      distanceParams.geodesic = true;
+                      point = distanceParams.geometry1;
+                      distanceRequest = geometryService.distance(distanceParams, function(distance){
+                        drawVertex.push(evt.mapPoint);
+                        textSymbol = new TextSymbol("Radio: " + (distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km"), font, new Color([255, 255, 255]));
+                        textSymbol.horizontalAlignment = "center";
+                        textSymbol.verticalAlignment = "top";
+                        map.graphics.add(Graphic(point, textSymbol));
+                      });
+                    })
+                    dragDraw = map.on("mouse-drag", function(evt){
+                      if(distanceRequest) distanceRequest.cancel();
+                      distanceParams.geometry1 = drawVertex[0];
+                      distanceParams.geometry2 = evt.mapPoint;
+                      distanceParams.geodesic = true;
+                      point = distanceParams.geometry1;
+                      distanceRequest = geometryService.distance(distanceParams, function(distance){
+                        textSymbol = new TextSymbol("Radio: " + (distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km"), font, new Color([255, 255, 255]));
+                        textSymbol.horizontalAlignment = "center";
+                        textSymbol.verticalAlignment = "top";
+                        if (endGraphic) { //if an end label already exists remove it
+                          map.graphics.remove(endGraphic);
+                        }
+                        endGraphic = new Graphic(point, textSymbol);
+                        map.graphics.add(endGraphic);
+                      });
+                    })
+                  } else {
+                    if(clickDraw) clickDraw.remove();
+                    if(overDraw) overDraw.remove();
+                    if(dragDraw) dragDraw.remove();
+                    if(dragStartDraw) dragStartDraw.remove();
+                    if(dragEndDraw) dragEndDraw.remove();
+                  }
+              });
+          };
+          function addGraphic(evt) {
+            $("#analisis span").removeClass("active");
+            if(clickDraw) clickDraw.remove();
+            if(overDraw) overDraw.remove();
+            if(dragDraw) dragDraw.remove();
+            if(dragStartDraw) dragStartDraw.remove();
+            if(dragEndDraw) dragEndDraw.remove();
+            var geometry = evt.geometry;
+              //deactivate the toolbar and clear existing graphics
+              tb.deactivate();
+              map.enableMapNavigation();
+
+              // figure out which symbol to use
+              var symbol;
+              if (evt.geometry.type === "point" || evt.geometry.type === "multipoint") {
+                  symbol = markerSymbol;
+              } else if (evt.geometry.type === "line" || evt.geometry.type === "polyline") {
+                  symbol = lineSymbol;
+              }
+              else {
+                  symbol = fillSymbol;
+              }
+
+              map.graphics.add(new Graphic(geometry, symbol));
+
+              //Calculo de área y perímetro
+              calcularAreaPerimetro(geometry);
+
+              //Funciones geo --> outStatistics
+              showElem();
+              createRandomText();
+              lastGeometry = evt.geometry;
+              realizarAnalisis(evt.geometry, exceptLayers);
+
+              // Poblacion mundial
+              $("#world").css("display", "block");
+              $("#world").on("click", function(){
+                $("#world").unbind();
+                $("#worldPopulation").css("display", "block");
+                $("#world").css("display", "none");
+
+                // Población mundial
+                createWorldPopulationRandomText();
+                var features= [];
+                features.push(new Graphic(evt.geometry, symbol));
+
+                var featureSet = new FeatureSet();
+                featureSet.features = features;
+                
+                var params = { "inputPoly": featureSet };
+                worldPopulationGP.execute(params);
+                worldPopulationGP.on("execute-complete", function(evtObj){
+                  clearInterval(randomWorldTextInterval);
+                  var valor;
+                  var results = evtObj.results;
+                  valor = {number:results[0].value.features[0].attributes.SUM};
+      
+                  valorNuevo = new Intl.NumberFormat("en-US").format(valor.number);    
+                  
+                  console.log(valorNuevo);
+                  $("#worldPopulationResult").text(valorNuevo.split(".",1));
+                });
+              });
+          };
         });
-    }
+           
+    }  
 
     function addFeatureLayer(map, url, properties, renderer = null) {
         require([
@@ -925,7 +1122,51 @@ $(function() {
 
         queryRegions(layerDetail["map"], layerDetail["view"], geometries, "FID");
     });
-
+    
+    document.addEventListener('analisis-completo', function(result){
+        console.log(result);
+        clearInterval(randomTextInterval);
+        $("#Poblacion .resultNumber").text(agregasComas(result.detail["Poblacion"]));
+        $("#Viviendas .resultNumber").text(agregasComas(result.detail["Viviendas"]));
+        $("#Hospitales .resultNumber").text(agregasComas(result.detail["Hospitales"]));
+        $("#Escuelas .resultNumber").text(agregasComas(result.detail["Escuelas"]));
+        $("#Supermercados .resultNumber").text(agregasComas(result.detail["Supermercados"]));
+        $("#Aeropuertos .resultNumber").text(agregasComas(result.detail["Aeropuertos"]));
+        $("#Hoteles .resultNumber").text(agregasComas(result.detail["Hoteles"]));
+        $("#Bancos .resultNumber").text(agregasComas(result.detail["Bancos"]));
+        $("#Gasolineras .resultNumber").text(agregasComas(result.detail["Gasolineras"]));
+        $("#Presas .resultNumber").text(agregasComas(result.detail["Presas"]));
+        $("#Ganadero .resultNumber").text(agregasComas(result.detail["Ganaderias"]));
+        $("#Colonias .resultNumber").text(agregasComas(result.detail["Colonias"]));
+        $("#AntropologiaINAH .resultNumber").text(agregasComas(result.detail["BibliotecaINAH"] + result.detail["MonumentoHistorico"] + result.detail["MuseoINAH"] + result.detail["PatrimonioMundial"] + result.detail["ZonasArqueologicas"]));
+      
+        var gvs = JSON.parse(result.detail["GradoVulnerabilidadSocial"]);
+        $("#gvsMuyBajo").text(agregasComas(gvs["Muy Bajo"]));
+        $("#gvsBajo").text(agregasComas(gvs["Bajo"]));
+        $("#gvsMedio").text(agregasComas(gvs["Medio"]));
+        $("#gvsAlto").text(agregasComas(gvs["Alto"]));
+        $("#gvsMuyAlto").text(agregasComas(gvs["Muy Alto"]));
+      
+        //
+        $("#pob_m_t").text(agregasComas(result.detail["TotalPobMas"]));
+        $("#pob_f_t").text(agregasComas(result.detail["TotalPobFem"]));
+        $("#pob_menor_12").text(agregasComas(result.detail["TotalMenor12"]));
+        $("#pob_m_menor_12").text(agregasComas(result.detail["TotalMenor12M"]));
+        $("#pob_f_menor_12").text(agregasComas(result.detail["TotalMenor12F"]));
+        $("#pob_mayor_60").text(agregasComas(result.detail["TotalMayor60"]));
+        $("#pob_m_mayor_60").text(agregasComas(result.detail["TotalMayor60M"]));
+        $("#pob_f_mayor_60").text(agregasComas(result.detail["TotalMayor60F"]));
+        $("#LenguasIndigenas .resultNumber").text(agregasComas(result.detail["TotalLenguasIndigenas"]));
+      
+        /*Abrir el panel al hacer un análisis*/
+        if($(".ui-panel").hasClass("ui-panel-closed"))
+          $("#ui-settings-button")[0].click();
+        if($("#analisis-container div")[0].attributes[1].value == "true")
+              $("#analisis-container h4")[0].click();
+        
+        generaTabla(pobTotalXEstado);
+        hideElem();
+      });
     function showPreview(screenshot) {
         $('.js-screenshot-image').show();
         const screenshotImage = document.getElementsByClassName("js-screenshot-image")[0];
@@ -1001,5 +1242,5 @@ $(function() {
     });
 
     loadMap("map");
-    getAutoresDefault();
+    //getAutoresDefault();
 });
