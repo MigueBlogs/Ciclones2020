@@ -304,6 +304,5 @@
             });
         }); 
     </script>
-    <script src="js/nubes.js"></script>
 </body>
 </html>
