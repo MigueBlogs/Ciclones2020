@@ -163,21 +163,6 @@
                 </div>
             </div>
         </div>
-        <div id="toolbar">
-                <div class="toolbar-container">
-                <div id="analisis">
-                    <div id="shapes">
-                    <span class="icon-Circle" id="Circle" title="Círculo">
-                    <button>circulo</button></span>
-                    <span class="icon-Mancha" id="FreehandPolygon" title="Mano alzada"></span>
-                    <span class="icon-Triangle" id="Polygon" title="Polígono"></span>
-                    </div>
-                    <span class="icon-Eraser" id="BtnLimpiar" title="Limpiar" onclick="limpiarGeometria();"></span>
-                </div>
-                <span class="icon-Selection" id="identifyLayers" title="Identificar"></span>
-                <div class="message"></div>
-                </div>
-            </div>
         <div id="map-container">
             <div id="stormSelection">
                 <div class="title">Ciclón tropical en el Pacífico</div>
@@ -194,6 +179,30 @@
                         <option value="">Cargando</option>
                     </select>
                 </div>
+            </div>
+            <div id="analisis" style="display:none;">
+            <center> Análisis de Exposición </center>
+            <table>
+                <thead>
+                <tr>
+                    <th rowspan="2" id="Poblacion" > Población: <span class="resultNumber"></span></th>
+                    <th id="pob_f_t">Pob. Fem.<span class="resultNumber"></span></th>
+                    <th id="Viviendas">Viviendas:<span class="resultNumber"></span></th>
+                    <th>Escuelas:</th>
+                    <th>Aeropuertos:</th>
+                    <th>Presas:</th>
+                    <th>Colonias:</th>
+                </tr>
+                <tr>
+                    <td>Pob. Mas.</td>
+                    <td>Estab. de Salud:</td>
+                    <td>Supermercados:</td>
+                    <td>Hoteles:</td>
+                    <td>Gasolineras:</td>
+                    <td>Ganaderías:</td>
+                </tr>
+                </thead>
+            </table>
             </div>
             <div id="map">
             </div>

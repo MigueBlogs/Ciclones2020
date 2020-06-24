@@ -426,10 +426,19 @@ function realizarAnalisis(geo, exceptLayers = []){
         document.dispatchEvent(evt);
     }
 }
+function agregasComas(nStr) {
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+}
 
 document.addEventListener('urls-listas', function(response){
-    console.log("URLS LISTAS ESCUCHADO");
-    
         var geo = response.detail.geometry;
         var exceptLayers = response.detail.exceptLayers;
         queryPromises = [];
@@ -466,7 +475,7 @@ document.addEventListener('urls-listas', function(response){
                     if(key == "PoblacionAgeb") tipo = "ageb";
                     else if(key == "PoblacionRural") tipo = "rural";
                     else if(key == "PoblacionITER") tipo = "iter";
-                    console.log("la cosa rara", result[idx]);
+                    //console.log("la cosa rara", result[idx]);
                     processResultPob(tipo, urls[key], queryParams[key].outFields, result[idx], 0);
                 } else if(tiposAnalisisEspecial["GradoVulnerabilidadSocial"] && tiposAnalisisEspecial["GradoVulnerabilidadSocial"].includes(key)){
                     var gradoVulnerabilidadSocial = {
@@ -481,6 +490,7 @@ document.addEventListener('urls-listas', function(response){
                     });
                     resultados[key] = JSON.stringify(gradoVulnerabilidadSocial);
                     resultadosAnalisis++;
+                    console.log("esto es result Analisis: ",resultadosAnalisis);
                 } else if(tiposAnalisisEspecial["LenguasIndigenas"] && tiposAnalisisEspecial["LenguasIndigenas"].includes(key)){
                     processResultLenguas(result[idx], urls[key], queryParams[key].outFields);
                 } else {
@@ -488,6 +498,7 @@ document.addEventListener('urls-listas', function(response){
                 }
             })
             if(resultadosAnalisis === Object.keys(tiposAnalisisEspecial).length){
+                
                 var evt = new CustomEvent('analisis-completo', { 'detail': resultados });
                 document.dispatchEvent(evt);
             }       
@@ -500,14 +511,16 @@ document.addEventListener('urls-listas', function(response){
 document.addEventListener('lenguas-obtenidas', function(){
     console.log("Lenguas obtenidas. ESCUCHADO")
     resultadosAnalisis++;
+    console.log("esto es result Analisis: ",resultadosAnalisis);
     if(resultadosAnalisis === Object.keys(tiposAnalisisEspecial).length){
+        
         var evt = new CustomEvent('analisis-completo', { 'detail': resultados });
         document.dispatchEvent(evt);
     }   
 })
 
 document.addEventListener('poblacion-obtenida', function(){
-    console.log("Poblacion obtenida ESCUCHADO!!!!");
+   // console.log("Poblacion obtenida ESCUCHADO!!!!");
     sumaPoblacion();
     resultados["Poblacion"] = TotalPobFinal;
     resultados["Viviendas"] = TotalVivFinal;
@@ -520,16 +533,19 @@ document.addEventListener('poblacion-obtenida', function(){
     resultados["TotalMayor60F"] = TotalMayor60F;
     resultados["TotalMayor60M"] = TotalMayor60M;
     resultadosAnalisis++;
+    console.log("esto es result Analisis: ",resultadosAnalisis);
 
     if(resultadosAnalisis === Object.keys(tiposAnalisisEspecial).length){
+        
         var evt = new CustomEvent('analisis-completo', { 'detail': resultados });
         document.dispatchEvent(evt);
     }
 })
 document.addEventListener('analisis-completo', function(result){
     console.log(result);
-    clearInterval(randomTextInterval);
+    //clearInterval(randomTextInterval);
     $("#Poblacion .resultNumber").text(agregasComas(result.detail["Poblacion"]));
+    
     $("#Viviendas .resultNumber").text(agregasComas(result.detail["Viviendas"]));
     $("#Hospitales .resultNumber").text(agregasComas(result.detail["Hospitales"]));
     $("#Escuelas .resultNumber").text(agregasComas(result.detail["Escuelas"]));
@@ -571,7 +587,7 @@ document.addEventListener('analisis-completo', function(result){
     hideElem();
 });
 function removeLayers(layerNames){
-    //debugger
+    //
     var index;
     layerNames.forEach(function(name){
         index = Object.keys(queryParams).indexOf(name);
@@ -596,6 +612,7 @@ function getQuery(array, objectidName = "OBJECTID"){
 }
 
 function processResultLenguas(idsArray, serviceUrl, outFields){
+    
     if(idsArray){
         var queryTask = new QueryTask(serviceUrl);
         var query = new Query();
@@ -603,7 +620,7 @@ function processResultLenguas(idsArray, serviceUrl, outFields){
         query.outFields = outFields;
         query.where = getQuery(idsArray);
         query.returnDistinctValues = true;
-        queryTask.execute(query, function(results){
+        queryTask.execute(query).then(function(results){
             TotalLenguasIndigenas += results.features.length;
             conteoLenguas++;
             if(conteoLenguas === tiposAnalisisEspecial["LenguasIndigenas"].length) {
@@ -624,11 +641,10 @@ function processResultLenguas(idsArray, serviceUrl, outFields){
 
 function processResultPob(type, url, outFields, idsArray, suma, pobResult = []){
     //console.log("estos son los queryparams outfields",outFields);
-    console.log("esto es idarray: ",idsArray)
+    //console.log("esto es idarray: ",idsArray)
     if(!idsArray){
          pobTotalAjustada[type] = [];
-         console.log(Object.keys(pobTotalAjustada).length == tiposAnalisisEspecial["Poblacion"].length);
-         if(Object.keys(pobTotalAjustada).length == tiposAnalisisEspecial["Poblacion"].length){
+         if(Object.keys(pobTotalAjustada).length === tiposAnalisisEspecial["Poblacion"].length){
             var evt = new CustomEvent('poblacion-obtenida');
             document.dispatchEvent(evt);
         }
@@ -646,7 +662,7 @@ function processResultPob(type, url, outFields, idsArray, suma, pobResult = []){
             // console.log('este es el queryTask: ',queryTask);
             var queryPob = queryTask.execute(query).then(function(result){ //el then aregló todo
                 
-                console.log("este es result del query de pob",result);
+                //console.log("este es result del query de pob",result);
                 for (var idx in result.features) {
                     if(!pobResult.hasOwnProperty(result.features[idx].attributes.NOM_ENT)){
                         if(!estados.includes(result.features[idx].attributes.NOM_ENT)) estados.push(result.features[idx].attributes.NOM_ENT);
@@ -688,25 +704,24 @@ function processResultPob(type, url, outFields, idsArray, suma, pobResult = []){
                 } else {
                     pobTotal.push(pobResult);
 
-                    console.log(type, suma);
+                    //console.log(type, suma);
                     
                     Object.keys(pobResult).forEach(function(d){
                         ajustaDatosObjPob(pobResult[d]);
                     });
 
                     pobTotalAjustada[type] = pobResult;
-                    console.log(Object.keys(pobTotalAjustada).length == tiposAnalisisEspecial["Poblacion"].length);
-                    if(Object.keys(pobTotalAjustada).length == tiposAnalisisEspecial["Poblacion"].length){
+                    //console.log(Object.keys(pobTotalAjustada).length == tiposAnalisisEspecial["Poblacion"].length);
+                    if(Object.keys(pobTotalAjustada).length === tiposAnalisisEspecial["Poblacion"].length){
                         var evt = new CustomEvent('poblacion-obtenida');
                         document.dispatchEvent(evt);
                     }
                 }
             }).then(function(value) {
-                console.log("exito!",value); // Success!
+                //console.log("exito!",value); // Success!
               }, function(reason) {
                 console.log("error",reason); // Error!
               });;
-              console.log("this is my shit",queryPob);
             queryTaskPobArray.push(queryPob);
     }
 }

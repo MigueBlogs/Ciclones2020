@@ -72,6 +72,17 @@ h1, h2, h3, h4, h5, strong {
     z-index:1
 }
 
+#analisis{
+    background:#fff;
+    border-radius:5px;
+    box-sizing:border-box;
+    bottom: 0%;
+    width: 100%;
+    padding:.5em;
+    position:absolute;
+    z-index:1
+}
+
 .collapsible {
     background-color: #777;
     color: white;
@@ -156,4 +167,5 @@ h1, h2, h3, h4, h5, strong {
         top:80px;
         z-index:1
     }
+
   }
