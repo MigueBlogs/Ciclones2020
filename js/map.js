@@ -1,5 +1,6 @@
 var captured=false;
 var map;
+var view;
 window.captured;
 
 var clickDraw;
@@ -25,7 +26,8 @@ $(function() {
             "esri/layers/GraphicsLayer",
             "esri/widgets/Sketch",
             "esri/layers/ImageryLayer",
-            "esri/layers/support/MapImage"
+            "esri/layers/support/MapImage",
+            "esri/widgets/Home"
         ], function(
             Map,
             MapView,
@@ -34,14 +36,15 @@ $(function() {
             GraphicsLayer,
             Sketch,
             ImageryLayer,
-            MapImage
+            MapImage,
+            Home
         ) {
             esriConfig.request.proxyUrl = "http://rmgir.cenapred.gob.mx/proxy/proxy.php";
             const layer = new GraphicsLayer();
-            var map = new Map({
+            map = new Map({
                 basemap: "hybrid"
             });
-            var view = new MapView({
+            view = new MapView({
                 container: container,
                 map: map,
                 center: [-101.608429, 23.200961],
@@ -53,27 +56,116 @@ $(function() {
             view.when(function(event){
                 //debugger
                 console.log("ya cargué!!!!!!!!!!!!!!!!!");
+                let today = new Date();
+                let end = new Date(today).setMinutes(today.getMinutes()-30);
+                let start = new Date(end).setDate(today.getDate()-1);
+
                 var weather = new ImageryLayer({
-                    url: "https://satellitemaps.nesdis.noaa.gov/arcgis/rest/services/WST13_Last_24hr/ImageServer"
+                    id: "TopClouds",
+                    url: "https://satellitemaps.nesdis.noaa.gov/arcgis/rest/services/WST13_Last_24hr/ImageServer",
+                    refreshInterval: 1, // every X minutes
+                    noData: [0,0,0],
+                    noDataInterpretation: "any",
+                    pixelFilter: colorize,
+                    // timeExtent: {
+                    //     start: start,
+                    //     end: end
+                    // },
+                    useViewTime: false,
                 });
                 console.log(weather);
-                weather.opacity = 0.3;
+                weather.opacity = 0.7;
+
+                function colorize(pixelData) {
+                    // If there isn't pixelData, a pixelBlock, nor pixels, exit the function
+                    if (pixelData === null || pixelData.pixelBlock === null || pixelData.pixelBlock.pixels === null) {
+                      return;
+                    }
+                    
+                    // The pixelBlock stores the values of all pixels visible in the view
+                    var pixelBlock = pixelData.pixelBlock;
+                  
+                    // Get the min and max values of the data in the current view
+                    // var minValue = pixelBlock.statistics[0].minValue;
+                    // var maxValue = pixelBlock.statistics[0].maxValue;
+                  
+                    // The mask is an array that determines which pixels are visible to the client
+                    // pixelBlock.mask = [0, 0, 0];
+                  
+                    // The pixels visible in the view
+                    var pixels = pixelBlock.pixels;
+                  
+                    // The number of pixels in the pixelBlock
+                    var numPixels = pixelBlock.width * pixelBlock.height;
+                  
+                    // Calculate the factor by which to determine the red and blue
+                    // values in the colorized version of the layer
+                    // var factor = 255.0 / (maxValue - minValue);
+                  
+                    // Get the pixels containing temperature values in the only band of the data
+                    var rband = pixels[0];
+                    var gband = pixels[1];
+                    var bband = pixels[2];
+                    
+                    // Create empty arrays for each of the RGB bands to set on the pixelBlock
+                    // var rBand = [];
+                    // var gBand = [];
+                    // var bBand = [];
+                    var mask = [];
+                  
+                    // Loop through all the pixels in the view
+                    for (i = 0; i < numPixels; i++) {
+                        // Get the pixel value recorded at the pixel location
+                        var r = rband[i];
+                        var g = gband[i];
+                        var b = bband[i];
+
+                        // rBand[i] = r;
+                        // gBand[i] = g;
+                        // bBand[i] = b;
+                        mask[i] = 1;
+                        //aBand[i] = 255;
+                        // quita los azules y los colores oscuros
+                        if ((b > g && b > r) || (r < 50 && g < 50 && b < 50)){
+                            // rBand[i] = 0;
+                            // gBand[i] = 0;
+                            // bBand[i] = 0;
+                            mask[i] = 0;
+                        }
+                        
+                    }
+                  
+                    pixelData.pixelBlock.mask = mask;
+                    // Set the new pixel values on the pixelBlock (now three bands)
+                    // pixelData.pixelBlock.pixels = [rBand, gBand, bBand];
+                    //pixelData.pixelBlock.addData({pixels: aBand})
+                    pixelData.pixelBlock.pixelType = "u8"; // u8 is used for color
+                }
+                
                 //weather.refreshInterval = 1;
-                var temp =0;
-                // setInterval(function(){
-                //     temp = temp +1;
-                //     weather.timeOffset= {
-                //         value: temp,
-                //         unit: "hours"
-                //       }
-                //       console.log(weather);
-                //       debugger
-                // },1000);
+                let tmp = 0;
+                setTimeout(() => {
+                    setInterval(function(){
+                        let start_temp = new Date(start)
+                        start_temp.setHours(start_temp.getHours() + tmp)
+                        // let end_temp = new Date(start_temp);
+                        // end_temp.setHours(end_temp.getHours() + 1);
+                        tmp += 1;
+                        if (tmp > 23){
+                            tmp = 0
+                        }
+                        let layer = map.findLayerById("TopClouds");
+                        layer.timeExtent = {
+                            start: start_temp,
+                            end: start_temp,
+                            useViewTime: false,
+                        };
+                        //weather.refresh();
+                        // console.log(start_temp);
+                        
+                    },1000);
+                }, 5000);
                 map.add(weather);
-                
-                
-
-
 
                 // var imageUrl = 'http://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg',
                 //     imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
@@ -603,7 +695,7 @@ $(function() {
                             $("#name").text(coneActive["stormname"]);
                             $("#sea").text(getSea(coneActive["layerid"]) + " / ");
                             $("#sea").attr("data-ocean", (getSea(coneActive["layerid"]) == "EP" ? "P" : "A"));
-                            tituloSecundario();
+                            //tituloSecundario();
                             const oceano = getSea(coneActive["layerid"]) == "EP" ? "PACÍFICO" : "ATLÁNTICO"; 
                             $(".TitleOceano").text(oceano);
                             //queryRegions(map, mapView, [coneActive["geometry"]], "FID");
@@ -625,7 +717,7 @@ $(function() {
                             $("#name").text(coneActive2["stormname"]);
                             $("#sea").text(getSea(coneActive2["layerid"]) + " / ");
                             $("#sea").attr("data-ocean", (getSea(coneActive2["layerid"]) == "EP" ? "P" : "A"));
-                            tituloSecundario();
+                            //tituloSecundario();
                             const oceano = getSea(coneActive2["layerid"]) == "EP" ? "PACÍFICO" : "ATLÁNTICO"; 
                             $(".TitleOceano").text(oceano);
                             //queryRegions(map, mapView, [coneActive2["geometry"]], "FID");
