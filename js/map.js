@@ -55,8 +55,6 @@ $(function() {
             });
             view.when(function(event){
                 //debugger
-                console.log("ya cargué!!!!!!!!!!!!!!!!!");
-                
 
                 var weather = new ImageryLayer({
                     id: "TopClouds",
@@ -71,7 +69,7 @@ $(function() {
                     // },
                     useViewTime: false,
                 });
-                console.log(weather);
+                //console.log(weather);
                 weather.opacity = 0.7;
 
                 function colorize(pixelData) {
@@ -203,6 +201,7 @@ $(function() {
                 // use the graphic.geometry to query features that intersect it
                 console.log(event.graphic.geometry);
                 realizarAnalisis(event.graphic.geometry, exceptLayers);
+                $("#analisis").slideDown(3000);
               }
             });
             
@@ -1297,50 +1296,50 @@ $(function() {
         queryRegions(layerDetail["map"], layerDetail["view"], geometries, "FID");
     });
     
-    document.addEventListener('analisis-completo', function(result){
-        console.log(result);
-        clearInterval(randomTextInterval);
-        $("#Poblacion .resultNumber").text(agregasComas(result.detail["Poblacion"]));
-        $("#Viviendas .resultNumber").text(agregasComas(result.detail["Viviendas"]));
-        $("#Hospitales .resultNumber").text(agregasComas(result.detail["Hospitales"]));
-        $("#Escuelas .resultNumber").text(agregasComas(result.detail["Escuelas"]));
-        $("#Supermercados .resultNumber").text(agregasComas(result.detail["Supermercados"]));
-        $("#Aeropuertos .resultNumber").text(agregasComas(result.detail["Aeropuertos"]));
-        $("#Hoteles .resultNumber").text(agregasComas(result.detail["Hoteles"]));
-        $("#Bancos .resultNumber").text(agregasComas(result.detail["Bancos"]));
-        $("#Gasolineras .resultNumber").text(agregasComas(result.detail["Gasolineras"]));
-        $("#Presas .resultNumber").text(agregasComas(result.detail["Presas"]));
-        $("#Ganadero .resultNumber").text(agregasComas(result.detail["Ganaderias"]));
-        $("#Colonias .resultNumber").text(agregasComas(result.detail["Colonias"]));
-        $("#AntropologiaINAH .resultNumber").text(agregasComas(result.detail["BibliotecaINAH"] + result.detail["MonumentoHistorico"] + result.detail["MuseoINAH"] + result.detail["PatrimonioMundial"] + result.detail["ZonasArqueologicas"]));
+    // document.addEventListener('analisis-completo', function(result){
+    //     console.log(result);
+    //     //clearInterval(randomTextInterval);
+    //     $("#Poblacion .resultNumber").text(agregasComas(result.detail["Poblacion"]));
+    //     $("#Viviendas .resultNumber").text(agregasComas(result.detail["Viviendas"]));
+    //     $("#Hospitales .resultNumber").text(agregasComas(result.detail["Hospitales"]));
+    //     $("#Escuelas .resultNumber").text(agregasComas(result.detail["Escuelas"]));
+    //     $("#Supermercados .resultNumber").text(agregasComas(result.detail["Supermercados"]));
+    //     $("#Aeropuertos .resultNumber").text(agregasComas(result.detail["Aeropuertos"]));
+    //     $("#Hoteles .resultNumber").text(agregasComas(result.detail["Hoteles"]));
+    //     $("#Bancos .resultNumber").text(agregasComas(result.detail["Bancos"]));
+    //     $("#Gasolineras .resultNumber").text(agregasComas(result.detail["Gasolineras"]));
+    //     $("#Presas .resultNumber").text(agregasComas(result.detail["Presas"]));
+    //     $("#Ganadero .resultNumber").text(agregasComas(result.detail["Ganaderias"]));
+    //     $("#Colonias .resultNumber").text(agregasComas(result.detail["Colonias"]));
+    //     $("#AntropologiaINAH .resultNumber").text(agregasComas(result.detail["BibliotecaINAH"] + result.detail["MonumentoHistorico"] + result.detail["MuseoINAH"] + result.detail["PatrimonioMundial"] + result.detail["ZonasArqueologicas"]));
       
-        var gvs = JSON.parse(result.detail["GradoVulnerabilidadSocial"]);
-        $("#gvsMuyBajo").text(agregasComas(gvs["Muy Bajo"]));
-        $("#gvsBajo").text(agregasComas(gvs["Bajo"]));
-        $("#gvsMedio").text(agregasComas(gvs["Medio"]));
-        $("#gvsAlto").text(agregasComas(gvs["Alto"]));
-        $("#gvsMuyAlto").text(agregasComas(gvs["Muy Alto"]));
+    //     var gvs = JSON.parse(result.detail["GradoVulnerabilidadSocial"]);
+    //     $("#gvsMuyBajo").text(agregasComas(gvs["Muy Bajo"]));
+    //     $("#gvsBajo").text(agregasComas(gvs["Bajo"]));
+    //     $("#gvsMedio").text(agregasComas(gvs["Medio"]));
+    //     $("#gvsAlto").text(agregasComas(gvs["Alto"]));
+    //     $("#gvsMuyAlto").text(agregasComas(gvs["Muy Alto"]));
       
-        //
-        $("#pob_m_t").text(agregasComas(result.detail["TotalPobMas"]));
-        $("#pob_f_t").text(agregasComas(result.detail["TotalPobFem"]));
-        $("#pob_menor_12").text(agregasComas(result.detail["TotalMenor12"]));
-        $("#pob_m_menor_12").text(agregasComas(result.detail["TotalMenor12M"]));
-        $("#pob_f_menor_12").text(agregasComas(result.detail["TotalMenor12F"]));
-        $("#pob_mayor_60").text(agregasComas(result.detail["TotalMayor60"]));
-        $("#pob_m_mayor_60").text(agregasComas(result.detail["TotalMayor60M"]));
-        $("#pob_f_mayor_60").text(agregasComas(result.detail["TotalMayor60F"]));
-        $("#LenguasIndigenas .resultNumber").text(agregasComas(result.detail["TotalLenguasIndigenas"]));
+    //     //
+    //     $("#pob_m_t").text(agregasComas(result.detail["TotalPobMas"]));
+    //     $("#pob_f_t").text(agregasComas(result.detail["TotalPobFem"]));
+    //     $("#pob_menor_12").text(agregasComas(result.detail["TotalMenor12"]));
+    //     $("#pob_m_menor_12").text(agregasComas(result.detail["TotalMenor12M"]));
+    //     $("#pob_f_menor_12").text(agregasComas(result.detail["TotalMenor12F"]));
+    //     $("#pob_mayor_60").text(agregasComas(result.detail["TotalMayor60"]));
+    //     $("#pob_m_mayor_60").text(agregasComas(result.detail["TotalMayor60M"]));
+    //     $("#pob_f_mayor_60").text(agregasComas(result.detail["TotalMayor60F"]));
+    //     $("#LenguasIndigenas .resultNumber").text(agregasComas(result.detail["TotalLenguasIndigenas"]));
       
-        /*Abrir el panel al hacer un análisis*/
-        if($(".ui-panel").hasClass("ui-panel-closed"))
-          $("#ui-settings-button")[0].click();
-        if($("#analisis-container div")[0].attributes[1].value == "true")
-              $("#analisis-container h4")[0].click();
+    //     /*Abrir el panel al hacer un análisis*/
+    //     if($(".ui-panel").hasClass("ui-panel-closed"))
+    //       $("#ui-settings-button")[0].click();
+    //     if($("#analisis-container div")[0].attributes[1].value == "true")
+    //           $("#analisis-container h4")[0].click();
         
-        generaTabla(pobTotalXEstado);
-        hideElem();
-      });
+    //     generaTabla(pobTotalXEstado);
+    //     hideElem();
+    //   });
     function showPreview(screenshot) {
         $('.js-screenshot-image').show();
         const screenshotImage = document.getElementsByClassName("js-screenshot-image")[0];

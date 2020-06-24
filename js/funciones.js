@@ -30,5 +30,8 @@ $(function(){
             buttonClose.call(close);
         }
     })
-   
+    $("#analisis").on('click',function(){
+        $("#analisis").slideUp(3000);
+    });
+
 });
