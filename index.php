@@ -195,6 +195,9 @@
                     </select>
                 </div>
             </div>
+            <div id="timeDiv" style="position: absolute; bottom: 15px; left: 15px; background-color: white; z-index: 1;">
+                <p style="margin: 0; padding: 5px; font-size: smaller;">Cargando...</p>
+            </div>
             <div id="map">
             </div>
         </div>
