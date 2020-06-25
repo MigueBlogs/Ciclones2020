@@ -12,6 +12,56 @@ p, input, div, label, span, button {
 h1, h2, h3, h4, h5, strong {
     font-family: Montserrat-Bold,sans-serif;
 }
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+tbody{
+    text-align: center;
+}
+ion-icon {
+    font-size: 26px;
+  }
+
+.buttonCloseTable{
+    position: absolute;
+    top: 0%;
+    left: calc(100% - 26px);
+    cursor: pointer;
+}
+.buttonGreen {
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background-color: #276051;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 3px #999;
+    padding: .5em;
+  }
+
+.buttonGreen:hover {background-color: #0C231E}
+
+.buttonGreen:active {
+  background-color: #285C4D;
+  box-shadow: 0 1px #666;
+  transform: translateY(2px);
+}
+
+.row {
+    display: flex;
+  }
+  
+/* Create two equal columns that sits next to each other */
+.column1 {
+flex: 30%;
+}
+.column2 {
+    flex: 70%;
+    }
+
 .cnpc{
     max-width: 80%;
     height: auto;

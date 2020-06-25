@@ -187,28 +187,147 @@
                 <p style="margin: 0; padding: 5px; font-size: smaller;">Cargando...</p>
             </div>
             <div id="analisis" style="display:none;">
-            <center> Análisis de Exposición </center>
+            <center> Análisis de Exposición </center><ion-icon class="buttonCloseTable" name="close-circle-outline" title="Cerrar Análisis"></ion-icon>
             <table>
-                <thead>
                 <tr>
-                    <th rowspan="2" id="Poblacion" > Población: <span class="resultNumber"></span></th>
-                    <th id="pob_f_t">Pob. Fem.<span class="resultNumber"></span></th>
-                    <th id="Viviendas">Viviendas:<span class="resultNumber"></span></th>
-                    <th>Escuelas:</th>
-                    <th>Aeropuertos:</th>
-                    <th>Presas:</th>
-                    <th>Colonias:</th>
+                    <th rowspan="2" id="Poblacion">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon style="font-size: 70px;" name="people-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                                Población:<br><span class="resultNumber"></span><br><button id="muestraTabla" class="buttonGreen">Más información</button>
+                            </div>
+                        </div>
+                    </th>
+                    <td id="pob_f_t">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="woman-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Pob. Fem:<br><span class="resultNumber"></span>
+                            </div>
+                        </div>    
+                   </td>
+                    <td id="Viviendas">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="home-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Viviendas:<br><span class="resultNumber"></span>
+                            </div>
+                        </div>     
+                    </td>
+                    <td id="Escuelas">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="school-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Escuelas:<br><span class="resultNumber"></span>
+                            </div>
+                        </div>     
+                    </td>
+                    <td id="Aeropuertos">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="airplane-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Aeropuertos:<br><span class="resultNumber"></span>
+                            </div>
+                        </div>
+                    </td>
+                    <td id="Presas">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="water-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Presas:<br><span class="resultNumber"></span>
+                            </div>
+                        </div>
+                    </td>
+                    <td id="Colonias">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="map-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Colonias:<br><span class="resultNumber"></span>
+                            </div>
+                        </div>    
+                    </td>
                 </tr>
                 <tr>
-                    <td>Pob. Mas.</td>
-                    <td>Estab. de Salud:</td>
-                    <td>Supermercados:</td>
-                    <td>Hoteles:</td>
-                    <td>Gasolineras:</td>
-                    <td>Ganaderías:</td>
+                    <td id="pob_m_t">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="man-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Pob. Mas.<br><span class="resultNumber"></span>
+                            </div>
+                        </div>
+                    </td>
+                    <td id="Hospitales">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="medkit-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Estab. de Salud:<br><span class="resultNumber"></span>
+                            </div>
+                        </div>    
+                    </td>
+                    <td id="Supermercados">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="cart-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Supermercados:<br><span class="resultNumber"></span>
+                            </div>
+                        </div> 
+                    </td>
+                    <td id="Hoteles">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="business-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Hoteles:<br><span class="resultNumber"></span>
+                            </div>
+                        </div>
+                    </td>
+                    <td id="Gasolineras">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="car-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Gasolineras:<br><span class="resultNumber"></span>
+                            </div>
+                        </div>
+                    </td>
+                    <td id="Ganadero">
+                        <div class="row">
+                            <div class="column1">
+                                <ion-icon name="leaf-outline"></ion-icon>
+                            </div>
+                            <div class="column2">
+                            Ganaderías:<br><span class="resultNumber"></span>>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
-                </thead>
             </table>
+            <div id="showTable" style="display:none">
+                <br>
+                <div id="table-container"></div>
+                <a href="#" id="csvPob">Descarga esta información en formato .CSV</a></div>
             </div>
             <div id="map">
                 <div class="cnpc-logos">
@@ -239,42 +358,11 @@
 			<option value="">Sin ciclones tropicales</option>
 		{{/each}}
 	</script>
-
-	<!-- <script id="autoresDefault-template" type="text/x-handlebars-template">
-		{{#each autores as |autor|}}
-			{{#if @last}}
-				<span class="autor" data-autorId={{autor.idAutor}}>{{autor.nombre}}</span>
-			{{else}}
-				<span class="autor" data-autorId={{autor.idAutor}}>{{autor.nombre}}</span>,<br/>
-			{{/if}}
-		{{/each}}
-	</script>
-
-	<script id="activeEvents-template" type="text/x-handlebars-template">
-		<select id="activeEventsOptions">
-			{{#each activeEvents as |event|}}
-				{{#if @first}}
-					<option value="">Selecciona</option>
-				{{/if}}
-				<option value="{{event.idBoletin}}">{{event.nombre}}</option>
-			{{else}}
-				<option value="">Sin eventos</option>
-			{{/each}}
-		</select>
-	</script>
-
-	<script id="filesUploaded-template" type="text/x-handlebars-template">
-		<ul id="filesUploadedList" class="filesList">
-			{{#each files as |file|}}
-			<li class="file-item"><span data-fileUrl="{{file.url}}" data-fileExt="{{file.ext}}">{{file.name}}</span><button data-fileUrl="{{file.url}}" class="deleteFile">Borrar</button></li>
-			{{/each}}
-		</ul>
-	</script> -->
     <script src="js/map.js"></script>	
     <script src="js/funciones.js"></script>
     <!-- <script src="js/TOC.js"></script> -->
     <script src="js/analisis.js"></script>
-    <!-- <script src="js/principal.js"></script> -->
+    <script src="js/csv.js"></script>
     <script>
         var coll = document.getElementsByClassName("collapsible");
         var i;
@@ -290,20 +378,6 @@
             }
         });
         }
-        // $('.collapsible').on('click', function(){
-        //     let other = $('.collapsible').not(this);
-        //     other.next().hide();
-        //     // if ($('.collapsible.active').length == 0){
-        //     //     $('#dataSection').css('height', '');
-        //     //     $('#dataSection').css('width', '');
-        //     // }
-        //     // else {
-        //     //     if ($(window).width() > 500) {
-        //     //         // $('#dataSection').css('height', '100vh');
-        //     //         // $('#dataSection').css('width', '15px');
-        //     //     }
-        //     // }
-        // });
         window.onscroll = function() {scrollFunction()};
         
         function scrollFunction() {
