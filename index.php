@@ -180,6 +180,9 @@
                     </select>
                 </div>
             </div>
+            <div id="timeDiv" style="position: absolute; bottom: 15px; left: 15px; background-color: white; z-index: 1;">
+                <p style="margin: 0; padding: 5px; font-size: smaller;">Cargando...</p>
+            </div>
             <div id="analisis" style="display:none;">
             <center> Análisis de Exposición </center><ion-icon class="buttonCloseTable" name="close-circle-outline" title="Cerrar Análisis"></ion-icon>
             <table>

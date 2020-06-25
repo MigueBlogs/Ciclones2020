@@ -55,9 +55,6 @@ $(function() {
             });
             view.when(function(event){
                 //debugger
-                let today = new Date();
-                let end = new Date(today).setMinutes(today.getMinutes()-30);
-                let start = new Date(end).setDate(today.getDate()-1);
 
                 var weather = new ImageryLayer({
                     id: "TopClouds",
@@ -145,8 +142,22 @@ $(function() {
                 let tmp = 0;
                 setTimeout(() => {
                     setInterval(function(){
-                        let start_temp = new Date(start)
-                        start_temp.setHours(start_temp.getHours() + tmp)
+                        let today = new Date();
+                        let end = new Date(today);
+                        end.setMinutes(end.getMinutes() - (end.getMinutes() % 10 + 20));
+                        // if (today.getMinutes() >= 30) {
+                        // }
+                        // else {
+                        //     end.setMinutes(0);
+                        // }
+                        end.setSeconds(0);
+                        let start = new Date(end);
+                        start.setDate(today.getDate()-1);
+                        //start = new Date(start);
+                        start.setHours(start.getHours() + 1);
+                        let start_temp = new Date(start);
+                        start_temp.setHours(start_temp.getHours() + tmp);
+                        $('#timeDiv p').text("Nubes: " + start_temp.toLocaleString());
                         // let end_temp = new Date(start_temp);
                         // end_temp.setHours(end_temp.getHours() + 1);
                         tmp += 1;
@@ -162,7 +173,7 @@ $(function() {
                         //weather.refresh();
                         // console.log(start_temp);
                         
-                    },1000);
+                    },2000);
                 }, 5000);
                 map.add(weather);
 
