@@ -164,6 +164,9 @@
             </div>
         </div>
         <div id="map-container">
+            <div id="stormLabel">
+                <p style="margin: 0; padding: 5px; font-size: smaller;">Ciclones actuales</p>
+            </div>
             <div id="stormSelection">
                 <div class="title">Ciclón tropical en el Pacífico</div>
                 <div class="options">
@@ -180,7 +183,7 @@
                     </select>
                 </div>
             </div>
-            <div id="timeDiv" style="position: absolute; bottom: 15px; left: 15px; background-color: white; z-index: 1;">
+            <div id="timeDiv">
                 <p style="margin: 0; padding: 5px; font-size: smaller;">Cargando...</p>
             </div>
             <div id="analisis" style="display:none;">
@@ -208,10 +211,13 @@
             </table>
             </div>
             <div id="map">
+                <div class="cnpc-logos">
+                    <img src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/SSyPC_CNPC_h.png" alt="CENACOM">
+                </div>
             </div>
         </div>
-        	
     </div>
+    
     <button id="botonTop" type="button" class="boton-volver" style="display: none;"><ion-icon name="arrow-up-outline"></ion-icon></button>
     <script id="stormsActiveEP-template" type="text/x-handlebars-template">
 		{{#each storms as |storm|}}

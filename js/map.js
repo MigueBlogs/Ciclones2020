@@ -15,8 +15,6 @@ var lastVertex;
 var exceptLayers = ["PoblacionITER"];
 
 $(function() {
-
-
     function loadMap(container) {
         require([
             "esri/Map",
@@ -54,28 +52,56 @@ $(function() {
                 }
             });
             view.when(function(event){
-                //debugger
-
                 var weather = new ImageryLayer({
                     id: "TopClouds",
                     url: "https://satellitemaps.nesdis.noaa.gov/arcgis/rest/services/WST13_Last_24hr/ImageServer",
-                    refreshInterval: 1, // every X minutes
+                    refreshInterval: 10, // every X minutes
                     noData: [0,0,0],
                     noDataInterpretation: "any",
                     pixelFilter: colorize,
-                    // timeExtent: {
-                    //     start: start,
-                    //     end: end
-                    // },
                     useViewTime: false,
                 });
+                weather.when(
+                    function(){
+                        let tmp = 0;
+                        setInterval(function(){
+                            let today = new Date();
+                            let end = new Date(today);
+                            end.setMinutes(end.getMinutes() - (end.getMinutes() % 10 + 20));
+                            end.setSeconds(0);
+                            end.setMilliseconds(0);
+
+                            let start = new Date(end);
+                            start.setDate(today.getDate()-1);
+                            
+                            start.setHours(start.getHours() + 1);
+                            let start_temp = new Date(start);
+                            start_temp.setHours(start_temp.getHours() + tmp);
+                            $('#timeDiv p').text("Nubes: " + start_temp.toLocaleString());
+                            
+                            tmp += 1;
+                            if (tmp > 23){
+                                tmp = 0
+                            }
+                            let layer = map.findLayerById("TopClouds");
+                            layer.timeExtent = {
+                                start: start_temp,
+                                end: start_temp,
+                                useViewTime: false,
+                            };
+                        }, 2000);
+                    },
+                    function(error){
+                        alert("Hubo un problema al cargar la información de nubes. Te pedimos refrescar la página.")
+                    }
+                )
                 //console.log(weather);
                 weather.opacity = 0.7;
 
                 function colorize(pixelData) {
                     // If there isn't pixelData, a pixelBlock, nor pixels, exit the function
                     if (pixelData === null || pixelData.pixelBlock === null || pixelData.pixelBlock.pixels === null) {
-                      return;
+                        return;
                     }
                     
                     // The pixelBlock stores the values of all pixels visible in the view
@@ -128,58 +154,15 @@ $(function() {
                             // bBand[i] = 0;
                             mask[i] = 0;
                         }
-                        
-                    }
-                  
+                    }                  
                     pixelData.pixelBlock.mask = mask;
                     // Set the new pixel values on the pixelBlock (now three bands)
                     // pixelData.pixelBlock.pixels = [rBand, gBand, bBand];
                     //pixelData.pixelBlock.addData({pixels: aBand})
                     pixelData.pixelBlock.pixelType = "u8"; // u8 is used for color
                 }
-                
-                //weather.refreshInterval = 1;
-                let tmp = 0;
-                setTimeout(() => {
-                    setInterval(function(){
-                        let today = new Date();
-                        let end = new Date(today);
-                        end.setMinutes(end.getMinutes() - (end.getMinutes() % 10 + 20));
-                        // if (today.getMinutes() >= 30) {
-                        // }
-                        // else {
-                        //     end.setMinutes(0);
-                        // }
-                        end.setSeconds(0);
-                        let start = new Date(end);
-                        start.setDate(today.getDate()-1);
-                        //start = new Date(start);
-                        start.setHours(start.getHours() + 1);
-                        let start_temp = new Date(start);
-                        start_temp.setHours(start_temp.getHours() + tmp);
-                        $('#timeDiv p').text("Nubes: " + start_temp.toLocaleString());
-                        // let end_temp = new Date(start_temp);
-                        // end_temp.setHours(end_temp.getHours() + 1);
-                        tmp += 1;
-                        if (tmp > 23){
-                            tmp = 0
-                        }
-                        let layer = map.findLayerById("TopClouds");
-                        layer.timeExtent = {
-                            start: start_temp,
-                            end: start_temp,
-                            useViewTime: false,
-                        };
-                        //weather.refresh();
-                        // console.log(start_temp);
-                        
-                    },2000);
-                }, 5000);
-                map.add(weather);
 
-                // var imageUrl = 'http://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg',
-                //     imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
-                // mil.imageOverlay(imageUrl, imageBounds).addTo(map);
+                map.add(weather);
             });
 
             const sketch = new Sketch({
@@ -187,25 +170,23 @@ $(function() {
                 view: view,
                 // graphic will be selected as soon as it is created
                 creationMode: "update"
-              });
-      
-              view.ui.add(sketch, "top-right");
-              sketch.on("create", function(event) {
-              // check if the create event's state has changed to complete indicating
-              // the graphic create operation is completed.
-              if (event.state === "complete") {
-                // remove the graphic from the layer. Sketch adds
-                // the completed graphic to the layer by default.
-                //layer.remove(event.graphic);
-            
-                // use the graphic.geometry to query features that intersect it
-                console.log(event.graphic.geometry);
-                realizarAnalisis(event.graphic.geometry, exceptLayers);
-                $("#analisis").slideDown(3000);
-              }
             });
-            
-            
+      
+            view.ui.add(sketch, "top-right");
+            sketch.on("create", function(event) {
+                // check if the create event's state has changed to complete indicating
+                // the graphic create operation is completed.
+                if (event.state === "complete") {
+                    // remove the graphic from the layer. Sketch adds
+                    // the completed graphic to the layer by default.
+                    //layer.remove(event.graphic);
+                
+                    // use the graphic.geometry to query features that intersect it
+                    console.log(event.graphic.geometry);
+                    realizarAnalisis(event.graphic.geometry, exceptLayers);
+                    $("#analisis").slideDown(3000);
+                }
+            });
 
             view["ui"]["components"] = ["attributtion"];
             view.when(function() {
@@ -214,7 +195,6 @@ $(function() {
 
                 const viewUpdating = view.watch("updating", function(){
                     viewUpdating.remove();
-
                     searchCicloneCones(map, view);
                 });
             });
@@ -225,38 +205,38 @@ $(function() {
             // adds the home widget to the top right corner of the MapView
             view.ui.add(homeWidget, "top-right");
             view.ui.add(
-              new Fullscreen({
-                view: view
-                //element: applicationDiv
-              }),
-              "top-right"
+                new Fullscreen({
+                    view: view
+                    //element: applicationDiv
+                }),
+                "top-right"
             );
             map.on("load", function (event){
                 
                 search = new Search({
-                  map: map
+                    map: map
                 }, "ui-dijit-search");
                 search.startup();
     
                 basemapGallery = new BasemapGallery({
-                showArcGISBasemaps: true,
-                map: map
+                    showArcGISBasemaps: true,
+                    map: map
                 }, "basemapGallery");
                 basemapGallery.startup();
     
                 geoLocate = new LocateButton({
-                  map: map
+                    map: map
                 }, "LocateButton");
                 geoLocate.startup();
     
                 home = new HomeButton({
-                  map: map
+                    map: map
                 }, "HomeButton");
                 home.startup();
     
                 editToolbar = new Edit(map);
                 map.on("click", function(evt) {
-                  editToolbar.deactivate();
+                    editToolbar.deactivate();
                 });
     
                 map.on("mouse-move", showCoordinates);
@@ -278,11 +258,11 @@ $(function() {
             var extraPoint;
             var distanceRequest;
             var font = new Font("18px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLDER, "sans-serif");
-              tb = new Draw(view);
-              tb.on("draw-end", addGraphic);
-              //on(dom.byId("info"), "click", function (evt) {
-              $("#analisis span button").click(function (evt) {
-                  if (evt.target.id === "BtnLimpiar") {
+            tb = new Draw(view);
+            tb.on("draw-end", addGraphic);
+            //on(dom.byId("info"), "click", function (evt) {
+            $("#analisis span button").click(function (evt) {
+                if (evt.target.id === "BtnLimpiar") {
                     if(tb) tb.deactivate();
                     map.enableMapNavigation();
                     if(clickDraw) clickDraw.remove();
@@ -293,122 +273,122 @@ $(function() {
                     if(locationEventClick) locationEventClick.remove();
                     $("#toolbar span").removeClass("active");
                     return;
-                  }
-                  $("#analisis span").removeClass("active");
-                  $(this).addClass("active");
-                  var dibujo = evt.target.id;
-                  map.graphics.clear();
-                  var tool = evt.target.id.toLowerCase();
-                  map.disableMapNavigation();
-                  if(tb) tb.deactivate();
-                  tb.activate(tool);
-                  drawVertex = [];
-                  // identify.remove();
-                  if(dibujo === "Polygon"){
+                }
+                $("#analisis span").removeClass("active");
+                $(this).addClass("active");
+                var dibujo = evt.target.id;
+                map.graphics.clear();
+                var tool = evt.target.id.toLowerCase();
+                map.disableMapNavigation();
+                if(tb) tb.deactivate();
+                tb.activate(tool);
+                drawVertex = [];
+                // identify.remove();
+                if(dibujo === "Polygon"){
                     clickDraw = map.on("click", function(evt){
-                      drawVertex.push(evt.mapPoint);
-                      if (endGraphic) { //if an end label already exists remove it
-                        map.graphics.remove(endGraphic);
-                      }
-                      if(drawVertex.length >= 2){
-                        if(distanceRequest) distanceRequest.cancel();
-                        distanceParams.geometry1 = drawVertex[drawVertex.length - 2];
-                        distanceParams.geometry2 = drawVertex[drawVertex.length - 1];
-                        distanceParams.geodesic = true;
-                        point = new Point((distanceParams.geometry1.x + distanceParams.geometry2.x)/2, (distanceParams.geometry1.y + distanceParams.geometry2.y)/2, distanceParams.geometry1.spatialReference);
-                        distanceRequest = geometryService.distance(distanceParams, function(distance){
-                          totalDistance += distance;
-                          textSymbol = new TextSymbol(distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km", font, new Color([255, 255, 255]));
-                          textSymbol.horizontalAlignment = "center";
-                          textSymbol.verticalAlignment = "top";
-                          map.graphics.add(Graphic(point, textSymbol));
-                          console.log("Acumulado: ", totalDistance.toFixed(2));
-                        })
-                      }
-                      if(drawVertex.length >= 3){
-                        distanceParams.geometry1 = drawVertex[drawVertex.length - 1];
-                        distanceParams.geometry2 = drawVertex[0]
-                        distanceParams.geodesic = true;
-                        extraPoint = new Point((distanceParams.geometry1.x + distanceParams.geometry2.x)/2, (distanceParams.geometry1.y + distanceParams.geometry2.y)/2, distanceParams.geometry1.spatialReference);
-                        geometryService.distance(distanceParams, function(distance){
-                          extraTextSymbol = new TextSymbol(distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km", font, new Color([255, 255, 255]));
-                          extraTextSymbol.horizontalAlignment = "center";
-                          extraTextSymbol.verticalAlignment = "top";
-                          if (lastVertex) { //if an end label already exists remove it
-                            map.graphics.remove(lastVertex);
-                          }
-                          lastVertex = new Graphic(extraPoint, extraTextSymbol);
-                          map.graphics.add(lastVertex);
-                        });
-                      }
+                        drawVertex.push(evt.mapPoint);
+                        if (endGraphic) { //if an end label already exists remove it
+                            map.graphics.remove(endGraphic);
+                        }
+                        if(drawVertex.length >= 2){
+                            if(distanceRequest) distanceRequest.cancel();
+                            distanceParams.geometry1 = drawVertex[drawVertex.length - 2];
+                            distanceParams.geometry2 = drawVertex[drawVertex.length - 1];
+                            distanceParams.geodesic = true;
+                            point = new Point((distanceParams.geometry1.x + distanceParams.geometry2.x)/2, (distanceParams.geometry1.y + distanceParams.geometry2.y)/2, distanceParams.geometry1.spatialReference);
+                            distanceRequest = geometryService.distance(distanceParams, function(distance){
+                                totalDistance += distance;
+                                textSymbol = new TextSymbol(distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km", font, new Color([255, 255, 255]));
+                                textSymbol.horizontalAlignment = "center";
+                                textSymbol.verticalAlignment = "top";
+                                map.graphics.add(Graphic(point, textSymbol));
+                                console.log("Acumulado: ", totalDistance.toFixed(2));
+                            })
+                        }
+                        if(drawVertex.length >= 3){
+                            distanceParams.geometry1 = drawVertex[drawVertex.length - 1];
+                            distanceParams.geometry2 = drawVertex[0]
+                            distanceParams.geodesic = true;
+                            extraPoint = new Point((distanceParams.geometry1.x + distanceParams.geometry2.x)/2, (distanceParams.geometry1.y + distanceParams.geometry2.y)/2, distanceParams.geometry1.spatialReference);
+                            geometryService.distance(distanceParams, function(distance){
+                                extraTextSymbol = new TextSymbol(distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km", font, new Color([255, 255, 255]));
+                                extraTextSymbol.horizontalAlignment = "center";
+                                extraTextSymbol.verticalAlignment = "top";
+                                if (lastVertex) { //if an end label already exists remove it
+                                    map.graphics.remove(lastVertex);
+                                }
+                                lastVertex = new Graphic(extraPoint, extraTextSymbol);
+                                map.graphics.add(lastVertex);
+                            });
+                        }
                     });
                     overDraw = map.on("mouse-move", function(evt){
-                      if(distanceRequest) distanceRequest.cancel();
-                      if(drawVertex.length >= 1){
-                        distanceParams.geometry1 = drawVertex[drawVertex.length - 1];
-                        distanceParams.geometry2 = evt.mapPoint;
-                        distanceParams.geodesic = true;
-                        point = new Point((distanceParams.geometry1.x + distanceParams.geometry2.x)/2, (distanceParams.geometry1.y + distanceParams.geometry2.y)/2, distanceParams.geometry1.spatialReference);
-                        distanceRequest = geometryService.distance(distanceParams, function(distance){
-                          textSymbol = new TextSymbol(distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km", font, new Color([255, 255, 255]));
-                          textSymbol.horizontalAlignment = "center";
-                          textSymbol.verticalAlignment = "top";
-                          if (endGraphic) { //if an end label already exists remove it
-                            map.graphics.remove(endGraphic);
-                          }
-                          endGraphic = new Graphic(point, textSymbol);
-                          map.graphics.add(endGraphic);
-                        })
-                      }
+                        if(distanceRequest) distanceRequest.cancel();
+                        if(drawVertex.length >= 1){
+                            distanceParams.geometry1 = drawVertex[drawVertex.length - 1];
+                            distanceParams.geometry2 = evt.mapPoint;
+                            distanceParams.geodesic = true;
+                            point = new Point((distanceParams.geometry1.x + distanceParams.geometry2.x)/2, (distanceParams.geometry1.y + distanceParams.geometry2.y)/2, distanceParams.geometry1.spatialReference);
+                            distanceRequest = geometryService.distance(distanceParams, function(distance){
+                                textSymbol = new TextSymbol(distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km", font, new Color([255, 255, 255]));
+                                textSymbol.horizontalAlignment = "center";
+                                textSymbol.verticalAlignment = "top";
+                                if (endGraphic) { //if an end label already exists remove it
+                                    map.graphics.remove(endGraphic);
+                                }
+                            endGraphic = new Graphic(point, textSymbol);
+                            map.graphics.add(endGraphic);
+                            })
+                        }
                     });
-                  } else if(dibujo === "Circle"){
+                } else if(dibujo === "Circle"){
                     dragStartDraw = map.on("mouse-drag-start", function(evt){
-                      drawVertex.push(evt.mapPoint);
+                        drawVertex.push(evt.mapPoint);
                     });
                     dragEndDraw = map.on("mouse-drag-end", function(evt){
-                      if(distanceRequest) distanceRequest.cancel();
-                      if (endGraphic) { //if an end label already exists remove it
-                        map.graphics.remove(endGraphic);
-                      }
-                      distanceParams.geometry1 = drawVertex[0];
-                      distanceParams.geometry2 = evt.mapPoint;
-                      distanceParams.geodesic = true;
-                      point = distanceParams.geometry1;
-                      distanceRequest = geometryService.distance(distanceParams, function(distance){
-                        drawVertex.push(evt.mapPoint);
-                        textSymbol = new TextSymbol("Radio: " + (distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km"), font, new Color([255, 255, 255]));
-                        textSymbol.horizontalAlignment = "center";
-                        textSymbol.verticalAlignment = "top";
-                        map.graphics.add(Graphic(point, textSymbol));
-                      });
+                        if(distanceRequest) distanceRequest.cancel();
+                        if (endGraphic) { //if an end label already exists remove it
+                            map.graphics.remove(endGraphic);
+                        }
+                        distanceParams.geometry1 = drawVertex[0];
+                        distanceParams.geometry2 = evt.mapPoint;
+                        distanceParams.geodesic = true;
+                        point = distanceParams.geometry1;
+                        distanceRequest = geometryService.distance(distanceParams, function(distance){
+                            drawVertex.push(evt.mapPoint);
+                            textSymbol = new TextSymbol("Radio: " + (distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km"), font, new Color([255, 255, 255]));
+                            textSymbol.horizontalAlignment = "center";
+                            textSymbol.verticalAlignment = "top";
+                            map.graphics.add(Graphic(point, textSymbol));
+                        });
                     })
                     dragDraw = map.on("mouse-drag", function(evt){
-                      if(distanceRequest) distanceRequest.cancel();
-                      distanceParams.geometry1 = drawVertex[0];
-                      distanceParams.geometry2 = evt.mapPoint;
-                      distanceParams.geodesic = true;
-                      point = distanceParams.geometry1;
-                      distanceRequest = geometryService.distance(distanceParams, function(distance){
-                        textSymbol = new TextSymbol("Radio: " + (distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km"), font, new Color([255, 255, 255]));
-                        textSymbol.horizontalAlignment = "center";
-                        textSymbol.verticalAlignment = "top";
-                        if (endGraphic) { //if an end label already exists remove it
-                          map.graphics.remove(endGraphic);
-                        }
-                        endGraphic = new Graphic(point, textSymbol);
-                        map.graphics.add(endGraphic);
-                      });
+                        if(distanceRequest) distanceRequest.cancel();
+                        distanceParams.geometry1 = drawVertex[0];
+                        distanceParams.geometry2 = evt.mapPoint;
+                        distanceParams.geodesic = true;
+                        point = distanceParams.geometry1;
+                        distanceRequest = geometryService.distance(distanceParams, function(distance){
+                            textSymbol = new TextSymbol("Radio: " + (distance < 1000 ? agregasComas(distance.toFixed(2)) + " m" : agregasComas((distance/1000).toFixed(2)) + " km"), font, new Color([255, 255, 255]));
+                            textSymbol.horizontalAlignment = "center";
+                            textSymbol.verticalAlignment = "top";
+                            if (endGraphic) { //if an end label already exists remove it
+                                map.graphics.remove(endGraphic);
+                            }
+                            endGraphic = new Graphic(point, textSymbol);
+                            map.graphics.add(endGraphic);
+                        });
                     })
-                  } else {
+                } else {
                     if(clickDraw) clickDraw.remove();
                     if(overDraw) overDraw.remove();
                     if(dragDraw) dragDraw.remove();
                     if(dragStartDraw) dragStartDraw.remove();
                     if(dragEndDraw) dragEndDraw.remove();
-                  }
-              });
-          };
-          function addGraphic(evt) {
+                }
+            });
+        };
+        function addGraphic(evt) {
             $("#analisis span").removeClass("active");
             if(clickDraw) clickDraw.remove();
             if(overDraw) overDraw.remove();
@@ -416,35 +396,35 @@ $(function() {
             if(dragStartDraw) dragStartDraw.remove();
             if(dragEndDraw) dragEndDraw.remove();
             var geometry = evt.geometry;
-              //deactivate the toolbar and clear existing graphics
-              tb.deactivate();
-              map.enableMapNavigation();
+            //deactivate the toolbar and clear existing graphics
+            tb.deactivate();
+            map.enableMapNavigation();
 
-              // figure out which symbol to use
-              var symbol;
-              if (evt.geometry.type === "point" || evt.geometry.type === "multipoint") {
-                  symbol = markerSymbol;
-              } else if (evt.geometry.type === "line" || evt.geometry.type === "polyline") {
-                  symbol = lineSymbol;
-              }
-              else {
-                  symbol = fillSymbol;
-              }
+            // figure out which symbol to use
+            var symbol;
+            if (evt.geometry.type === "point" || evt.geometry.type === "multipoint") {
+                symbol = markerSymbol;
+            } else if (evt.geometry.type === "line" || evt.geometry.type === "polyline") {
+                symbol = lineSymbol;
+            }
+            else {
+                symbol = fillSymbol;
+            }
 
-              map.graphics.add(new Graphic(geometry, symbol));
+            map.graphics.add(new Graphic(geometry, symbol));
 
-              //Calculo de área y perímetro
-              calcularAreaPerimetro(geometry);
+            //Calculo de área y perímetro
+            calcularAreaPerimetro(geometry);
 
-              //Funciones geo --> outStatistics
-              showElem();
-              createRandomText();
-              lastGeometry = evt.geometry;
-              realizarAnalisis(evt.geometry, exceptLayers);
+            //Funciones geo --> outStatistics
+            showElem();
+            createRandomText();
+            lastGeometry = evt.geometry;
+            realizarAnalisis(evt.geometry, exceptLayers);
 
-              // Poblacion mundial
-              $("#world").css("display", "block");
-              $("#world").on("click", function(){
+            // Poblacion mundial
+            $("#world").css("display", "block");
+            $("#world").on("click", function(){
                 $("#world").unbind();
                 $("#worldPopulation").css("display", "block");
                 $("#world").css("display", "none");
@@ -460,19 +440,19 @@ $(function() {
                 var params = { "inputPoly": featureSet };
                 worldPopulationGP.execute(params);
                 worldPopulationGP.on("execute-complete", function(evtObj){
-                  clearInterval(randomWorldTextInterval);
-                  var valor;
-                  var results = evtObj.results;
-                  valor = {number:results[0].value.features[0].attributes.SUM};
+                    clearInterval(randomWorldTextInterval);
+                    var valor;
+                    var results = evtObj.results;
+                    valor = {number:results[0].value.features[0].attributes.SUM};
       
-                  valorNuevo = new Intl.NumberFormat("en-US").format(valor.number);    
+                    valorNuevo = new Intl.NumberFormat("en-US").format(valor.number);    
                   
-                  console.log(valorNuevo);
-                  $("#worldPopulationResult").text(valorNuevo.split(".",1));
+                    console.log(valorNuevo);
+                    $("#worldPopulationResult").text(valorNuevo.split(".",1));
                 });
-              });
-          };
-        });
+            });
+        };
+    });
            
     }  
 
