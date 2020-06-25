@@ -39,6 +39,10 @@ var queryPromises = [];
 var queryTaskPobArray = [];
 
 var maxFeaturesReturned = 20000;
+
+//Other variables from "principal.js"
+var randomTextInterval;
+var delay = 50;
 /*
   Los nombres a buscar deben ser a nivel de capas
   TODO:
@@ -543,9 +547,8 @@ document.addEventListener('poblacion-obtenida', function(){
 })
 document.addEventListener('analisis-completo', function(result){
     console.log(result);
-    //clearInterval(randomTextInterval);
+    clearInterval(randomTextInterval);
     $("#Poblacion .resultNumber").text(agregasComas(result.detail["Poblacion"]));
-    
     $("#Viviendas .resultNumber").text(agregasComas(result.detail["Viviendas"]));
     $("#Hospitales .resultNumber").text(agregasComas(result.detail["Hospitales"]));
     $("#Escuelas .resultNumber").text(agregasComas(result.detail["Escuelas"]));
@@ -567,8 +570,8 @@ document.addEventListener('analisis-completo', function(result){
     $("#gvsMuyAlto").text(agregasComas(gvs["Muy Alto"]));
   
     //
-    $("#pob_m_t").text(agregasComas(result.detail["TotalPobMas"]));
-    $("#pob_f_t").text(agregasComas(result.detail["TotalPobFem"]));
+    $("#pob_m_t .resultNumber").text(agregasComas(result.detail["TotalPobMas"]));
+    $("#pob_f_t .resultNumber").text(agregasComas(result.detail["TotalPobFem"]));
     $("#pob_menor_12").text(agregasComas(result.detail["TotalMenor12"]));
     $("#pob_m_menor_12").text(agregasComas(result.detail["TotalMenor12M"]));
     $("#pob_f_menor_12").text(agregasComas(result.detail["TotalMenor12F"]));
@@ -578,10 +581,10 @@ document.addEventListener('analisis-completo', function(result){
     $("#LenguasIndigenas .resultNumber").text(agregasComas(result.detail["TotalLenguasIndigenas"]));
   
     /*Abrir el panel al hacer un análisis*/
-    if($(".ui-panel").hasClass("ui-panel-closed"))
-      $("#ui-settings-button")[0].click();
-    if($("#analisis-container div")[0].attributes[1].value == "true")
-          $("#analisis-container h4")[0].click();
+    // if($(".ui-panel").hasClass("ui-panel-closed"))
+    //   $("#ui-settings-button")[0].click();
+    // if($("#analisis-container div")[0].attributes[1].value == "true")
+    //       $("#analisis-container h4")[0].click();
     
     generaTabla(pobTotalXEstado);
     hideElem();
@@ -869,6 +872,14 @@ function ajustaDatosObjPob(obj){
 
     return obj;
 }
+
+function createRandomText(){
+    randomTextInterval = setInterval(function(){
+            $(".resultNumber").each(function(){
+              $(this).text(agregasComas(Math.floor(Math.random() * 99999)));
+            })
+          }, delay);
+  }
 /*
 **********************************************************
 	Fin funciones de Obtener resultados outStatistics
