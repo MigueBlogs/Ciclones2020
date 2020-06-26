@@ -226,7 +226,6 @@ optgroup[label="Pacífico"] {
 }
 .cnpc-logos img {
     height:2em;
-    width: 100%;
 }
 @media(max-width: 500px) {
     #dataSection{
