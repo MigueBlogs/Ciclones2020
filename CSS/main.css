@@ -111,7 +111,17 @@ flex: 30%;
     width: 85%;
     position: absolute !important;
 }
-#map-container #stormSelection2{
+#stormSelection {
+    background:#fff;
+    border-radius:5px;
+    box-sizing:border-box;
+    left:10px;
+    padding:.5em;
+    position:absolute;
+    top:10px;
+    z-index:1
+}
+#stormSelection2 {
     background:#fff;
     border-radius:5px;
     box-sizing:border-box;
@@ -143,79 +153,119 @@ flex: 30%;
     text-align: left;
     outline: none;
     font-size: 15px;
-  }
-  .collapsible.active {
+}
+.collapsible.active {
     background-color: #9D2449;
-  }
-  .collapsible:hover, .collapsible.active:hover {
+}
+.collapsible:hover, .collapsible.active:hover {
     background-color: #555;
-  }
+}
   
-  .content {
+.content {
     padding: 0 18px;
     display: none;
     overflow: hidden;
     background-color: #f1f1f1;
-  }
+}
 
-    li.activo > *:nth-child(n+2) {
+li.activo > *:nth-child(n+2) {
     font-size: 0.7rem;
-    }
-    li.pasado {
+}
+li.pasado {
     color: gray;
-    }
-    li.activo {
+}
+li.activo {
     cursor: context-menu;
-    }
-    li.siguiente {
+}
+li.siguiente {
     color: lightgray;
-    }
-    li.siguiente:hover {
+}
+li.siguiente:hover {
     color: unset;
     cursor: context-menu;
-    }
-    li.pasado:hover {
+}
+li.pasado:hover {
     color: #800040;
     cursor: pointer;
-    }
-    li.pasado > *:nth-child(n+2) {
+}
+li.pasado > *:nth-child(n+2) {
     font-size: 0.7rem;
-    }
-    ol {
+}
+ol {
     padding-left: 15px;
-    }
+}
 
-    optgroup[label="Atlántico"]
-    {
+optgroup[label="Atlántico"] {
     background-color: aquamarine;
-    }
+}
 
-    optgroup[label="Pacífico"]
-    {
+optgroup[label="Pacífico"] {
     background-color: mediumaquamarine;
-    }
-  @media(max-width: 500px) {
+}
+#timeDiv {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    background-color: white;
+    z-index: 1;
+}
+#stormLabel {
+    display: none;
+    text-align: center;
+    background-color: teal;
+    color: white;
+}
+
+.cnpc-logos {
+    bottom:10px;
+    right:10px;
+    position:absolute;
+    max-width: 50%;
+}
+.cnpc-logos img {
+    height:2em;
+    width: 100%;
+}
+@media(max-width: 500px) {
     #dataSection{
         position: unset;
         width: 100%;
         display: block;
         overflow: unset;
         height:unset !important;
+        float: unset;
     }
     #map-container{
         width: 100%;
         height: calc(100vh) !important;
-        position: unset !important;
+        position: relative;
     }
-    #map-container #stormSelection2{
+    #stormSelection, #stormSelection2 {
         background:#fff;
         border-radius:5px;
         box-sizing:border-box;
         left:10px;
         padding:.5em;
-        position:absolute;
-        top:80px;
-        z-index:1
+        position:unset;
+        top:unset;
+        z-index:1;
     }
-
-  }
+    #timeDiv {
+        position: unset;
+        background-color: teal;
+        color: white;
+    }
+    #stormLabel {
+        display: block;
+    }
+    .cnpc-logos {
+        bottom: 7px;
+        right: unset;
+        left: 7px;
+        max-width: 50%;
+    }
+    .cnpc-logos img {
+        height: 1em;
+        width: 100%;
+    }
+}
