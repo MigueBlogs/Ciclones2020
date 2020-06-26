@@ -417,13 +417,13 @@ function realizarAnalisis(geo, exceptLayers = []){
         if(queryPromises.length > 0){
             queryPromises.forEach(function(query){
                 console.log("cancelando", query);
-                query.cancel();
+                query=null;
             })
         }
         if(queryTaskPobArray.length > 0){
             queryTaskPobArray.forEach(function(query){
                 console.log("cancelando Pob", query);
-                query.cancel();
+                query=null;
             })
         }
         var evt = new CustomEvent('urls-listas', {detail: {geometry: geo, exceptLayers: exceptLayers}});
@@ -587,7 +587,6 @@ document.addEventListener('analisis-completo', function(result){
     //       $("#analisis-container h4")[0].click();
     
     generaTabla(pobTotalXEstado);
-    hideElem();
 });
 function removeLayers(layerNames){
     //

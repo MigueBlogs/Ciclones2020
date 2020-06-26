@@ -193,14 +193,14 @@ $(function() {
               sketch.on("create", function(event) {
               // check if the create event's state has changed to complete indicating
               // the graphic create operation is completed.
-              if (event.state === "complete") {
+              if (event.state === "active") {
                 // remove the graphic from the layer. Sketch adds
                 // the completed graphic to the layer by default.
                 //layer.remove(event.graphic);
             
                 // use the graphic.geometry to query features that intersect it
-                console.log(event.graphic.geometry);
-                realizarAnalisis(event.graphic.geometry, exceptLayers);
+                //console.log(event.graphic.geometry);
+                //realizarAnalisis(event.graphic.geometry, exceptLayers);
                 $("#analisis").slideDown(3000);
                 createRandomText();
               }
@@ -232,44 +232,44 @@ $(function() {
               }),
               "top-right"
             );
-            map.on("load", function (event){
+            // map.on("load", function (event){
                 
-                search = new Search({
-                  map: map
-                }, "ui-dijit-search");
-                search.startup();
+            //     search = new Search({
+            //       map: map
+            //     }, "ui-dijit-search");
+            //     search.startup();
     
-                basemapGallery = new BasemapGallery({
-                showArcGISBasemaps: true,
-                map: map
-                }, "basemapGallery");
-                basemapGallery.startup();
+            //     basemapGallery = new BasemapGallery({
+            //     showArcGISBasemaps: true,
+            //     map: map
+            //     }, "basemapGallery");
+            //     basemapGallery.startup();
     
-                geoLocate = new LocateButton({
-                  map: map
-                }, "LocateButton");
-                geoLocate.startup();
+            //     geoLocate = new LocateButton({
+            //       map: map
+            //     }, "LocateButton");
+            //     geoLocate.startup();
     
-                home = new HomeButton({
-                  map: map
-                }, "HomeButton");
-                home.startup();
+            //     home = new HomeButton({
+            //       map: map
+            //     }, "HomeButton");
+            //     home.startup();
     
-                editToolbar = new Edit(map);
-                map.on("click", function(evt) {
-                  editToolbar.deactivate();
-                });
+            //     editToolbar = new Edit(map);
+            //     map.on("click", function(evt) {
+            //       editToolbar.deactivate();
+            //     });
     
-                map.on("mouse-move", showCoordinates);
-                map.on("mouse-drag", showCoordinates);
-                //showScale();
-                map.on("zoom-end", showScale);
+            //     map.on("mouse-move", showCoordinates);
+            //     map.on("mouse-drag", showCoordinates);
+            //     //showScale();
+            //     map.on("zoom-end", showScale);
     
-                map.addLayer(bufferGraphics);
+            //     map.addLayer(bufferGraphics);
     
-                //createGraphicsMenu();
-                initToolbar();
-            });
+            //     //createGraphicsMenu();
+            //     initToolbar();
+            // });
             
             function initToolbar() {
             var totalDistance = 0;
@@ -409,70 +409,70 @@ $(function() {
                   }
               });
           };
-          function addGraphic(evt) {
-            $("#analisis span").removeClass("active");
-            if(clickDraw) clickDraw.remove();
-            if(overDraw) overDraw.remove();
-            if(dragDraw) dragDraw.remove();
-            if(dragStartDraw) dragStartDraw.remove();
-            if(dragEndDraw) dragEndDraw.remove();
-            var geometry = evt.geometry;
-              //deactivate the toolbar and clear existing graphics
-              tb.deactivate();
-              map.enableMapNavigation();
+        //   function addGraphic(evt) {
+        //     $("#analisis span").removeClass("active");
+        //     if(clickDraw) clickDraw.remove();
+        //     if(overDraw) overDraw.remove();
+        //     if(dragDraw) dragDraw.remove();
+        //     if(dragStartDraw) dragStartDraw.remove();
+        //     if(dragEndDraw) dragEndDraw.remove();
+        //     var geometry = evt.geometry;
+        //       //deactivate the toolbar and clear existing graphics
+        //       tb.deactivate();
+        //       map.enableMapNavigation();
 
-              // figure out which symbol to use
-              var symbol;
-              if (evt.geometry.type === "point" || evt.geometry.type === "multipoint") {
-                  symbol = markerSymbol;
-              } else if (evt.geometry.type === "line" || evt.geometry.type === "polyline") {
-                  symbol = lineSymbol;
-              }
-              else {
-                  symbol = fillSymbol;
-              }
+        //       // figure out which symbol to use
+        //       var symbol;
+        //       if (evt.geometry.type === "point" || evt.geometry.type === "multipoint") {
+        //           symbol = markerSymbol;
+        //       } else if (evt.geometry.type === "line" || evt.geometry.type === "polyline") {
+        //           symbol = lineSymbol;
+        //       }
+        //       else {
+        //           symbol = fillSymbol;
+        //       }
 
-              map.graphics.add(new Graphic(geometry, symbol));
+        //       map.graphics.add(new Graphic(geometry, symbol));
 
-              //Calculo de área y perímetro
-              calcularAreaPerimetro(geometry);
+        //       //Calculo de área y perímetro
+        //       calcularAreaPerimetro(geometry);
 
-              //Funciones geo --> outStatistics
-              showElem();
-              createRandomText();
-              lastGeometry = evt.geometry;
-              realizarAnalisis(evt.geometry, exceptLayers);
+        //       //Funciones geo --> outStatistics
+        //       showElem();
+        //       createRandomText();
+        //       lastGeometry = evt.geometry;
+        //       realizarAnalisis(evt.geometry, exceptLayers);
 
-              // Poblacion mundial
-              $("#world").css("display", "block");
-              $("#world").on("click", function(){
-                $("#world").unbind();
-                $("#worldPopulation").css("display", "block");
-                $("#world").css("display", "none");
+        //       // Poblacion mundial
+        //       $("#world").css("display", "block");
+        //       $("#world").on("click", function(){
+        //         $("#world").unbind();
+        //         $("#worldPopulation").css("display", "block");
+        //         $("#world").css("display", "none");
 
-                // Población mundial
-                createWorldPopulationRandomText();
-                var features= [];
-                features.push(new Graphic(evt.geometry, symbol));
+        //         // Población mundial
+        //         createWorldPopulationRandomText();
+        //         var features= [];
+        //         features.push(new Graphic(evt.geometry, symbol));
 
-                var featureSet = new FeatureSet();
-                featureSet.features = features;
+        //         var featureSet = new FeatureSet();
+        //         featureSet.features = features;
                 
-                var params = { "inputPoly": featureSet };
-                worldPopulationGP.execute(params);
-                worldPopulationGP.on("execute-complete", function(evtObj){
-                  clearInterval(randomWorldTextInterval);
-                  var valor;
-                  var results = evtObj.results;
-                  valor = {number:results[0].value.features[0].attributes.SUM};
+        //         var params = { "inputPoly": featureSet };
+        //         worldPopulationGP.execute(params);
+        //         worldPopulationGP.on("execute-complete", function(evtObj){
+        //           clearInterval(randomWorldTextInterval);
+        //           var valor;
+        //           var results = evtObj.results;
+        //           valor = {number:results[0].value.features[0].attributes.SUM};
       
-                  valorNuevo = new Intl.NumberFormat("en-US").format(valor.number);    
+        //           valorNuevo = new Intl.NumberFormat("en-US").format(valor.number);    
                   
-                  console.log(valorNuevo);
-                  $("#worldPopulationResult").text(valorNuevo.split(".",1));
-                });
-              });
-          };
+        //           console.log(valorNuevo);
+        //           $("#worldPopulationResult").text(valorNuevo.split(".",1));
+        //         });
+        //       });
+        //   };
         });
            
     }  

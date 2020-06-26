@@ -16,7 +16,9 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="./css/styles.css">
     <!--JS IONICON-->
-	<script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
+    <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Handlebars -->
 	<script src="./lib/handlebars.js"></script>
     <!-- ARCGIS MAP's -->
@@ -302,7 +304,9 @@
                     <td id="Gasolineras">
                         <div class="row">
                             <div class="column1">
-                                <ion-icon name="car-outline"></ion-icon>
+                                <span class="material-icons">
+                                local_gas_station
+                                </span>
                             </div>
                             <div class="column2">
                             Gasolineras:<br><span class="resultNumber"></span>
@@ -312,10 +316,12 @@
                     <td id="Ganadero">
                         <div class="row">
                             <div class="column1">
-                                <ion-icon name="leaf-outline"></ion-icon>
+                            <span class="material-icons">
+                            agriculture
+                            </span>
                             </div>
                             <div class="column2">
-                            Ganaderías:<br><span class="resultNumber"></span>>
+                            Ganaderías:<br><span class="resultNumber"></span>
                             </div>
                         </div>
                     </td>
