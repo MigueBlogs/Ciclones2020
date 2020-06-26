@@ -40,7 +40,8 @@ $(function() {
             esriConfig.request.proxyUrl = "http://rmgir.cenapred.gob.mx/proxy/proxy.php";
             const layer = new GraphicsLayer();
             map = new Map({
-                basemap: "hybrid"
+                basemap: "hybrid",
+                layers:[layer]
             });
             view = new MapView({
                 container: container,
@@ -193,7 +194,7 @@ $(function() {
             sketch.on("delete", function(event) {
                 // fires after delete method is called
                 // returns references to deleted graphics.
-
+                $("#analisis").slideUp(3000);
                 // ocultar capa de municipios
                 let layer = map.findLayerById("municipios");
                 layer.opacity = 0;
