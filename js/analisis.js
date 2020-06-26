@@ -442,6 +442,8 @@ function obtenMunicipios(geometry) {
         GeometryService,
         ProjectParameters
     ) {
+        $('#table-municipios table').remove();
+        $('#table-municipios label').show();
         var geometryService = new GeometryService({url: "http://rmgir.proyectomesoamerica.org/server/rest/services/Utilities/Geometry/GeometryServer"});
         
         let layer = map.findLayerById("municipios");
@@ -485,6 +487,7 @@ function obtenMunicipios(geometry) {
 }
 function creaTablaMunicipios(datos) {
     $('#table-municipios table').remove();
+    $('#table-municipios label').hide();
     $('#table-municipios').append("<table><thead><tr><td>Estado</td><td>Municipio(s)</td></tr></thead><tbody></tbody></table>")
     for (const estado in datos) {
         $('#table-municipios tbody').append("<tr><td>"+estado+"</td><td>"+datos[estado].join(", ")+"</td></tr>");
