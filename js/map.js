@@ -170,33 +170,7 @@ $(function() {
                 view: view,
                 // graphic will be selected as soon as it is created
                 creationMode: "update"
-            });
-      
-            view.ui.add(sketch, "top-right");
-            sketch.on("create", function(event) {
-                // check if the create event's state has changed to complete indicating
-                // the graphic create operation is completed.
-                if (event.state === "active") {
-                    // remove the graphic from the layer. Sketch adds
-                    // the completed graphic to the layer by default.
-                    //layer.remove(event.graphic);
-                
-                    // use the graphic.geometry to query features that intersect it
-                    //console.log(event.graphic.geometry);
-                    //realizarAnalisis(event.graphic.geometry, exceptLayers);
-                    $("#analisis").slideDown(3000);
-                    createRandomText();
-                }
-            });
-            sketch.on("delete", function(event) {
-                // fires after delete method is called
-                // returns references to deleted graphics.
-
-                // ocultar capa de municipios
-                let layer = map.findLayerById("municipios");
-                layer.opacity = 0;
-                layer.definitionExpression = "1=0";
-            });
+            });           
             
       
             view.ui.add(sketch, "top-right");
@@ -216,6 +190,15 @@ $(function() {
                     }
                 }
             );
+            sketch.on("delete", function(event) {
+                // fires after delete method is called
+                // returns references to deleted graphics.
+
+                // ocultar capa de municipios
+                let layer = map.findLayerById("municipios");
+                layer.opacity = 0;
+                layer.definitionExpression = "1=0";
+            });
 
             view["ui"]["components"] = ["attributtion"];
             view.when(function() {
