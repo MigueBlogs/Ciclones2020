@@ -189,151 +189,156 @@
                 <p style="margin: 0; padding: 5px; font-size: smaller;">Cargando...</p>
             </div>
             <div id="analisis" style="display:none;">
-            <center> Análisis de Exposición </center><ion-icon class="buttonCloseTable" name="close-circle-outline" title="Cerrar Análisis"></ion-icon>
-            <table>
-                <tr>
-                    <th rowspan="2" id="Poblacion">
-                        <div class="row">
-                            <div class="column1">
-                                <ion-icon style="font-size: 70px;" name="people-outline"></ion-icon>
+                <center> Análisis de Exposición </center><ion-icon class="buttonCloseTable" name="close-circle-outline" title="Cerrar Análisis"></ion-icon>
+                <table>
+                    <tr>
+                        <th rowspan="2" id="Poblacion">
+                            <div class="row">
+                                <div class="column1">
+                                    <ion-icon style="font-size: 70px;" name="people-outline"></ion-icon>
+                                </div>
+                                <div class="column2">
+                                    Población:<br><span class="resultNumber"></span><br><button id="muestraTabla" class="buttonGreen">Más información</button>
+                                </div>
                             </div>
-                            <div class="column2">
-                                Población:<br><span class="resultNumber"></span><br><button id="muestraTabla" class="buttonGreen">Más información</button>
-                            </div>
-                        </div>
-                    </th>
-                    <td id="pob_f_t">
-                        <div class="row">
-                            <div class="column1">
-                                <ion-icon name="woman-outline"></ion-icon>
-                            </div>
-                            <div class="column2">
-                            Pob. Fem:<br><span class="resultNumber"></span>
-                            </div>
-                        </div>    
-                   </td>
-                    <td id="Viviendas">
-                        <div class="row">
-                            <div class="column1">
-                                <ion-icon name="home-outline"></ion-icon>
-                            </div>
-                            <div class="column2">
-                            Viviendas:<br><span class="resultNumber"></span>
-                            </div>
-                        </div>     
+                        </th>
+                        <td id="pob_f_t">
+                            <div class="row">
+                                <div class="column1">
+                                    <ion-icon name="woman-outline"></ion-icon>
+                                </div>
+                                <div class="column2">
+                                Pob. Fem:<br><span class="resultNumber"></span>
+                                </div>
+                            </div>    
                     </td>
-                    <td id="Escuelas">
-                        <div class="row">
-                            <div class="column1">
-                                <ion-icon name="school-outline"></ion-icon>
+                        <td id="Viviendas">
+                            <div class="row">
+                                <div class="column1">
+                                    <ion-icon name="home-outline"></ion-icon>
+                                </div>
+                                <div class="column2">
+                                Viviendas:<br><span class="resultNumber"></span>
+                                </div>
+                            </div>     
+                        </td>
+                        <td id="Escuelas">
+                            <div class="row">
+                                <div class="column1">
+                                    <ion-icon name="school-outline"></ion-icon>
+                                </div>
+                                <div class="column2">
+                                Escuelas:<br><span class="resultNumber"></span>
+                                </div>
+                            </div>     
+                        </td>
+                        <td id="Aeropuertos">
+                            <div class="row">
+                                <div class="column1">
+                                    <ion-icon name="airplane-outline"></ion-icon>
+                                </div>
+                                <div class="column2">
+                                Aeropuertos:<br><span class="resultNumber"></span>
+                                </div>
                             </div>
-                            <div class="column2">
-                            Escuelas:<br><span class="resultNumber"></span>
+                        </td>
+                        <td id="Presas">
+                            <div class="row">
+                                <div class="column1">
+                                    <ion-icon name="water-outline"></ion-icon>
+                                </div>
+                                <div class="column2">
+                                Presas:<br><span class="resultNumber"></span>
+                                </div>
                             </div>
-                        </div>     
-                    </td>
-                    <td id="Aeropuertos">
-                        <div class="row">
-                            <div class="column1">
-                                <ion-icon name="airplane-outline"></ion-icon>
+                        </td>
+                        <td id="Colonias">
+                            <div class="row">
+                                <div class="column1">
+                                    <ion-icon name="map-outline"></ion-icon>
+                                </div>
+                                <div class="column2">
+                                Colonias:<br><span class="resultNumber"></span>
+                                </div>
+                            </div>    
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="pob_m_t">
+                            <div class="row">
+                                <div class="column1">
+                                    <ion-icon name="man-outline"></ion-icon>
+                                </div>
+                                <div class="column2">
+                                Pob. Mas.<br><span class="resultNumber"></span>
+                                </div>
                             </div>
-                            <div class="column2">
-                            Aeropuertos:<br><span class="resultNumber"></span>
+                        </td>
+                        <td id="Hospitales">
+                            <div class="row">
+                                <div class="column1">
+                                    <ion-icon name="medkit-outline"></ion-icon>
+                                </div>
+                                <div class="column2">
+                                Estab. de Salud:<br><span class="resultNumber"></span>
+                                </div>
+                            </div>    
+                        </td>
+                        <td id="Supermercados">
+                            <div class="row">
+                                <div class="column1">
+                                    <ion-icon name="cart-outline"></ion-icon>
+                                </div>
+                                <div class="column2">
+                                Supermercados:<br><span class="resultNumber"></span>
+                                </div>
+                            </div> 
+                        </td>
+                        <td id="Hoteles">
+                            <div class="row">
+                                <div class="column1">
+                                    <ion-icon name="business-outline"></ion-icon>
+                                </div>
+                                <div class="column2">
+                                Hoteles:<br><span class="resultNumber"></span>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td id="Presas">
-                        <div class="row">
-                            <div class="column1">
-                                <ion-icon name="water-outline"></ion-icon>
+                        </td>
+                        <td id="Gasolineras">
+                            <div class="row">
+                                <div class="column1">
+                                    <span class="material-icons">
+                                    local_gas_station
+                                    </span>
+                                </div>
+                                <div class="column2">
+                                Gasolineras:<br><span class="resultNumber"></span>
+                                </div>
                             </div>
-                            <div class="column2">
-                            Presas:<br><span class="resultNumber"></span>
-                            </div>
-                        </div>
-                    </td>
-                    <td id="Colonias">
-                        <div class="row">
-                            <div class="column1">
-                                <ion-icon name="map-outline"></ion-icon>
-                            </div>
-                            <div class="column2">
-                            Colonias:<br><span class="resultNumber"></span>
-                            </div>
-                        </div>    
-                    </td>
-                </tr>
-                <tr>
-                    <td id="pob_m_t">
-                        <div class="row">
-                            <div class="column1">
-                                <ion-icon name="man-outline"></ion-icon>
-                            </div>
-                            <div class="column2">
-                            Pob. Mas.<br><span class="resultNumber"></span>
-                            </div>
-                        </div>
-                    </td>
-                    <td id="Hospitales">
-                        <div class="row">
-                            <div class="column1">
-                                <ion-icon name="medkit-outline"></ion-icon>
-                            </div>
-                            <div class="column2">
-                            Estab. de Salud:<br><span class="resultNumber"></span>
-                            </div>
-                        </div>    
-                    </td>
-                    <td id="Supermercados">
-                        <div class="row">
-                            <div class="column1">
-                                <ion-icon name="cart-outline"></ion-icon>
-                            </div>
-                            <div class="column2">
-                            Supermercados:<br><span class="resultNumber"></span>
-                            </div>
-                        </div> 
-                    </td>
-                    <td id="Hoteles">
-                        <div class="row">
-                            <div class="column1">
-                                <ion-icon name="business-outline"></ion-icon>
-                            </div>
-                            <div class="column2">
-                            Hoteles:<br><span class="resultNumber"></span>
-                            </div>
-                        </div>
-                    </td>
-                    <td id="Gasolineras">
-                        <div class="row">
-                            <div class="column1">
+                        </td>
+                        <td id="Ganadero">
+                            <div class="row">
+                                <div class="column1">
                                 <span class="material-icons">
-                                local_gas_station
+                                agriculture
                                 </span>
+                                </div>
+                                <div class="column2">
+                                Ganaderías:<br><span class="resultNumber"></span>
+                                </div>
                             </div>
-                            <div class="column2">
-                            Gasolineras:<br><span class="resultNumber"></span>
-                            </div>
-                        </div>
-                    </td>
-                    <td id="Ganadero">
-                        <div class="row">
-                            <div class="column1">
-                            <span class="material-icons">
-                            agriculture
-                            </span>
-                            </div>
-                            <div class="column2">
-                            Ganaderías:<br><span class="resultNumber"></span>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-            <div id="showTable" style="display:none">
-                <br>
-                <div id="table-container"></div>
-                <a href="#" id="csvPob">Descarga esta información en formato .CSV</a></div>
+                        </td>
+                    </tr>
+                </table>
+                <div id="showTable" style="display:none">
+                    <br>
+                    <div id="table-container"></div>
+                    <a href="#" id="csvPob">Descarga esta información en formato .CSV</a>
+                    <div id="table-municipios" style="text-align:center;">
+                        <p>Lista de municipios por estado dentro del análisis</p>
+                    </div>
+                    <a href="#" id="csvMun">Descarga esta lista en formato .CSV</a>
+                </div>
             </div>
             <div id="map">
                 <div class="cnpc-logos">

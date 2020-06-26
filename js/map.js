@@ -170,24 +170,34 @@ $(function() {
                 view: view,
                 // graphic will be selected as soon as it is created
                 creationMode: "update"
-              });
-      
-              view.ui.add(sketch, "top-right");
-              sketch.on("create", function(event) {
-              // check if the create event's state has changed to complete indicating
-              // the graphic create operation is completed.
-              if (event.state === "active") {
-                // remove the graphic from the layer. Sketch adds
-                // the completed graphic to the layer by default.
-                //layer.remove(event.graphic);
-            
-                // use the graphic.geometry to query features that intersect it
-                //console.log(event.graphic.geometry);
-                //realizarAnalisis(event.graphic.geometry, exceptLayers);
-                $("#analisis").slideDown(3000);
-                createRandomText();
-              }
             });
+      
+            view.ui.add(sketch, "top-right");
+            sketch.on("create", function(event) {
+                // check if the create event's state has changed to complete indicating
+                // the graphic create operation is completed.
+                if (event.state === "active") {
+                    // remove the graphic from the layer. Sketch adds
+                    // the completed graphic to the layer by default.
+                    //layer.remove(event.graphic);
+                
+                    // use the graphic.geometry to query features that intersect it
+                    //console.log(event.graphic.geometry);
+                    //realizarAnalisis(event.graphic.geometry, exceptLayers);
+                    $("#analisis").slideDown(3000);
+                    createRandomText();
+                }
+            });
+            sketch.on("delete", function(event) {
+                // fires after delete method is called
+                // returns references to deleted graphics.
+
+                // ocultar capa de municipios
+                let layer = map.findLayerById("municipios");
+                layer.opacity = 0;
+                layer.definitionExpression = "1=0";
+            });
+            
       
             view.ui.add(sketch, "top-right");
                 sketch.on("create", function(event) {
@@ -1168,6 +1178,31 @@ $(function() {
         };
         addFeatureLayer(map, area_inestabilidad_EP["area"], properties_area);
         addFeatureLayer(map, area_inestabilidad_EP["text"], properties_label);
+
+        // capa de municipios
+        const prop = {
+            id: "municipios",
+            opacity: 0,
+            showLabels: true,
+            outFields: ["admin1Name_es", "admin2Name_es"],
+            renderer: {
+                type: "simple",
+                symbol: {
+                          type: "simple-fill", 
+                          color: "#000050",
+                          style: "solid",
+                          outline: {  
+                            color: "white",
+                            width: 2
+                            },
+                        },
+                    },
+            definitionExpression: "1 = 0",
+            minScale: 10000000
+        };
+    
+        const url = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/MEX_ES/MapServer/3";
+        addFeatureLayer(map, url, prop);
     }
 
     function changeColoredRegions(map) {

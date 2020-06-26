@@ -45,6 +45,9 @@ $(document).ready(function () {
     $("#csvPob").on('click', function (event) {
         exportTableToCSV.apply(this, [$('#table-container>table'), 'poblacion.csv']);
     });
+    $("#csvMun").on('click', function (event) {
+        exportTableToCSV.apply(this, [$('#table-municipios>table'), 'municipios.csv']);
+    });
     // $(".close").on('click', function(event){
     //     $("#table").hide();
     // });

@@ -412,6 +412,8 @@ function realizarAnalisis(geo, exceptLayers = []){
     resultadosAnalisis = 0;
     conteoLenguas = 0;
 
+    obtenMunicipios(geo);
+
     if(Object.keys(urls) == 0) obtenerURLServicios(nombresCapas, geo, exceptLayers);
     else {
         if(queryPromises.length > 0){
@@ -428,6 +430,64 @@ function realizarAnalisis(geo, exceptLayers = []){
         }
         var evt = new CustomEvent('urls-listas', {detail: {geometry: geo, exceptLayers: exceptLayers}});
         document.dispatchEvent(evt);
+    }
+}
+function obtenMunicipios(geometry) {
+    require([
+        "esri/tasks/support/Query",
+        "esri/tasks/GeometryService",
+        "esri/tasks/support/ProjectParameters"
+    ], function(
+        Query,
+        GeometryService,
+        ProjectParameters
+    ) {
+        var geometryService = new GeometryService({url: "http://rmgir.proyectomesoamerica.org/server/rest/services/Utilities/Geometry/GeometryServer"});
+        
+        let layer = map.findLayerById("municipios");
+        
+        let query = new Query();
+        query.geometry = geometry;
+        query.returnGeometry = true;
+        query.outFields = [ "*" ];
+        query.outSpatialReference = view["spatialReference"];
+        //query.where = "admin1Name_es = 'Tabasco'";
+
+        
+        //layer.refresh();
+
+        //console.log(query.where);
+
+        layer.queryFeatures(query).then(function(result) {
+            var tabla = {};
+            var geometries = result["features"].map(function(feature) { return feature["geometry"]; });
+            var ids = result["features"].map(function(feature) {
+                const estado = feature["attributes"].admin1Name_es;
+                const municipio = feature["attributes"].admin2Name_es
+                if (!(estado in tabla)){
+                    tabla[estado] = [];
+                }
+                tabla[estado].push(municipio);
+                return feature["attributes"].OBJECTID; 
+            });
+            
+            creaTablaMunicipios(tabla);
+            var params = new ProjectParameters({
+                geometries: geometries,
+                outSpatialReference: view["spatialReference"]
+            });
+            geometryService.project(params).then(function(r) {
+                layer.definitionExpression = "OBJECTID in ("+ids.join()+")";
+                layer.opacity = 0.5;
+            });
+        });
+    });
+}
+function creaTablaMunicipios(datos) {
+    $('#table-municipios table').remove();
+    $('#table-municipios').append("<table><thead><tr><td>Estado</td><td>Municipio(s)</td></tr></thead><tbody></tbody></table>")
+    for (const estado in datos) {
+        $('#table-municipios tbody').append("<tr><td>"+estado+"</td><td>"+datos[estado].join(", ")+"</td></tr>");
     }
 }
 function agregasComas(nStr) {
