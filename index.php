@@ -199,7 +199,11 @@
                         <span class="material-icons">wb_cloudy</span>
                     </div>
                     <div style="padding: 5px;">
-                        <label style="vertical-align: middle;"><input type="checkbox" id="nubes-checkbox" checked> Nubes</label>
+                        <!-- <label style="font-size: smaller;">Apag/Enc</label> -->
+                        <label class="switch" style="vertical-align: middle;">
+                            <input type="checkbox" id="nubes-checkbox" checked> 
+                            <span class="slider round"></span>
+                        </label>
                     </div>
                 </div>
                 <p style="margin: 0; padding: 5px; font-size: smaller;">Cargando...</p>
