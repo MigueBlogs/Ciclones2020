@@ -131,9 +131,9 @@ $(function() {
                     var bband = pixels[2];
                     
                     // Create empty arrays for each of the RGB bands to set on the pixelBlock
-                    // var rBand = [];
-                    // var gBand = [];
-                    // var bBand = [];
+                    var rBand = [];
+                    var gBand = [];
+                    var bBand = [];
                     var mask = [];
                   
                     // Loop through all the pixels in the view
@@ -143,22 +143,28 @@ $(function() {
                         var g = gband[i];
                         var b = bband[i];
 
-                        // rBand[i] = r;
-                        // gBand[i] = g;
-                        // bBand[i] = b;
+                        rBand[i] = r;
+                        gBand[i] = g;
+                        bBand[i] = b;
                         mask[i] = 1;
                         //aBand[i] = 255;
                         // quita los azules y los colores oscuros
-                        if ((b > g && b > r) || (r < 50 && g < 50 && b < 50)){
+                        if ((b > g && b > r && r < 120 && g < 120) || (r < 50 && g < 50 && b < 50)){
                             // rBand[i] = 0;
                             // gBand[i] = 0;
                             // bBand[i] = 0;
                             mask[i] = 0;
                         }
+                        else if (b > g && b > r && r >= 120 && g >= 120){
+                            rBand[i] = b;
+                            gBand[i] = b;
+                            bBand[i] = b;
+                            //mask[i] = 0;
+                        }
                     }                  
                     pixelData.pixelBlock.mask = mask;
                     // Set the new pixel values on the pixelBlock (now three bands)
-                    // pixelData.pixelBlock.pixels = [rBand, gBand, bBand];
+                    pixelData.pixelBlock.pixels = [rBand, gBand, bBand];
                     //pixelData.pixelBlock.addData({pixels: aBand})
                     pixelData.pixelBlock.pixelType = "u8"; // u8 is used for color
                 }
