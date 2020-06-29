@@ -489,8 +489,11 @@ function creaTablaMunicipios(datos) {
     $('#table-municipios table').remove();
     $('#table-municipios label').hide();
     $('#table-municipios').append("<table><thead><tr><td>Estado</td><td>Municipio(s)</td></tr></thead><tbody></tbody></table>")
-    for (const estado in datos) {
-        $('#table-municipios tbody').append("<tr><td>"+estado+"</td><td>"+datos[estado].join(", ")+"</td></tr>");
+    estd = Object.keys(datos)
+    estd.sort();
+    for (const estado in estd) {
+        datos[estd[estado]].sort();
+        $('#table-municipios tbody').append("<tr><td>"+estd[estado]+"</td><td>"+datos[estd[estado]].join(", ")+"</td></tr>");
     }
 }
 function agregasComas(nStr) {

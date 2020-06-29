@@ -227,6 +227,27 @@ optgroup[label="Pacífico"] {
 .cnpc-logos img {
     height:2em;
 }
+.tabla-datos {
+    background-color:teal;
+    color: white;
+    margin-bottom: 0.3rem;
+}
+.tabla-datos thead tr td {
+    background-color: whitesmoke;
+    color: #9D2449;
+}
+.tabla-datos td {
+    border: 1px solid white;
+}
+.tabla-datos tr:nth-child(2n){
+    background-color: whitesmoke;
+    color: black;
+}
+.a-datos {
+    background-color: #9D2449;
+    color: white;
+    padding: 0.2rem;
+}
 @media(max-width: 500px) {
     #dataSection{
         position: unset;

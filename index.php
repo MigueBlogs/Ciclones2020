@@ -332,13 +332,13 @@
                 </table>
                 <div id="showTable" style="display:none">
                     <br>
-                    <div id="table-container"></div>
-                    <a href="#" id="csvPob">Descarga esta información en formato .CSV</a>
-                    <div id="table-municipios" style="text-align:center;">
-                        <p>Lista de municipios por estado dentro del análisis</p>
+                    <div id="table-container" class="tabla-datos"></div>
+                    <a href="#" id="csvPob" class="a-datos">Descarga esta información en formato .CSV</a>
+                    <div id="table-municipios" class="tabla-datos" style="text-align:center;">
+                        <p style="background-color: white; color: black;">Lista de municipios por estado dentro del análisis</p>
                         <label>Cargando...</label>
                     </div>
-                    <a href="#" id="csvMun">Descarga esta lista en formato .CSV</a>
+                    <a href="#" id="csvMun" class="a-datos">Descarga esta lista en formato .CSV</a>
                 </div>
             </div>
             <div id="map">
