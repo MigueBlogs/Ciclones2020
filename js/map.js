@@ -93,7 +93,11 @@ $(function() {
                         }, 2000);
                     },
                     function(error){
-                        alert("Hubo un problema al cargar la información de nubes. Te pedimos refrescar la página.")
+                        $('#timeDiv p')
+                            .css("background-color", "red")
+                            .css("color", "white")
+                            .text("Hubo un problema al cargar la información de nubes. Te pedimos refrescar la página.");
+                        // alert("Hubo un problema al cargar la información de nubes. Te pedimos refrescar la página.")
                     }
                 )
                 //console.log(weather);
