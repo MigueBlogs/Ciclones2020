@@ -164,8 +164,8 @@
                     </ol>
                 </div>
             </div>
-            <button type="button" class="collapsible">Leyenda</button>
-            <div class="content">
+            <button type="button" class="collapsible active">Leyenda</button>
+            <div class="content" style="display: block;">
                 <ol style="font-size: 0.8rem;list-style-type: none;padding-left:0;">
                     <li><s style="color: gray;">Evento</s> Evento pasado</li>
                     <li><span style="color: green;">Evento</span> Evento activo</li>
@@ -194,6 +194,14 @@
                 </div>
             </div>
             <div id="timeDiv">
+                <div style="display: grid; grid-template-columns: 20% 80%; text-align:center; padding: 3px;">
+                    <div style="padding: 2px;">
+                        <span class="material-icons">wb_cloudy</span>
+                    </div>
+                    <div style="padding: 5px;">
+                        <label style="vertical-align: middle;"><input type="checkbox" id="nubes-checkbox" checked> Nubes</label>
+                    </div>
+                </div>
                 <p style="margin: 0; padding: 5px; font-size: smaller;">Cargando...</p>
             </div>
             <div id="analisis" style="display:none;">
