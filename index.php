@@ -164,6 +164,14 @@
                     </ol>
                 </div>
             </div>
+            <button type="button" class="collapsible">Leyenda</button>
+            <div class="content">
+                <ol style="font-size: 0.8rem;list-style-type: none;padding-left:0;">
+                    <li><s style="color: gray;">Evento</s> Evento pasado</li>
+                    <li><span style="color: green;">Evento</span> Evento activo</li>
+                    <li class="siguiente">Evento <span style="color:black!important;">Evento esperado</span></li>
+                </ol>
+            </div>
         </div>
         <div id="map-container">
             <div id="stormLabel">
