@@ -356,7 +356,7 @@
                     <a href="#" id="csvPob" class="a-datos">Descarga esta información en formato .CSV</a>
                     <div id="table-municipios" class="tabla-datos" style="text-align:center;">
                         <p style="background-color: white; color: black;">Lista de municipios por estado dentro del análisis</p>
-                        <label>Cargando...</label>
+                        <label>Cargando.</label>
                     </div>
                     <a href="#" id="csvMun" class="a-datos">Descarga esta lista en formato .CSV</a>
                 </div>

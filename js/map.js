@@ -16,6 +16,7 @@ var exceptLayers = ["PoblacionITER"];
 
 var hour_delta = 0;
 var timeExtentChanger;
+var nubes_error = false;
 
 $(function() {
     function changeTimeExtent(){
@@ -94,8 +95,11 @@ $(function() {
                 weather.when(
                     function(){
                         timeExtentChanger = setInterval(changeTimeExtent, 2000);
+                        nubes_error = false;
                     },
                     function(error){
+                        nubes_error = true;
+                        $('#nubes-checkbox').prop("checked", false).attr("disabled", true);
                         $('#timeDiv p')
                             .css("background-color", "red")
                             .css("color", "white")
@@ -1403,6 +1407,9 @@ $(function() {
     });
 
     $('#nubes-checkbox').on('change', function(){
+        if (nubes_error) {
+            return;
+        }
         let layer = map.findLayerById("TopClouds");
         layer.visible = this.checked;
         $('#timeDiv p').toggle();

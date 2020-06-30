@@ -43,6 +43,8 @@ var maxFeaturesReturned = 20000;
 //Other variables from "principal.js"
 var randomTextInterval;
 var delay = 50;
+
+var id_anim_mun_cargando;
 /*
   Los nombres a buscar deben ser a nivel de capas
   TODO:
@@ -432,6 +434,14 @@ function realizarAnalisis(geo, exceptLayers = []){
         document.dispatchEvent(evt);
     }
 }
+function anima_mun_carga(){
+    let current = $('#table-municipios label').text();
+    let after = current + ".";
+    $('#table-municipios label').text(after);    
+    if (after == "Cargando...."){
+        $('#table-municipios label').text("Cargando");
+    }
+}
 function obtenMunicipios(geometry) {
     require([
         "esri/tasks/support/Query",
@@ -444,6 +454,8 @@ function obtenMunicipios(geometry) {
     ) {
         $('#table-municipios table').remove();
         $('#table-municipios label').show();
+        id_anim_mun_cargando = setInterval(anima_mun_carga, 1000);
+
         var geometryService = new GeometryService({url: "http://rmgir.proyectomesoamerica.org/server/rest/services/Utilities/Geometry/GeometryServer"});
         
         let layer = map.findLayerById("municipios");
@@ -488,6 +500,7 @@ function obtenMunicipios(geometry) {
 function creaTablaMunicipios(datos) {
     $('#table-municipios table').remove();
     $('#table-municipios label').hide();
+    clearInterval(id_anim_mun_cargando);
     $('#table-municipios').append("<table><thead><tr><td>Estado</td><td>Municipio(s)</td></tr></thead><tbody></tbody></table>")
     estd = Object.keys(datos)
     estd.sort();
