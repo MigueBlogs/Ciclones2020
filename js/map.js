@@ -607,10 +607,11 @@ $(function() {
                 if(resultIdx < conesLayers.length && result["features"].length) {
                     // debugger;
                     var eventActive = result["features"][0]["layer"]["id"].split("_")[0];
-                    if (getSea(conesLayers[resultIdx]["id"]) == "EP"){
+                    let sea = result["features"][0]["attributes"]["BASIN"];
+                    if (sea == "EP"){
                         activeConesEP.push({
-                            stormname: result["features"][0]["attributes"]["stormname"],
-                            stormtype: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["stormtype"],
+                            stormname: result["features"][0]["attributes"]["STORMNAME"],
+                            stormtype: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["STORMTYPE"],
                             geometry: result["features"][0]["geometry"],
                             maxwind: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["maxwind"],
                             layerid: conesLayers[resultIdx]["id"]
@@ -618,8 +619,8 @@ $(function() {
                     }
                     else {
                         activeConesAT.push({
-                            stormname: result["features"][0]["attributes"]["stormname"],
-                            stormtype: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["stormtype"],
+                            stormname: result["features"][0]["attributes"]["STORMNAME"],
+                            stormtype: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["STORMTYPE"],
                             geometry: result["features"][0]["geometry"],
                             maxwind: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["maxwind"],
                             layerid: conesLayers[resultIdx]["id"]
@@ -749,6 +750,14 @@ $(function() {
                     }
                 })
             });
+            setTimeout(() => {
+                if ($("#stormsActive option:eq(1)").val()){
+                    $("#stormsActive").val($("#stormsActive option:eq(1)").val()).change();
+                }
+                if ($("#stormsActive2 option:eq(1)").val()){
+                    $("#stormsActive2").val($("#stormsActive2 option:eq(1)").val()).change();
+                }
+            }, 250);
         });
     }
 
@@ -869,6 +878,20 @@ $(function() {
     }
 
     function loadCiclones(map) {
+        // nueva capa de ciclones por ESRI (a traves de la NOAA)
+        const activeHurricanesBothUrls = [
+            {
+                "name": "EPAT",
+                "layers": {
+                    "forecastCone": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Active_Hurricanes_v1/FeatureServer/4",
+                    "forecastPoints": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Active_Hurricanes_v1/FeatureServer/0",
+                    "forecastTrack": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Active_Hurricanes_v1/FeatureServer/2",
+                    "watchWarnings": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Active_Hurricanes_v1/FeatureServer/5",
+                    "pastTrack": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Active_Hurricanes_v1/FeatureServer/3",
+                    "pastPoints": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Active_Hurricanes_v1/FeatureServer/1"
+                }
+            }
+        ]
         const area_inestabilidad_EP = {
             // capa de inestabilidad en pacífico
             "name": "EP_Area_5d",
@@ -1007,6 +1030,13 @@ $(function() {
             height: "20px"
         };
 
+        const pointLowSymbol = {
+            type: "picture-marker",
+            url: "./img/ciclones/low.png",
+            width: "20px",
+            height: "20px"
+        };
+
         const pointStormSymbol = {
             type: "picture-marker",
             url: "./img/ciclones/tormenta.png",
@@ -1025,6 +1055,10 @@ $(function() {
             type: "unique-value",
             field: "DVLBL",
             uniqueValueInfos: [
+              {
+                value: "L",
+                symbol: pointLowSymbol
+              },
               {
                 value: "D",
                 symbol: pointDepressionSymbol
@@ -1073,7 +1107,37 @@ $(function() {
             symbol: pastTrackPointSymbol
         }
 
-        activeHurricanesEPUrls.forEach(function(hurricaneEvent) {
+        activeHurricanesBothUrls.forEach(function(hurricaneEvent) {
+            const name = hurricaneEvent["name"];
+            const layers = hurricaneEvent["layers"];
+            Object.keys(layers).forEach(function(type) {
+                const layerId = name + "_" + type;
+                var properties = {
+                    id: layerId,  
+                    opacity: 0.8,
+                    refreshInterval: 60,
+                    showLabels: true,
+                    outFields: ["*"],
+                    visible: false
+                };
+
+                if(type == "forecastPoints") {
+                    properties["labelingInfo"] = [forecastPointsLabelClass];
+                    properties["renderer"] = forecastPointsRenderer;
+                } else if(type == "forecastTrack") {
+                    properties["renderer"] = forecastTrackRenderer;
+                } else if(type == "pastTrack") {
+                    properties["renderer"] = pastTrackRenderer;
+                } else if(type == "pastPoints") {
+                    properties["renderer"] = pastTrackPointRenderer;
+                }
+
+                addFeatureLayer(map, layers[type], properties);
+            });
+        });
+
+        // desactivada para dejar solo la de ESRI
+        /* activeHurricanesEPUrls.forEach(function(hurricaneEvent) {
             const name = hurricaneEvent["name"];
             const layers = hurricaneEvent["layers"];
             Object.keys(layers).forEach(function(type) {
@@ -1101,9 +1165,9 @@ $(function() {
 
                 addFeatureLayer(map, layers[type], properties);
             });
-        });
-
-        activeHurricanesATUrls.forEach(function(hurricaneEvent) {
+        }); */
+        // desactivada para dejar solo la de ESRI
+        /* activeHurricanesATUrls.forEach(function(hurricaneEvent) {
             const name = hurricaneEvent["name"];
             const layers = hurricaneEvent["layers"];
             Object.keys(layers).forEach(function(type) {
@@ -1131,7 +1195,7 @@ $(function() {
 
                 addFeatureLayer(map, layers[type], properties);
             });
-        });
+        }); */
         // para la capa de inestabilidad
         let labelClass = {
             // Content
