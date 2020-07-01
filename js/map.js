@@ -296,7 +296,6 @@ $(function() {
                                 geometry: {latitude:temp[0],longitude:temp[1],type:"point"},
                                 symbol: graphicSymbol
                             });
-                            //console.log(event.graphic.geometry.centroid)
                             
                             setTimeout(function(){ 
                                 map.findLayerById("tempGraphics").add(graphic);
@@ -352,6 +351,12 @@ $(function() {
             );
 
             sketch.on("update", function(event){
+                //previene que el usuario siga generando polígonos hasta que haya terminado de procesar y analisar la figura dibujada
+                $(".esri-sketch__button").addClass("sketchDisabled")
+                $(".esri-sketch__button").attr("disabled","");
+                 //previene que el usuario elimine el análisis actual
+                 $(".esri-icon-trash").addClass("sketchDisabled")
+                 $(".esri-icon-trash").attr("disabled","");
                 // check if the graphics are done being moved, printout dx, dy parameters to the console.
                 const eventInfo = event.toolEventInfo;
                 //console.log(event);
