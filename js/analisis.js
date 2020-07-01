@@ -453,7 +453,7 @@ function obtenMunicipios(geometry) {
         ProjectParameters
     ) {
         $('#table-municipios table').remove();
-        $('#table-municipios label').show();
+        $('#table-municipios label').text("Cargando").show();
         id_anim_mun_cargando = setInterval(anima_mun_carga, 1000);
 
         var geometryService = new GeometryService({url: "http://rmgir.proyectomesoamerica.org/server/rest/services/Utilities/Geometry/GeometryServer"});
@@ -501,12 +501,17 @@ function creaTablaMunicipios(datos) {
     $('#table-municipios table').remove();
     $('#table-municipios label').hide();
     clearInterval(id_anim_mun_cargando);
-    $('#table-municipios').append("<table><thead><tr><td>Estado</td><td>Municipio(s)</td></tr></thead><tbody></tbody></table>")
-    estd = Object.keys(datos)
-    estd.sort();
-    for (const estado in estd) {
-        datos[estd[estado]].sort();
-        $('#table-municipios tbody').append("<tr><td>"+estd[estado]+"</td><td>"+datos[estd[estado]].join(", ")+"</td></tr>");
+    if (Object.keys(datos).length > 0) {
+        $('#table-municipios').append("<table><thead><tr><td>Estado</td><td>Municipio(s)</td></tr></thead><tbody></tbody></table>")
+        estd = Object.keys(datos)
+        estd.sort();
+        for (const estado in estd) {
+            datos[estd[estado]].sort();
+            $('#table-municipios tbody').append("<tr><td>"+estd[estado]+"</td><td>"+datos[estd[estado]].join(", ")+"</td></tr>");
+        }
+    }
+    else {
+        $('#table-municipios label').text("No hay municipios").show();
     }
 }
 function agregasComas(nStr) {
