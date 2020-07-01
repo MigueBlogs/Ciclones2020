@@ -55,7 +55,11 @@ $(function() {
             "esri/widgets/Sketch",
             "esri/layers/ImageryLayer",
             "esri/layers/support/MapImage",
-            "esri/widgets/Home"
+            "esri/widgets/Home",
+            "esri/geometry/support/geodesicUtils",
+            "esri/geometry/support/webMercatorUtils",
+            "esri/geometry/Polygon",
+            "esri/Graphic"
         ], function(
             Map,
             MapView,
@@ -65,13 +69,20 @@ $(function() {
             Sketch,
             ImageryLayer,
             MapImage,
-            Home
+            Home,
+            geodesicUtils,
+            webMercatorUtils,
+            Polygon,
+            Graphic
         ) {
             esriConfig.request.proxyUrl = "http://rmgir.cenapred.gob.mx/proxy/proxy.php";
-            const layer = new GraphicsLayer();
+            const layer = new GraphicsLayer({
+                id: "tempGraphics"
+            });
             map = new Map({
-                basemap: "hybrid",
-                layers:[layer]
+                basemap: "hybrid"
+                //,
+                // layers:[layer]
             });
             view = new MapView({
                 container: container,
@@ -82,6 +93,34 @@ $(function() {
                     rotationEnabled: false
                 }
             });
+            const textSymbol = {
+                type: "text",  // autocasts as new TextSymbol()
+                color: "white",
+                haloColor: "black",
+                haloSize: "4px",
+                text: "",
+                xoffset: 3,
+                yoffset: 3,
+                font: {  // autocast as new Font()
+                  size: 20,
+                  family: "sans-serif",
+                  weight: "bold"
+                }
+              };
+            const textSymbolPoint = {
+                type: "text",  // autocasts as new TextSymbol()
+                color: "white",
+                haloColor: "black",
+                haloSize: "4px",
+                text: "",
+                xoffset: 0,
+                yoffset: 20,
+                font: {  // autocast as new Font()
+                  size: 14,
+                  family: "sans-serif",
+                  weight: "bold"
+                }
+              };
             view.when(function(event){
                 var weather = new ImageryLayer({
                     id: "TopClouds",
@@ -182,43 +221,371 @@ $(function() {
                 }
 
                 map.add(weather);
+                //le puse 80 como valor arbitrario para que siempre esté en el TOP esta capa y se puedan hacer figuras de análisis sin problemas
+                map.add(layer,80);
             });
 
             const sketch = new Sketch({
                 layer: layer,
                 view: view,
-                // graphic will be selected as soon as it is created
-                creationMode: "update"
+                creationMode: "single"
             });           
             
       
             view.ui.add(sketch, "top-right");
                 sketch.on("create", function(event) {
-                    // check if the create event's state has changed to complete indicating
-                    // the graphic create operation is completed.
-                    if (event.state === "complete") {
-                        // remove the graphic from the layer. Sketch adds
-                        // the completed graphic to the layer by default.
-                        //layer.remove(event.graphic);
-                    
-                        // use the graphic.geometry to query features that intersect it
-                        console.log(event.graphic.geometry);
-                        realizarAnalisis(event.graphic.geometry, exceptLayers);
-                        $("#analisis").slideDown(3000);
-                        createRandomText();
+                    if(event.tool=="circle" || event.tool=="rectangle" || event.tool=="polygon"){
+                        if (event.state === "complete") {
+                            //previene que el usuario siga generando polígonos hasta que haya terminado de procesar y analisar la figura dibujada
+                            $(".esri-sketch__button").addClass("sketchDisabled")
+                            $(".esri-sketch__button").attr("disabled","");
+                            var graphicSymbol = textSymbol;
+                            realizarAnalisis(event.graphic.geometry, exceptLayers);
+                            var temp =[];
+                            event.graphic.geometry.rings[0].forEach( function(value,index){
+                                    temp.push(webMercatorUtils.xyToLngLat(value[0],value[1]));
+                                }
+                            );
+
+                            var polygon = new Polygon({rings: 
+                                [temp]
+                            })
+
+
+                            const areas = geodesicUtils.geodesicAreas([polygon], "square-kilometers");
+                            const area = areas[0].toLocaleString('es-MX', {maximumFractionDigits: 3});
+                            graphicSymbol.text ="Área: "+area+" km²";
+
+                            const graphic = new Graphic({
+                                id: event.graphic.uid,
+                                geometry: event.graphic.geometry.centroid,
+                                symbol: graphicSymbol
+                            });
+                            // debugger
+                            // console.log(graphic);
+
+                            setTimeout(function(){ 
+                                map.findLayerById("tempGraphics").add(graphic);
+                                
+                                //previene que el usuario elimine el análisis actual
+                                $(".esri-icon-trash").addClass("sketchDisabled")
+                                $(".esri-icon-trash").attr("disabled","");
+                            }, 666);  
+                            
+                            $("#analisis").slideDown(3000);
+                            createRandomText();
+                        }
+                    }else if(event.tool=="point"){
+                        if(event.state === "complete"){
+                            //previene que el usuario siga generando polígonos hasta que haya terminado de procesar y analisar la figura dibujada
+                            $(".esri-sketch__button").addClass("sketchDisabled")
+                            $(".esri-sketch__button").attr("disabled","");
+                            var graphicSymbol = textSymbolPoint;
+                            realizarAnalisis(event.graphic.geometry, exceptLayers);
+                            var temp =[];
+                            
+                            temp[0] = event.graphic.geometry.latitude;
+                            temp[1] = event.graphic.geometry.longitude;
+                            
+                            //console.log("Lat: ",temp[0].toFixed(2),"Long: ",temp[1].toFixed(2));
+                            
+                            graphicSymbol.text ="Lat: "+temp[0].toFixed(2)+", Long: "+temp[1].toFixed(2);
+                            
+                            const graphic = new Graphic({
+                                id: event.graphic.uid,
+                                geometry: {latitude:temp[0],longitude:temp[1],type:"point"},
+                                symbol: graphicSymbol
+                            });
+                            //console.log(event.graphic.geometry.centroid)
+                            
+                            setTimeout(function(){ 
+                                map.findLayerById("tempGraphics").add(graphic);
+                                //previene que el usuario elimine el análisis actual
+                                $(".esri-icon-trash").addClass("sketchDisabled")
+                                $(".esri-icon-trash").attr("disabled","");
+                            }, 666);
+                            $("#analisis").slideDown(3000);
+                            createRandomText();
+                        }
+                    }else if(event.tool=="polyline"){
+                        if (event.state === "complete") {
+                            //previene que el usuario siga generando polígonos hasta que haya terminado de procesar y analisar la figura dibujada
+                            $(".esri-sketch__button").addClass("sketchDisabled")
+                            $(".esri-sketch__button").attr("disabled","");
+                            var graphicSymbol = textSymbol;
+                            realizarAnalisis(event.graphic.geometry, exceptLayers);
+                            
+                            var temp =[];
+                            event.graphic.geometry.paths[0].forEach( function(value,index){
+                                    temp.push(webMercatorUtils.xyToLngLat(value[0],value[1]));
+                                }
+                            );
+
+                            var polygon = new Polygon({rings: 
+                                [temp]
+                            });
+
+                            const distancias = geodesicUtils.geodesicLengths([polygon], "kilometers");
+                            const distancia = distancias[0].toLocaleString('es-MX', {maximumFractionDigits: 3});
+                            graphicSymbol.text ="Distrancia: "+distancia+" km²";
+                            const graphic = new Graphic({
+                                id: event.graphic.uid,
+                                //aqui no comprendo porque tuve que cambiar las coordenadas de posición (lat por long y viceversa pero así ya las dibuja)
+                                geometry: {latitude:temp[0][1],longitude:temp[0][0],type:"point"},
+                                symbol: graphicSymbol
+                            });
+                            //debugger
+                            setTimeout(function(){ 
+                                map.findLayerById("tempGraphics").add(graphic);
+                                //debugger
+                                //previene que el usuario elimine el análisis actual
+                                $(".esri-icon-trash").addClass("sketchDisabled")
+                                $(".esri-icon-trash").attr("disabled","");
+                            }, 666);  
+                            
+                            $("#analisis").slideDown(3000);
+                            createRandomText();
+                        }
                     }
+                    
                 }
             );
+
+            sketch.on("update", function(event){
+                // check if the graphics are done being moved, printout dx, dy parameters to the console.
+                const eventInfo = event.toolEventInfo;
+                //console.log(event);
+                //Evento cuando se mueve una gráfica de lugar sobre el mapa
+                if (eventInfo && eventInfo.type.includes("move")){
+                  //se verifica el caso cuando es el movimiento de un punto
+                  if(event.graphics[0].geometry.type=="point"){
+                    if(eventInfo.type=="move-stop"){
+                        // ocultar capa de municipios
+                          let layer = map.findLayerById("municipios");
+                          layer.opacity = 0;
+                          layer.definitionExpression = "1=0";
+                        //buscamos la nueva posición
+                            var graphicSymbol = textSymbolPoint;
+                            var temp =[];
+                            
+                            temp[0] = event.graphics[0].geometry.latitude;
+                            temp[1] = event.graphics[0].geometry.longitude;
+
+                            graphicSymbol.text ="Lat: "+temp[0].toFixed(2)+", Long: "+temp[1].toFixed(2);
+
+                          // buscar capa de texto para actualizar posición
+                          map.findLayerById("tempGraphics").graphics.forEach(function(graphic){
+                              
+                              if(graphic.id==event.graphics[0].uid){
+                                  graphic.geometry = {latitude:temp[0],longitude:temp[1],type:"point"};
+                                  graphic.symbol.text=graphicSymbol.text;
+                              } 
+                          });
+                          realizarAnalisis(event.graphics[0].geometry, exceptLayers);
+                          createRandomText();
+                          $("#analisis").slideDown(3000);
+                        }
+                  }else if(event.graphics[0].geometry.type=="circle" || event.graphics[0].geometry.type=="rectangle" || event.graphics[0].geometry.type=="polygon"){
+                    if(eventInfo.type=="move-stop"){
+                    // ocultar capa de municipios
+                        let layer = map.findLayerById("municipios");
+                        layer.opacity = 0;
+                        layer.definitionExpression = "1=0";
+                        // buscar capa de texto para actualizar posición
+                        map.findLayerById("tempGraphics").graphics.forEach(function(graphic){
+                            
+                            if(graphic.id==event.graphics[0].uid){
+                                graphic.geometry = event.graphics[0].geometry.centroid;
+                            } 
+                        });
+                        realizarAnalisis(event.graphics[0].geometry, exceptLayers);
+                        createRandomText();
+                        $("#analisis").slideDown(3000);
+                    } 
+                  }else if(event.graphics[0].geometry.type=="polyline"){
+                        if(eventInfo.type=="move-stop"){
+                            // ocultar capa de municipios
+                            let layer = map.findLayerById("municipios");
+                            layer.opacity = 0;
+                            layer.definitionExpression = "1=0";
+                            //buscar nueva posición del punto para colocar el texto
+                            var temp =[];
+                            event.graphics[0].geometry.paths[0].forEach( function(value,index){
+                                    temp.push(webMercatorUtils.xyToLngLat(value[0],value[1]));
+                                }
+                            );
+
+                            var polygon = new Polygon({rings: 
+                                [temp]
+                            });
+                            
+                            // buscar capa de texto para actualizar posición
+                            map.findLayerById("tempGraphics").graphics.forEach(function(graphic){
+                                
+                                if(graphic.id==event.graphics[0].uid){
+                                    graphic.geometry = {latitude:temp[0][1],longitude:temp[0][0],type:"point"};
+                                } 
+                            });
+                            realizarAnalisis(event.graphics[0].geometry, exceptLayers);
+                            createRandomText();
+                            $("#analisis").slideDown(3000);
+                        }
+                  } 
+                }
+                //evento para cuando se modifica un polígono ya dibujado sobre el mapa
+                if (eventInfo && eventInfo.type.includes("reshape")){
+                   //console.log(eventInfo.type, eventInfo, eventInfo.dy);
+                    if(eventInfo.type=="reshape-stop"){
+                        // ocultar capa de municipios
+                        let layer = map.findLayerById("municipios");
+                        layer.opacity = 0;
+                        layer.definitionExpression = "1=0";
+                        
+                        if(event.graphics[0].geometry.type=="polyline"){
+                            //recalcula la distancia en caso de polilínea
+                            var tempPoly =[];
+                            event.graphics[0].geometry.paths[0].forEach( function(value,index){
+                                    tempPoly.push(webMercatorUtils.xyToLngLat(value[0],value[1]));
+                                }
+                            );
+
+                            var polygon = new Polygon({rings: 
+                                [tempPoly]
+                            });
+
+                            const distancias = geodesicUtils.geodesicLengths([polygon], "kilometers");
+                            const distancia = distancias[0].toLocaleString('es-MX', {maximumFractionDigits: 3});
+                            var textoNuevo ="Distrancia: "+distancia+" km²";
+
+                        }else{
+                            //recalcula el área en caso de Polígono
+                            var temp =[];
+                            event.graphics[0].geometry.rings[0].forEach( function(value,index){
+                                temp.push(webMercatorUtils.xyToLngLat(value[0],value[1]));
+                            }
+                            );
+                            var polygon = new Polygon({rings: 
+                                [temp]
+                            });
+                            const areas = geodesicUtils.geodesicAreas([polygon], "square-kilometers");
+                            const area = areas[0].toLocaleString('es-MX', {maximumFractionDigits: 3});
+                            var textoNuevo ="Área: "+area+" km²";
+                        
+                        }
+                        
+                        //busca la figura del texto y remplaza contenido
+                        map.findLayerById("tempGraphics").graphics.forEach(function(graphic){
+                            if(graphic.id==event.graphics[0].uid){
+                                graphic.symbol.text = textoNuevo;
+                                if(event.graphics[0].geometry.type=="polyline"){
+                                    graphic.geometry = {latitude:tempPoly[0][1],longitude:tempPoly[0][0],type:"point"}
+                                }else{
+                                    graphic.geometry = event.graphics[0].geometry.centroid;
+                                }
+                            } 
+                        });
+
+                        realizarAnalisis(event.graphics[0].geometry, exceptLayers);
+                        createRandomText();
+                        $("#analisis").slideDown(3000);
+                    }
+                  }
+                //evento para cuando se reescala un polígono de análisis
+                if (eventInfo && eventInfo.type.includes("scale")){
+                    //console.log(eventInfo.type, eventInfo.dx, eventInfo.dy);
+                    // if(eventInfo.type=="scale-stop"){
+                    // // ocultar capa de municipios
+                    // let layer = map.findLayerById("municipios");
+                    // layer.opacity = 0;
+                    // layer.definitionExpression = "1=0";
+                    // realizarAnalisis(event.graphics[0].geometry, exceptLayers);
+                    // createRandomText();
+                    // $("#analisis").slideDown(3000);
+                    // }
+                    if(eventInfo.type=="scale-stop"){
+                        // ocultar capa de municipios
+                        let layer = map.findLayerById("municipios");
+                        layer.opacity = 0;
+                        layer.definitionExpression = "1=0";
+                        
+                        if(event.graphics[0].geometry.type=="polyline"){
+                            //recalcula la distancia en caso de polilínea
+                            var tempPoly =[];
+                            event.graphics[0].geometry.paths[0].forEach( function(value,index){
+                                    tempPoly.push(webMercatorUtils.xyToLngLat(value[0],value[1]));
+                                }
+                            );
+
+                            var polygon = new Polygon({rings: 
+                                [tempPoly]
+                            });
+
+                            const distancias = geodesicUtils.geodesicLengths([polygon], "kilometers");
+                            const distancia = distancias[0].toLocaleString('es-MX', {maximumFractionDigits: 3});
+                            var textoNuevo ="Distrancia: "+distancia+" km²";
+
+                        }else{
+                            //recalcula el área en caso de Polígono
+                            var temp =[];
+                            event.graphics[0].geometry.rings[0].forEach( function(value,index){
+                                temp.push(webMercatorUtils.xyToLngLat(value[0],value[1]));
+                            }
+                            );
+                            var polygon = new Polygon({rings: 
+                                [temp]
+                            });
+                            const areas = geodesicUtils.geodesicAreas([polygon], "square-kilometers");
+                            const area = areas[0].toLocaleString('es-MX', {maximumFractionDigits: 3});
+                            var textoNuevo ="Área: "+area+" km²";
+                        
+                        }
+                        
+                        //busca la figura del texto y remplaza contenido
+                        map.findLayerById("tempGraphics").graphics.forEach(function(graphic){
+                            if(graphic.id==event.graphics[0].uid){
+                                graphic.symbol.text = textoNuevo;
+                                if(event.graphics[0].geometry.type=="polyline"){
+                                    graphic.geometry = {latitude:tempPoly[0][1],longitude:tempPoly[0][0],type:"point"}
+                                }else{
+                                    graphic.geometry = event.graphics[0].geometry.centroid;
+                                }
+                            } 
+                        });
+
+                        realizarAnalisis(event.graphics[0].geometry, exceptLayers);
+                        createRandomText();
+                        $("#analisis").slideDown(3000);
+                    }
+                }
+
+              });
+            
             sketch.on("delete", function(event) {
-                // fires after delete method is called
-                // returns references to deleted graphics.
                 $("#analisis").slideUp(3000);
                 // ocultar capa de municipios
-                let layer = map.findLayerById("municipios");
-                layer.opacity = 0;
-                layer.definitionExpression = "1=0";
-            });
+                let layerColor = map.findLayerById("municipios");
+                layerColor.opacity = 0;
+                layerColor.definitionExpression = "1=0";
 
+                event.graphics.forEach(function(graphic){
+                    if(graphic.id==null){
+                        //Si es un polígono busca el texto en el layer.graphics que tengan por igual el uid(polygon) y el id(texto)
+                        layer.graphics.forEach(function(graficoTexto){
+                            if(graphic.uid==graficoTexto.id){
+                                layer.graphics.remove(graficoTexto);
+                            }
+                        });
+                    }else{
+                        //Si es texto busca el polígono en el layer.graphics que tenga por igual el id(texto) y el uid(polygon)
+                        layer.graphics.forEach(function(graficoPolygon){
+                            if(graphic.id==graficoPolygon.uid){
+                                layer.graphics.remove(graficoPolygon);
+                            }
+                        });
+                    }
+                  console.log("deleted", graphic)
+                });
+            });
             view["ui"]["components"] = ["attributtion"];
             view.when(function() {
                 loadCiclones(map);
@@ -486,15 +853,18 @@ $(function() {
         });
            
     }  
+    function disabledButtons(){
 
-    function addFeatureLayer(map, url, properties, renderer = null) {
+    }
+
+    function addFeatureLayer(map, url, properties, renderer = null,index=0) {
         require([
             "esri/layers/FeatureLayer"
         ], function(
             FeatureLayer
         ) {
             const layer = new FeatureLayer(url, properties);
-            map.add(layer);
+            map.add(layer,index);
         });
     }
 
