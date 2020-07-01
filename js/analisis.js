@@ -454,6 +454,7 @@ function obtenMunicipios(geometry) {
     ) {
         $('#table-municipios table').remove();
         $('#table-municipios label').text("Cargando").show();
+        $('.loading-gif img').show();
         id_anim_mun_cargando = setInterval(anima_mun_carga, 1000);
 
         var geometryService = new GeometryService({url: "http://rmgir.proyectomesoamerica.org/server/rest/services/Utilities/Geometry/GeometryServer"});
@@ -496,7 +497,11 @@ function obtenMunicipios(geometry) {
                 //Vulve a funcionar el sketch
                 $(".esri-sketch__button").removeClass("sketchDisabled");
                 $(".esri-sketch__button").removeAttr("disabled","");
+                $('.loading-gif img').hide();
             });
+        }).catch(function(error){
+            $('#table-municipios label').text("El área es demasiado grande").show();
+            $('.loading-gif img').hide();
         });
     });
 }

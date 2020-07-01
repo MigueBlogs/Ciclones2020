@@ -362,6 +362,9 @@
                 </div>
             </div>
             <div id="map">
+                <div class="loading-gif">
+                    <img src="./img/loading.gif" alt="Cargando" style="display: none;">
+                </div>
                 <div class="cnpc-logos">
                     <img src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/SSyPC_CNPC_h.png" alt="CENACOM">
                 </div>

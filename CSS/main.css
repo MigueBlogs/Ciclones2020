@@ -212,6 +212,15 @@ optgroup[label="Atlántico"] {
 optgroup[label="Pacífico"] {
     background-color: mediumaquamarine;
 }
+.loading-gif {
+    position: absolute;
+    right: 60px;
+    top: 72px;
+}
+.loading-gif img {
+    width: 25px;
+    height: 25px;
+}
 #timeDiv {
     position: absolute;
     bottom: 15px;
