@@ -42,6 +42,7 @@ ion-icon {
     padding: .5em;
   }
 
+
 .buttonGreen:hover {background-color: #0C231E}
 
 .buttonGreen:active {
@@ -67,6 +68,13 @@ flex: 30%;
     height: auto;
     max-height: 5em;
     margin-top: 1rem;
+}
+
+.sketchDisabled:hover{
+    background-color: unset !important;
+    color:rgba(110,110,110,0.4) !important;
+    cursor: wait !important;
+    outline: unset !important;
 }
 
 .guinda {

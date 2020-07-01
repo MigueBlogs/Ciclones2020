@@ -418,13 +418,13 @@ function realizarAnalisis(geo, exceptLayers = []){
     else {
         if(queryPromises.length > 0){
             queryPromises.forEach(function(query){
-                console.log("cancelando", query);
+                //console.log("cancelando", query);
                 query=null;
             })
         }
         if(queryTaskPobArray.length > 0){
             queryTaskPobArray.forEach(function(query){
-                console.log("cancelando Pob", query);
+                //console.log("cancelando Pob", query);
                 query=null;
             })
         }
@@ -481,6 +481,9 @@ function obtenMunicipios(geometry) {
             geometryService.project(params).then(function(r) {
                 layer.definitionExpression = "OBJECTID in ("+ids.join()+")";
                 layer.opacity = 0.5;
+                //Vulve a funcionar el sketch
+                $(".esri-sketch__button").removeClass("sketchDisabled");
+                $(".esri-sketch__button").removeAttr("disabled","");
             });
         });
     });
@@ -560,7 +563,7 @@ document.addEventListener('urls-listas', function(response){
                     });
                     resultados[key] = JSON.stringify(gradoVulnerabilidadSocial);
                     resultadosAnalisis++;
-                    console.log("esto es result Analisis: ",resultadosAnalisis);
+                    //t Analisis: ",resultadosAnalisis);
                 } else if(tiposAnalisisEspecial["LenguasIndigenas"] && tiposAnalisisEspecial["LenguasIndigenas"].includes(key)){
                     processResultLenguas(result[idx], urls[key], queryParams[key].outFields);
                 } else {
@@ -579,9 +582,9 @@ document.addEventListener('urls-listas', function(response){
 });
 
 document.addEventListener('lenguas-obtenidas', function(){
-    console.log("Lenguas obtenidas. ESCUCHADO")
+    //console.log("Lenguas obtenidas. ESCUCHADO")
     resultadosAnalisis++;
-    console.log("esto es result Analisis: ",resultadosAnalisis);
+    //console.log("esto es result Analisis: ",resultadosAnalisis);
     if(resultadosAnalisis === Object.keys(tiposAnalisisEspecial).length){
         
         var evt = new CustomEvent('analisis-completo', { 'detail': resultados });
@@ -603,7 +606,7 @@ document.addEventListener('poblacion-obtenida', function(){
     resultados["TotalMayor60F"] = TotalMayor60F;
     resultados["TotalMayor60M"] = TotalMayor60M;
     resultadosAnalisis++;
-    console.log("esto es result Analisis: ",resultadosAnalisis);
+    //console.log("esto es result Analisis: ",resultadosAnalisis);
 
     if(resultadosAnalisis === Object.keys(tiposAnalisisEspecial).length){
         
@@ -612,7 +615,7 @@ document.addEventListener('poblacion-obtenida', function(){
     }
 })
 document.addEventListener('analisis-completo', function(result){
-    console.log(result);
+    //console.log(result);
     clearInterval(randomTextInterval);
     $("#Poblacion .resultNumber").text(agregasComas(result.detail["Poblacion"]));
     $("#Viviendas .resultNumber").text(agregasComas(result.detail["Viviendas"]));
