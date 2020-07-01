@@ -14,7 +14,37 @@ var lastVertex;
 
 var exceptLayers = ["PoblacionITER"];
 
+var hour_delta = 0;
+var timeExtentChanger;
+var nubes_error = false;
+
 $(function() {
+    function changeTimeExtent(){
+        let today = new Date();
+        let end = new Date(today);
+        end.setMinutes(end.getMinutes() - (end.getMinutes() % 10 + 20));
+        end.setSeconds(0);
+        end.setMilliseconds(0);
+
+        let start = new Date(end);
+        start.setDate(today.getDate()-1);
+        
+        start.setHours(start.getHours() + 1);
+        let start_temp = new Date(start);
+        start_temp.setHours(start_temp.getHours() + hour_delta);
+        $('#timeDiv p').text("Nubes: " + start_temp.toLocaleString());
+        
+        hour_delta += 1;
+        if (hour_delta > 23){
+            hour_delta = 0
+        }
+        let layer = map.findLayerById("TopClouds");
+        layer.timeExtent = {
+            start: start_temp,
+            end: start_temp,
+            useViewTime: false,
+        };
+    }
     function loadMap(container) {
         require([
             "esri/Map",
@@ -103,36 +133,18 @@ $(function() {
                 });
                 weather.when(
                     function(){
-                        let tmp = 0;
-                        setInterval(function(){
-                            let today = new Date();
-                            let end = new Date(today);
-                            end.setMinutes(end.getMinutes() - (end.getMinutes() % 10 + 20));
-                            end.setSeconds(0);
-                            end.setMilliseconds(0);
-
-                            let start = new Date(end);
-                            start.setDate(today.getDate()-1);
-                            
-                            start.setHours(start.getHours() + 1);
-                            let start_temp = new Date(start);
-                            start_temp.setHours(start_temp.getHours() + tmp);
-                            $('#timeDiv p').text("Nubes: " + start_temp.toLocaleString());
-                            
-                            tmp += 1;
-                            if (tmp > 23){
-                                tmp = 0
-                            }
-                            let layer = map.findLayerById("TopClouds");
-                            layer.timeExtent = {
-                                start: start_temp,
-                                end: start_temp,
-                                useViewTime: false,
-                            };
-                        }, 2000);
+                        timeExtentChanger = setInterval(changeTimeExtent, 2000);
+                        nubes_error = false;
                     },
                     function(error){
-                        alert("Hubo un problema al cargar la información de nubes. Te pedimos refrescar la página.")
+                        nubes_error = true;
+                        $('#nubes-checkbox').prop("checked", false).attr("disabled", true);
+                        $('#timeDiv p')
+                            .css("background-color", "red")
+                            .css("color", "white")
+                            .text("Hubo un problema al cargar la información de nubes. Te pedimos refrescar la página.");
+                        console.log(error);                        
+                        // alert("Hubo un problema al cargar la información de nubes. Te pedimos refrescar la página.")
                     }
                 )
                 //console.log(weather);
@@ -1763,6 +1775,21 @@ $(function() {
             $("#activeEvents").html('');
         }
     });
+
+    $('#nubes-checkbox').on('change', function(){
+        if (nubes_error) {
+            return;
+        }
+        let layer = map.findLayerById("TopClouds");
+        layer.visible = this.checked;
+        $('#timeDiv p').toggle();
+        if (this.checked){
+            timeExtentChanger = setInterval(changeTimeExtent, 2000);
+        }
+        else {
+            clearInterval(timeExtentChanger);
+        }
+    })
 
     loadMap("map");
     //getAutoresDefault();

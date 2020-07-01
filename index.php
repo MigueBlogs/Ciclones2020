@@ -164,6 +164,14 @@
                     </ol>
                 </div>
             </div>
+            <button type="button" class="collapsible active">Leyenda</button>
+            <div class="content" style="display: block;">
+                <ol style="font-size: 0.8rem;list-style-type: none;padding-left:0;">
+                    <li><s style="color: gray;">Evento</s> Evento pasado</li>
+                    <li><span style="color: green;">Evento</span> Evento activo</li>
+                    <li class="siguiente">Evento <span style="color:black!important;">Evento esperado</span></li>
+                </ol>
+            </div>
         </div>
         <div id="map-container">
             <div id="stormLabel">
@@ -186,6 +194,18 @@
                 </div>
             </div>
             <div id="timeDiv">
+                <div style="display: grid; grid-template-columns: 20% 80%; text-align:center; padding: 3px;">
+                    <div style="padding: 2px;">
+                        <span class="material-icons">wb_cloudy</span>
+                    </div>
+                    <div style="padding: 5px;">
+                        <!-- <label style="font-size: smaller;">Apag/Enc</label> -->
+                        <label class="switch" style="vertical-align: middle;">
+                            <input type="checkbox" id="nubes-checkbox" checked> 
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
                 <p style="margin: 0; padding: 5px; font-size: smaller;">Cargando...</p>
             </div>
             <div id="analisis" style="display:none;">
@@ -336,7 +356,7 @@
                     <a href="#" id="csvPob" class="a-datos">Descarga esta información en formato .CSV</a>
                     <div id="table-municipios" class="tabla-datos" style="text-align:center;">
                         <p style="background-color: white; color: black;">Lista de municipios por estado dentro del análisis</p>
-                        <label>Cargando...</label>
+                        <label>Cargando.</label>
                     </div>
                     <a href="#" id="csvMun" class="a-datos">Descarga esta lista en formato .CSV</a>
                 </div>
