@@ -33,6 +33,9 @@ $(function(){
     $(".buttonCloseTable").on('click',function(){
         $("#analisis").slideUp(3000);
     });
+    // $("#muestraTablaEdos").on('click',function(){
+    //     $("#showTableEdos").slideDown(3000);
+    // });
     //Elimina los elementos de "title" de ionicon de todos los elementos
     setTimeout(function(){
         $("ion-icon").each(function(){this.shadowRoot.querySelector('div').querySelector('svg').querySelector('title').remove()});

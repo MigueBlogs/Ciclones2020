@@ -32,7 +32,7 @@ $(function() {
         start.setHours(start.getHours() + 1);
         let start_temp = new Date(start);
         start_temp.setHours(start_temp.getHours() + hour_delta);
-        $('#timeDiv p').text("Nubes: " + start_temp.toLocaleString());
+        $('#timeDiv p').text(start_temp.getDate()+"/"+ start_temp.getMonth()+"/"+ start_temp.getFullYear() +"\n"+ start_temp.getHours()+":"+start_temp.getMinutes()+":"+start_temp.getSeconds()+"0");
         
         hour_delta += 1;
         if (hour_delta > 23){
@@ -862,14 +862,19 @@ $(function() {
 
     }
 
-    function addFeatureLayer(map, url, properties, renderer = null,index=0) {
+    function addFeatureLayer(map, url, properties,index=0) {
         require([
             "esri/layers/FeatureLayer"
         ], function(
             FeatureLayer
         ) {
             const layer = new FeatureLayer(url, properties);
-            map.add(layer,index);
+            if(index==0){
+                map.add(layer);
+            }else if(index > 0){
+                map.add(layer,index);
+            }
+            
         });
     }
 
@@ -1643,7 +1648,7 @@ $(function() {
         };
     
         const url = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/MEX_ES/MapServer/3";
-        addFeatureLayer(map, url, prop);
+        addFeatureLayer(map, url, prop,1);
     }
 
     function changeColoredRegions(map) {
@@ -1851,7 +1856,7 @@ $(function() {
         }
         let layer = map.findLayerById("TopClouds");
         layer.visible = this.checked;
-        $('#timeDiv p').toggle();
+        $('#timeDiv p').text("Capa \nApagada");
         if (this.checked){
             timeExtentChanger = setInterval(changeTimeExtent, 2000);
         }
