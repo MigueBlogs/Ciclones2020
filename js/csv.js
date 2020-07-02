@@ -53,14 +53,25 @@ $(document).ready(function () {
     // });
     $("#muestraTabla").on('click', function(event){
         if($("#showTable").is(":visible")){
-            $("#muestraTabla").text("Más información");
+            $("#muestraTabla").text("+Población por edo.");
             $("#showTable").slideUp(2000);
         }else{
-            $("#muestraTabla").text("Muestrar menos");
+            $("#muestraTabla").text("-Población por edo.");
             generaTabla(pobTotalXEstado);
             $("#showTable").slideDown(2000);
         }
     });
+    $("#muestraTablaEdos").on('click', function(event){
+        if($("#showTableEdos").is(":visible")){
+            $("#muestraTablaEdos").text("+Lista de Municipios");
+            $("#showTableEdos").slideUp(2000);
+        }else{
+            $("#muestraTablaEdos").text("-Lista de Municipios");
+            //generaTabla(pobTotalXEstado);
+            $("#showTableEdos").slideDown(2000);
+        }
+    });
+
 });
 
 function generaTabla(arr){

@@ -198,7 +198,7 @@
                     <div style="padding: 2px;">
                         <span class="material-icons">wb_cloudy</span>
                     </div>
-                    <div style="padding: 5px;">
+                    <div style="padding: 5px;">&nbsp;
                         <!-- <label style="font-size: smaller;">Apag/Enc</label> -->
                         <label class="switch" style="vertical-align: middle;">
                             <input type="checkbox" id="nubes-checkbox" checked> 
@@ -218,7 +218,7 @@
                                     <ion-icon style="font-size: 70px;" name="people-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
-                                    Población:<br><span class="resultNumber"></span><br><button id="muestraTabla" class="buttonGreen">Más información</button>
+                                    Población: <span class="resultNumber"></span><br><button id="muestraTabla" class="buttonGreen">+Población por edo.</button><button id="muestraTablaEdos" class="buttonGreen">+Lista de Municipios</button>
                                 </div>
                             </div>
                         </th>
@@ -352,8 +352,11 @@
                 </table>
                 <div id="showTable" style="display:none">
                     <br>
-                    <div id="table-container" class="tabla-datos"></div>
-                    <a href="#" id="csvPob" class="a-datos">Descarga esta información en formato .CSV</a>
+                    <div id="table-container" class="tabla-datos">
+                    </div>
+                        <a href="#" id="csvPob" class="a-datos">Descarga esta información en formato .CSV</a>
+                </div>
+                <div id="showTableEdos" style="display:none">
                     <div id="table-municipios" class="tabla-datos" style="text-align:center;">
                         <p style="background-color: white; color: black;">Lista de municipios por estado dentro del análisis</p>
                         <label>Cargando.</label>
