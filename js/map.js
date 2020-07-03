@@ -14,6 +14,8 @@ var lastVertex;
 
 var exceptLayers = ["PoblacionITER"];
 
+var lastGeometry;
+
 var hour_delta = 0;
 var timeExtentChanger;
 var nubes_error = false;
@@ -240,6 +242,7 @@ $(function() {
                             $(".esri-sketch__button").addClass("sketchDisabled")
                             $(".esri-sketch__button").attr("disabled","");
                             var graphicSymbol = textSymbol;
+                            lastGeometry = event.graphic.geometry;
                             realizarAnalisis(event.graphic.geometry, exceptLayers);
                             var temp =[];
                             event.graphic.geometry.rings[0].forEach( function(value,index){
@@ -280,6 +283,7 @@ $(function() {
                             //previene que el usuario siga generando polígonos hasta que haya terminado de procesar y analisar la figura dibujada
                             $(".esri-sketch__button").addClass("sketchDisabled")
                             $(".esri-sketch__button").attr("disabled","");
+                            lastGeometry = event.graphic.geometry;
                             var graphicSymbol = textSymbolPoint;
                             realizarAnalisis(event.graphic.geometry, exceptLayers);
                             var temp =[];
@@ -312,6 +316,7 @@ $(function() {
                             $(".esri-sketch__button").addClass("sketchDisabled")
                             $(".esri-sketch__button").attr("disabled","");
                             var graphicSymbol = textSymbol;
+                            lastGeometry = event.graphic.geometry;
                             realizarAnalisis(event.graphic.geometry, exceptLayers);
                             
                             var temp =[];

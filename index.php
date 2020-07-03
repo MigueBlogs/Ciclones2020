@@ -296,7 +296,7 @@
                         </td>
                         <td id="Hospitales">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" id="Hospitales" data-sources="Hospitales">
                                     <ion-icon name="medkit-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -376,6 +376,35 @@
     </div>
     
     <button id="botonTop" type="button" class="boton-volver" style="display: none;"><ion-icon name="arrow-up-outline"></ion-icon></button>
+    <!-- Feature Table template  -->
+  <script id="featureTable-template" type="text/x-handlebars-template">
+    <a title="Cerrar" href="#" class="ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-notext closeFeatures" style="border:none;margin:0"></a>
+    <div class="tabs-container">
+      <ul class="tabs">
+        {{#each features}}
+          {{#if @first}}
+            <li class="tabs__item active" data-feature="{{this.shortName}}" data-parent="{{this.parent}}" data-layerId="{{this.layerId}}">{{this.name}}</li>
+          {{else}}
+            <li class="tabs__item" data-feature="{{this.shortName}}" data-parent="{{this.parent}}" data-layerId="{{this.layerId}}">{{this.name}}</li>
+          {{/if}}
+        {{/each}}
+      </ul>
+      <div class="panels">
+        {{#each features}}
+          {{#if @first}}
+            <div class="panels__item active">
+              <div id="panels__item-{{this.shortName}}"></div>
+            </div>
+          {{else}}
+            <div class="panels__item">
+              <div id="panels__item-{{this.shortName}}"></div>
+            </div>
+          {{/if}}
+        {{/each}}
+      </div>
+    </div>
+    <div><a href='#' id="downloadFeature">Descargar CSV</a></div>
+  </script>
     <script id="stormsActiveEP-template" type="text/x-handlebars-template">
 		{{#each storms as |storm|}}
 			{{#if @first}}
@@ -398,7 +427,7 @@
 	</script>
     <script src="js/map.js"></script>	
     <script src="js/funciones.js"></script>
-    <!-- <script src="js/TOC.js"></script> -->
+    <script src="js/features.js"></script>
     <script src="js/analisis.js"></script>
     <script src="js/csv.js"></script>
     <script>

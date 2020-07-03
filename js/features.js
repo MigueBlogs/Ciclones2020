@@ -59,7 +59,7 @@ $(function(){
             });
         }
         if($(clicked).hasClass("clicked") && lastGeometry){
-            showElem();
+            //showElem();
             var sourcesClicked = $(clicked).attr("data-sources");
             var sources = sourcesClicked.split("/").map(function(source){ return {name: source, shortName: source.split(" ").join("")} });
 
@@ -96,11 +96,11 @@ $(function(){
                     $(".clicked").click();
                 });
 
-                showElem();
+                //showElem();
                 sourcesClicked.split("/").forEach(function(source){
                     mostrarFeaturesDentro(lastGeometry, featureLayer_urls[source], source, true);
                 });
-                hideElem();
+                //hideElem();
             }
         } else {
             sistemaExpuestoActivo = "";
@@ -112,7 +112,7 @@ $(function(){
 
     function borrarCapas(){
         Object.keys(featureLayer_urls).forEach(function(key){
-            if(map.getLayer(key))
+            if(map.findLayerById(key))
                 map.removeLayer(map.getLayer(key));
         })
     }
@@ -243,14 +243,15 @@ function crearTablaSeleccion(url, geometry, sources, filter) {
 }
 
 function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
+    
     require([
         "esri/layers/FeatureLayer",
-        "esri/dijit/FeatureTable",
-        "esri/tasks/query",
+        "esri/widgets/FeatureTable",
+        "esri/tasks/support/Query",
         "esri/tasks/QueryTask",
         "esri/geometry/Circle",
-        "esri/graphic",
-        "esri/InfoTemplate",
+        "esri/Graphic",
+        "esri/PopupTemplate",
         "esri/symbols/PictureMarkerSymbol",
         "esri/symbols/SimpleMarkerSymbol",
         "esri/symbols/SimpleLineSymbol",
@@ -275,25 +276,48 @@ function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
             Color
         ){
 
-        var attributes = {
-            outFields: ["*"],
-            mode: FeatureLayer.MODE_ONDEMAND,
-            visible: visible,
-            infoTemplate: new InfoTemplate("Feature", "${*}"),
-            id: name
-        };
+        // var attributes = {
+        //     outFields: ["*"],
+        //     mode: FeatureLayer.MODE_ONDEMAND,
+        //     visible: visible,
+        //     infoTemplate: new InfoTemplate("Feature", "${*}"),
+        //     id: name
+        // };
+
+        var template = {
+            // autocasts as new PopupTemplate()
+            title: "Detalles:",
+            content: getInfo,
+            outFields: ["*"]
+            };
+        function getInfo(feature) {
+            var graphic, attributes, content;
+            graphic = feature.graphic;
+            attributes = graphic.attributes;
+            console.log(attributes);
+            var result ="";
+            Object.keys(attributes).forEach(function(key){
+                
+                result = result+key+': '+attributes[key]+'<br>';
+            });
+            content =  result;
+            
+            return content;
+            }
 
         if(name == "Escuelas") {
             attributes["definitionExpression"] = "NIVEL = '" + filter + "'";
         }
 
-        var featureLayer = new FeatureLayer(url, attributes);
+        var featureLayer = new FeatureLayer(url);
+        featureLayer.popupTemplate = template;
         
         featureLayer.on("error", function(error){
             console.log("Ocurrió un error", error);
         })
-
-        featureLayer.on("load", function(){
+        
+        featureLayer.load().then(function(){
+            
             var queryTask = new QueryTask(url);
             var queryFeature = new Query();
             queryFeature.geometry = geometry;
@@ -318,11 +342,12 @@ function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
             }
             queryFeature.where = act;
 
-            queryTask.on("error", function(error){
-                alert("Ocurrió un error", error);
-            })
-
-            queryTask.executeForIds(queryFeature,function(results){
+            // queryTask.on("error", function(error){
+            //     alert("Ocurrió un error", error);
+            // })
+            
+            queryTask.executeForIds(queryFeature).then(function(results){
+                
                 if(!results){
                     console.log("Sin resultados", name.split(" ").join(""));
                     $("#panels__item-" + name.split(" ").join("")).text("Sin resultados");
@@ -331,8 +356,9 @@ function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
                     var noResults = results.length;
                     var defExp = getQuery(results, featureLayer.objectIdField);
 
-                    featureLayer.setDefinitionExpression(defExp);
-                    map.addLayer(featureLayer);
+                    featureLayer.definitionExpression=defExp;
+                    console.log(featureLayer)
+                    map.add(featureLayer,90);
                     var layerAdd = map.on('update-end', function(){
                         console.log("Capa agregada");
                         loadFetureTable(featureLayer, name, noResults)
@@ -340,7 +366,7 @@ function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
                     })
                 }
             });
-        })
+        });
     })
 }
 
