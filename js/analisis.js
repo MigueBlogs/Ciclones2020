@@ -500,7 +500,11 @@ function obtenMunicipios(geometry) {
                 $('.loading-gif img').hide();
             });
         }).catch(function(error){
+            clearInterval(id_anim_mun_cargando);
             $('#table-municipios label').text("El área es demasiado grande").show();
+            //Vulve a funcionar el sketch
+            $(".esri-sketch__button").removeClass("sketchDisabled");
+            $(".esri-sketch__button").removeAttr("disabled","");
             $('.loading-gif img').hide();
         });
     });

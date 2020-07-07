@@ -32,7 +32,7 @@ $(function() {
         start.setHours(start.getHours() + 1);
         let start_temp = new Date(start);
         start_temp.setHours(start_temp.getHours() + hour_delta);
-        $('#timeDiv p').text(start_temp.getDate()+"/"+ start_temp.getMonth()+"/"+ start_temp.getFullYear() +"\n"+ start_temp.getHours()+":"+start_temp.getMinutes()+":"+start_temp.getSeconds()+"0");
+        $('#timeDiv p').text(start_temp.toLocaleDateString() +"\n"+ start_temp.toLocaleTimeString());
         
         hour_delta += 1;
         if (hour_delta > 23){
@@ -59,7 +59,8 @@ $(function() {
             "esri/geometry/support/geodesicUtils",
             "esri/geometry/support/webMercatorUtils",
             "esri/geometry/Polygon",
-            "esri/Graphic"
+            "esri/Graphic",
+            "esri/layers/FeatureLayer"
         ], function(
             Map,
             MapView,
@@ -73,7 +74,8 @@ $(function() {
             geodesicUtils,
             webMercatorUtils,
             Polygon,
-            Graphic
+            Graphic,
+            FeatureLayer
         ) {
             esriConfig.request.proxyUrl = "http://rmgir.cenapred.gob.mx/proxy/proxy.php";
             const layer = new GraphicsLayer({
@@ -122,6 +124,49 @@ $(function() {
                 }
               };
             view.when(function(event){
+
+                function getInfo(feature) {
+                    var attributes = feature.graphic.attributes;
+                    var result = "";
+                    Object.keys(attributes).forEach(function(key){
+                        if (key == "objectid") {
+                            return;
+                        }
+                        result = result + key + ': ' + attributes[key] + '<br>';
+                    });
+                    return result;
+                }
+                
+                var properties = {
+                    id: "refugios",  
+                    opacity: 1,
+                    showLabels: true,
+                    outFields: ["*"],
+                    visible: false,
+                    definitionExpression: "1=0",
+                    renderer: {
+                        type: "simple",  // autocasts as new SimpleRenderer()
+                        symbol: {
+                            type: "simple-marker",  // autocasts as new SimpleMarkerSymbol()
+                            size: 5,
+                            color: "red",
+                            outline: {  // autocasts as new SimpleLineSymbol()
+                                width: 0.5,
+                                color: "white"
+                            }
+                        }
+                    },
+                    popupTemplate: {
+                        title: "Detalles:",
+                        content: getInfo,
+                        outFields: ["*"]
+                    }
+                };
+                
+                const refugiosURL = "http://rmgir.proyectomesoamerica.org/server/rest/services/Hosted/RefugiosTemporalesCT/FeatureServer/0";
+
+                addFeatureLayer(map, refugiosURL, properties);
+
                 var weather = new ImageryLayer({
                     id: "TopClouds",
                     url: "https://satellitemaps.nesdis.noaa.gov/arcgis/rest/services/WST13_Last_24hr/ImageServer",
@@ -133,6 +178,9 @@ $(function() {
                 });
                 weather.when(
                     function(){
+                        if (!$('#nubes-checkbox').is(":checked")){
+                            return;
+                        }
                         timeExtentChanger = setInterval(changeTimeExtent, 2000);
                         nubes_error = false;
                     },
@@ -962,51 +1010,38 @@ $(function() {
         });
     }
 
-    function searchCicloneCones(map, mapView) {
-        const conesLayers = map.layers["items"].filter(function(item) {
-            return item["id"].indexOf("Cone") != -1;
-        });
-
-        const forecastPointsLayers = map.layers["items"].filter(function(item) {
-            return item["id"].indexOf("forecastPoints") != -1;
-        });
-
-        var activeConesPromises = [];
+    function searchCicloneCones(map, mapView) {    
         var activeConesAT = [];
         var activeConesEP = [];
-        conesLayers.forEach(function(layer) {
-            activeConesPromises.push(layer.queryFeatures());
-        });
+        let EPAT = map.findLayerById("EPAT_forecastCone");
 
-        forecastPointsLayers.forEach(function(layer) {
-            activeConesPromises.push(layer.queryFeatures());
-        });
-
-        Promise.all(activeConesPromises).then(function(results) {
-            results.forEach(function(result, resultIdx) {
-                if(resultIdx < conesLayers.length && result["features"].length) {
-                    // debugger;
-                    var eventActive = result["features"][0]["layer"]["id"].split("_")[0];
-                    let sea = result["features"][0]["attributes"]["BASIN"];
-                    if (sea == "EP"){
-                        activeConesEP.push({
-                            stormname: result["features"][0]["attributes"]["STORMNAME"],
-                            stormtype: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["STORMTYPE"],
-                            geometry: result["features"][0]["geometry"],
-                            maxwind: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["maxwind"],
-                            layerid: conesLayers[resultIdx]["id"]
-                        });
-                    }
-                    else {
-                        activeConesAT.push({
-                            stormname: result["features"][0]["attributes"]["STORMNAME"],
-                            stormtype: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["STORMTYPE"],
-                            geometry: result["features"][0]["geometry"],
-                            maxwind: results[conesLayers.length + resultIdx]["features"][0]["attributes"]["maxwind"],
-                            layerid: conesLayers[resultIdx]["id"]
-                        });
-                    }
+        EPAT.queryFeatures().then(function(results) {
+            
+            results["features"].forEach(function(result, resultIdx) {
+                
+                // debugger;
+                //var eventActive = result["layer"]["id"].split("_")[0];
+                let sea = result["attributes"]["BASIN"];
+                
+                if (sea == "EP"){
+                    activeConesEP.push({
+                        stormname: result["attributes"]["STORMNAME"],
+                        stormtype: result["attributes"]["STORMTYPE"],
+                        geometry: result["geometry"],
+                        maxwind: result["attributes"]["maxwind"],
+                        layerid: result["layer"]["id"]
+                    });
                 }
+                else {
+                    activeConesAT.push({
+                        stormname: result["attributes"]["STORMNAME"],
+                        stormtype: result["attributes"]["STORMTYPE"],
+                        geometry: result["geometry"],
+                        maxwind: result["attributes"]["maxwind"],
+                        layerid: result["layer"]["id"]
+                    });
+                }
+                
             });
 
             var templateSource = $("#stormsActiveEP-template").html();
@@ -1027,26 +1062,20 @@ $(function() {
                 let select = $(this);
                 require([
                     "esri/tasks/GeometryService",
-                    "esri/tasks/support/ProjectParameters"
+                    "esri/tasks/support/ProjectParameters",
+                    "esri/tasks/support/Query"
                 ], function(
                     GeometryService,
-                    ProjectParameters
+                    ProjectParameters,
+                    Query
                 ) {
                     
-                    var layerid = $(select).children("option:selected").attr("data-layerid");
-                    
+                    var layerid = "EPAT_forecastCone";
+                    var EP_storm = $("#stormsActive").children("option:selected").val();
+                    var AT_storm = $("#stormsActive2").children("option:selected").val();
                     //si no hay Evento en la selección
-                    if(!layerid) {
-                        $("#type").text("");
-                        $("#sea").text("");
-                        $("#name").text("");
-                        $(".TitleOceano").text("");
-                        $(".TitleTipo").text('');
-                        // $('#tablaEdos1 > tbody').html("");
-	                    // $('#tablaEdos2 > tbody').html("");
-                        $("#regiones").hide();
-                        $("#mostrar").hide();
-                        $('#tablaEditar').show();
+                    if(EP_storm == undefined && AT_storm == undefined) {
+                        
                         let ocean = $(select).attr("ocean");
                         map.allLayers.map(function(layer) {
                             if (layer["id"] == "EP_Area_5d_area" || layer["id"] == "EP_Area_5d_label"){
@@ -1056,19 +1085,98 @@ $(function() {
                                 layer.visible = false;
                             }
                             else if (ocean == "P" && layer["id"].indexOf("EP") != -1){
-                                layer.visible = false;
+                                console.log(layer["id"]);
                             }
                         });
                         return;
-                    }else{//si existe el evento muestra la tabla correspondiente
-                        $("#regiones").hide();
-                        $("#mostrar").hide();
-                        $('#tablaEditar').show();
                     }
+                    let tormentas = []
+                    if (EP_storm) {tormentas.push(EP_storm)}
+                    if (AT_storm) {tormentas.push(AT_storm)}
 
-                    var layer = map.findLayerById(layerid);
+                    // let query = new Query();
+                    // query.returnGeometry = true;
+                    // query.outFields = [ "*" ];
+                    // query.outSpatialReference = view["spatialReference"];
+                    // query.where = "STORMNAME in ('" + tormentas.join("','") + "')";
+
+                    //var layer = map.findLayerById(layerid);
                     var event = layerid.split("_")[0];
 
+                    map.allLayers.map(function(layer) {
+                        if (layer["id"] == "EP_Area_5d_area" || layer["id"] == "EP_Area_5d_label"){
+                            return;
+                        }
+                        if(layer["id"].indexOf(event) != -1){
+                            layer.definitionExpression = "STORMNAME in ('" + tormentas.join("','") + "')";
+                            layer.visible = true;  
+                        } 
+                        // else if(layer["id"].indexOf("AT") != -1 || layer["id"].indexOf("EP") != -1) {
+                        //     layer.visible = false;
+                        // }
+                    });
+
+                    var coneActive = activeConesAT.filter(function(activeConesAT) { 
+                        //debugger;
+                        if(activeConesAT["stormname"] == AT_storm) return activeConesAT; 
+                    })[0];
+                    
+                    var coneActive2 = activeConesEP.filter(function(activeConesEP) {
+                        //debugger;
+                        if(activeConesEP["stormname"] == EP_storm) return activeConesEP; 
+                    })[0];
+
+                    let geometries = [];
+
+                    if (coneActive) {
+                        geometries.push(coneActive["geometry"])
+                    }
+                    if (coneActive2) {
+                        geometries.push(coneActive2["geometry"])
+                    }
+
+                    if (geometries.length == 0) {
+                        $('#vientos-div').hide();
+                        map.findLayerById("area_34KtWinds").visible = false;
+                        return;
+                    }
+                    $('#vientos-div').show();
+                    if ($("#vientos-checkbox").is(":checked")){
+                        map.findLayerById("area_34KtWinds").visible = true;
+                    }
+                    
+                    var geometryService = new GeometryService({ url: "http://rmgir.proyectomesoamerica.org/server/rest/services/Utilities/Geometry/GeometryServer" });
+                    geometryService.union(geometries).then(function(res) { 
+                        if(res && res.extent) {
+                            let extent = res.extent.expand(1.5);
+            
+                            view.extent = extent;
+                        }
+                    })
+                })
+            });
+            function seleccion_inicio() {
+                let geometries = [];
+                let selects = [];
+                
+                if ($("#stormsActive option:eq(1)").val()){
+                    $("#stormsActive").val($("#stormsActive option:eq(1)").val());
+                    selects.push($('#stormsActive'));
+                }
+                if ($("#stormsActive2 option:eq(1)").val()){
+                    $("#stormsActive2").val($("#stormsActive2 option:eq(1)").val());
+                    selects.push($('#stormsActive2'));
+                }
+                $.each(selects, function( index, value ) {
+                    var layerid = $(value).children("option:selected").attr("data-layerid");
+                    //si no hay Evento en la selección
+                    if(!layerid) {
+                        return;
+                    }
+    
+                    var layer = map.findLayerById(layerid);
+                    var event = layerid.split("_")[0];
+    
                     map.allLayers.map(function(layer) {
                         if (layer["id"] == "EP_Area_5d_area" || layer["id"] == "EP_Area_5d_label"){
                             return;
@@ -1076,69 +1184,68 @@ $(function() {
                         if(layer["id"].indexOf(event) != -1) layer.visible = true;
                         else if(layer["id"].indexOf("AT") != -1 || layer["id"].indexOf("EP") != -1) layer.visible = false;
                     });
-
+                    // obtener geometria del seleccionado
                     var coneActive = activeConesAT.filter(function(activeConesAT) { if(activeConesAT["layerid"] == layerid) return activeConesAT; })[0];
                     
                     var coneActive2 = activeConesEP.filter(function(activeConesEP) { if(activeConesEP["layerid"] == layerid) return activeConesEP; })[0];
-
-
-                    var geometryService = new GeometryService({ url: "http://rmgir.proyectomesoamerica.org/server/rest/services/Utilities/Geometry/GeometryServer" });
+                    
                     if (coneActive) {
-                        var params = new ProjectParameters({
-                            geometries: [coneActive["geometry"]["extent"]],
-                            outSpatialReference: mapView["spatialReference"]
-                        });
-
-                        geometryService.project(params).then(function(result) {
-                            mapView.goTo(result[0]);
-
-                            var tipoHuracan = getCicloneType(coneActive["stormtype"], coneActive["maxwind"]);
-                            $("#type").text(tipoHuracan);
-                            $("#type").attr("data-typeId", getIdCicloneTypeId(tipoHuracan));
-                            $("#name").text(coneActive["stormname"]);
-                            $("#sea").text(getSea(coneActive["layerid"]) + " / ");
-                            $("#sea").attr("data-ocean", (getSea(coneActive["layerid"]) == "EP" ? "P" : "A"));
-                            //tituloSecundario();
-                            const oceano = getSea(coneActive["layerid"]) == "EP" ? "PACÍFICO" : "ATLÁNTICO"; 
-                            $(".TitleOceano").text(oceano);
-                            //queryRegions(map, mapView, [coneActive["geometry"]], "FID");
-                            var zoomComplete = new Event("eventSelected");
-                            document.dispatchEvent(zoomComplete);
-                        });
+                        geometries.push(coneActive["geometry"])
                     }
                     if (coneActive2) {
-                        var params2 = new ProjectParameters({
-                            geometries: [coneActive2["geometry"]["extent"]],
-                            outSpatialReference: mapView["spatialReference"]
-                        });
-                        geometryService.project(params2).then(function(result) {
-                            mapView.goTo(result[0]);
-
-                            var tipoHuracan = getCicloneType(coneActive2["stormtype"], coneActive2["maxwind"]);
-                            $("#type").text(tipoHuracan);
-                            $("#type").attr("data-typeId", getIdCicloneTypeId(tipoHuracan));
-                            $("#name").text(coneActive2["stormname"]);
-                            $("#sea").text(getSea(coneActive2["layerid"]) + " / ");
-                            $("#sea").attr("data-ocean", (getSea(coneActive2["layerid"]) == "EP" ? "P" : "A"));
-                            //tituloSecundario();
-                            const oceano = getSea(coneActive2["layerid"]) == "EP" ? "PACÍFICO" : "ATLÁNTICO"; 
-                            $(".TitleOceano").text(oceano);
-                            //queryRegions(map, mapView, [coneActive2["geometry"]], "FID");
-                            var zoomComplete = new Event("eventSelected");
-                            document.dispatchEvent(zoomComplete);
-                        });
+                        geometries.push(coneActive2["geometry"])
                     }
-                })
-            });
-            setTimeout(() => {
-                if ($("#stormsActive option:eq(1)").val()){
-                    $("#stormsActive").val($("#stormsActive option:eq(1)").val()).change();
+                });
+                if (geometries.length > 0) {
+                    $('#vientos-div').show();
+                    $("#vientos-checkbox").prop("checked", true);
+                    $("#vientos-div img").attr("src", "img/wind_dorado.png");
+                    map.findLayerById("area_34KtWinds").visible = true;
+                    require([
+                        "esri/tasks/GeometryService"
+                    ], function(
+                        GeometryService
+                    ) {
+                        geometryService = new GeometryService("http://rmgir.proyectomesoamerica.org/server/rest/services/Utilities/Geometry/GeometryServer");
+                        geometryService.union(geometries).then(function(res) { 
+                            if(res && res.extent) {
+                                let extent = res.extent.expand(1.5);
+                
+                                view.extent = extent;
+                            }
+                        }).catch(function(error){
+                            console.log("error", error);                        
+                        });
+                    })
                 }
-                if ($("#stormsActive2 option:eq(1)").val()){
-                    $("#stormsActive2").val($("#stormsActive2 option:eq(1)").val()).change();
+                else {
+                    $('#vientos-div').hide();
+                    $("#vientos-checkbox").prop("checked", false);
+                    map.findLayerById("area_34KtWinds").visible = false;
                 }
-            }, 250);
-        });
+            }
+            setTimeout(seleccion_inicio, 250);
+            
+        })
+
+            // debugger
+
+            // const conesLayers = map.layers["items"].filter(function(item) {
+            //     return item["id"].indexOf("forecastCone") != -1;
+            // });
+
+            // const forecastPointsLayers = map.layers["items"].filter(function(item) {
+            //     return item["id"].indexOf("forecastPoints") != -1;
+            // });
+            
+            // conesLayers.forEach(function(layer) {
+            //     activeConesPromises.push(layer.queryFeatures());
+            // });
+
+            // forecastPointsLayers.forEach(function(layer) {
+            //     activeConesPromises.push(layer.queryFeatures());
+            // });
+
     }
 
     function getCicloneType(type, maxwind) {
@@ -1272,6 +1379,25 @@ $(function() {
                 }
             }
         ]
+        // capa de probabilidad de vientos de 34+ nudos
+        const active34KtWindshUrl = {
+            "name": "34KtWinds",
+            "area": "https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS_Forecasts_Guidance_Warnings/NHC_E_Pac_trop_cyclones/MapServer/54"
+        }
+
+        // para la capa de vientos
+        let properties_vientos = {
+            id: "area_34KtWinds",  
+            opacity: 0.5,
+            refreshInterval: 60,
+            showLabels: true,
+            outFields: ["*"],
+            visible: false,
+            //ocean: "P",
+            //labelingInfo: [labelClass]
+        };
+        addFeatureLayer(map, active34KtWindshUrl["area"], properties_vientos);
+        
         const area_inestabilidad_EP = {
             // capa de inestabilidad en pacífico
             "name": "EP_Area_5d",
@@ -1516,66 +1642,6 @@ $(function() {
             });
         });
 
-        // desactivada para dejar solo la de ESRI
-        /* activeHurricanesEPUrls.forEach(function(hurricaneEvent) {
-            const name = hurricaneEvent["name"];
-            const layers = hurricaneEvent["layers"];
-            Object.keys(layers).forEach(function(type) {
-                const layerId = name + "_" + type;
-                var properties = {
-                    id: layerId,  
-                    opacity: 0.8,
-                    refreshInterval: 60,
-                    showLabels: true,
-                    outFields: ["*"],
-                    visible: false,
-                    ocean: "P"
-                };
-
-                if(type == "forecastPoints") {
-                    properties["labelingInfo"] = [forecastPointsLabelClass];
-                    properties["renderer"] = forecastPointsRenderer;
-                } else if(type == "forecastTrack") {
-                    properties["renderer"] = forecastTrackRenderer;
-                } else if(type == "pastTrack") {
-                    properties["renderer"] = pastTrackRenderer;
-                } else if(type == "pastPoints") {
-                    properties["renderer"] = pastTrackPointRenderer;
-                }
-
-                addFeatureLayer(map, layers[type], properties);
-            });
-        }); */
-        // desactivada para dejar solo la de ESRI
-        /* activeHurricanesATUrls.forEach(function(hurricaneEvent) {
-            const name = hurricaneEvent["name"];
-            const layers = hurricaneEvent["layers"];
-            Object.keys(layers).forEach(function(type) {
-                const layerId = name + "_" + type;
-                const properties = {
-                    id: layerId,  
-                    opacity: 0.8,
-                    refreshInterval: 60,
-                    showLabels: true,
-                    outFields: ["*"],
-                    visible: false,
-                    ocean: "A"
-                };
-
-                if(type == "forecastPoints") {
-                    properties["labelingInfo"] = [forecastPointsLabelClass];
-                    properties["renderer"] = forecastPointsRenderer;
-                } else if(type == "forecastTrack") {
-                    properties["renderer"] = forecastTrackRenderer;
-                } else if(type == "pastTrack") {
-                    properties["renderer"] = pastTrackRenderer;
-                } else if(type == "pastPoints") {
-                    properties["renderer"] = pastTrackPointRenderer;
-                }
-
-                addFeatureLayer(map, layers[type], properties);
-            });
-        }); */
         // para la capa de inestabilidad
         let labelClass = {
             // Content
@@ -1630,7 +1696,8 @@ $(function() {
             id: "municipios",
             opacity: 0,
             showLabels: true,
-            outFields: ["admin1Name_es", "admin2Name_es"],
+            outFields: ["admin1Name_es", "admin2Name_es"], // campos para url de gistmaps
+            //outFields : ["NOM_ENT_", "NOM_MUN"],  // campos para capa rmgir
             renderer: {
                 type: "simple",
                 symbol: {
@@ -1648,6 +1715,7 @@ $(function() {
         };
     
         const url = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/MEX_ES/MapServer/3";
+        //const url = "http://rmgir.proyectomesoamerica.org/server/rest/services/ANR/Datos_Basicos/MapServer/5";
         addFeatureLayer(map, url, prop,1);
     }
 
@@ -1855,15 +1923,57 @@ $(function() {
             return;
         }
         let layer = map.findLayerById("TopClouds");
+        if (layer == undefined){
+            return;
+        }
         layer.visible = this.checked;
+        $('#timeDiv span.material-icons').toggleClass("dorado");
         $('#timeDiv p').text("Capa \nApagada");
         if (this.checked){
+            $('#timeDiv p').text("Cargando \n capa");
             timeExtentChanger = setInterval(changeTimeExtent, 2000);
         }
         else {
             clearInterval(timeExtentChanger);
         }
     })
+
+    $('#refugios-checkbox').on('change', function(){
+        if (this.checked) {
+            $('#refugios-select').css("opacity", 1);
+            map.findLayerById("refugios").visible = true;
+            $('#refugios-div span.material-icons').addClass("dorado");
+        }
+        else {
+            $('#refugios-select').css("opacity", 0);
+            $('#refugios-div span.material-icons').removeClass("dorado");
+            map.findLayerById("refugios").visible = false;
+        }
+    });
+    $('#refugios-select').on('change', function(){
+        let value = this.value;  // valor del estado
+        let layer = map.findLayerById("refugios");    
+        if (value == "") {
+            layer.definitionExpression = "1=0";
+            layer.visible = false;
+            return;
+        }
+        // pregunta quienes son del estado seleccionado
+        layer.definitionExpression = "clave_estado = " + value;
+        layer.visible = true;
+
+    });
+
+    $('#vientos-checkbox').on('change', function(){
+        if (this.checked) {
+            $("#vientos-div img").attr("src", "img/wind_dorado.png");
+            map.findLayerById("area_34KtWinds").visible = true;
+        }
+        else {
+            $("#vientos-div img").attr("src", "img/wind.png");
+            map.findLayerById("area_34KtWinds").visible = false;
+        }
+    });
 
     loadMap("map");
     //getAutoresDefault();

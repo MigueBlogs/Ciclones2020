@@ -193,10 +193,76 @@
                     </select>
                 </div>
             </div>
+            <div id="refugiosDiv">
+                <p class="refugios-titulo">Refugios temporales</p>
+                <div style="width: 168px; display: grid; grid-template-columns: 50% 50%; height: 40px;">
+                    <div class="refugios-iconos" id="refugios-div">
+                        <div style="padding: 2px;">
+                            <span class="material-icons">house</span>
+                        </div>
+                        <div style="padding: 5px;">&nbsp;
+                            <!-- <label style="font-size: smaller;">Apag/Enc</label> -->
+                            <label class="switch" style="vertical-align: middle;">
+                                <input type="checkbox" id="refugios-checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="refugios-iconos" style="padding: 2px; display:none;" id="vientos-div">
+                        <div style="padding: 2px;">
+                            <img src="img/wind.png" style="width: 30px; height: 30px;"></img>
+                        </div>
+                        <div style="padding: 5px;">&nbsp;
+                            <!-- <label style="font-size: smaller;">Apag/Enc</label> -->
+                            <label class="switch" style="vertical-align: middle;">
+                                <input type="checkbox" id="vientos-checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <select id="refugios-select" style="opacity: 0;">
+                        <option value="">Selecciona estado</option>
+                        <option value='1'>AGUASCALIENTES</option>
+                        <option value='2'>BAJA CALIFORNIA</option>
+                        <option value='3'>BAJA CALIFORNIA SUR</option>
+                        <option value='4'>CAMPECHE</option>
+                        <option value='5'>COAHUILA</option>
+                        <option value='6'>COLIMA</option>
+                        <option value='7'>CHIAPAS</option>
+                        <option value='8'>CHIHUAHUA</option>
+                        <option value='9'>CIUDAD DE MÉXICO</option>
+                        <option value='10'>DURANGO</option>
+                        <option value='11'>GUANAJUATO</option>
+                        <option value='12'>GUERRERO</option>
+                        <option value='13'>HIDALGO</option>
+                        <option value='14'>JALISCO</option>
+                        <option value='15'>ESTADO DE MÉXICO</option>
+                        <option value='16'>MICHOACÁN</option>
+                        <option value='17'>MORELOS</option>
+                        <option value='18'>NAYARIT</option>
+                        <option value='19'>NUEVO LEÓN</option>
+                        <option value='20'>OAXACA</option>
+                        <option value='21'>PUEBLA</option>
+                        <option value='22'>QUERÉTARO</option>
+                        <option value='23'>QUINTANA ROO</option>
+                        <option value='24'>SAN LUIS POTOSÍ</option>
+                        <option value='25'>SINALOA</option>
+                        <option value='26'>SONORA</option>
+                        <option value='27'>TABASCO</option>
+                        <option value='28'>TAMAULIPAS</option>
+                        <option value='29'>TLAXCALA</option>
+                        <option value='30'>VERACRUZ</option>
+                        <option value='31'>YUCATÁN</option>
+                        <option value='32'>ZACATECAS</option>
+                    </select>
+                </div>
+            </div>
             <div id="timeDiv">
                 <div style="display: grid; grid-template-columns: 20% 80%; text-align:center; padding: 3px;">
                     <div style="padding: 2px;">
-                        <span class="material-icons">wb_cloudy</span>
+                        <span class="material-icons dorado">wb_cloudy</span>
                     </div>
                     <div style="padding: 5px;">&nbsp;
                         <!-- <label style="font-size: smaller;">Apag/Enc</label> -->
