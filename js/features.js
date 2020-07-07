@@ -40,6 +40,7 @@ $(function(){
     $("#BtnLimpiar").on("click", function(){
         borrarCapas();
     });
+    
 
     $(".clickable").on("click", function(){
         var clicked = this;
@@ -113,7 +114,7 @@ $(function(){
     function borrarCapas(){
         Object.keys(featureLayer_urls).forEach(function(key){
             if(map.findLayerById(key))
-                map.removeLayer(map.getLayer(key));
+                map.remove(map.findLayerById(key));
         })
     }
 });
@@ -294,7 +295,7 @@ function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
             var graphic, attributes, content;
             graphic = feature.graphic;
             attributes = graphic.attributes;
-            console.log(attributes);
+            //console.log(attributes);
             var result ="";
             Object.keys(attributes).forEach(function(key){
                 
@@ -357,13 +358,13 @@ function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
                     var defExp = getQuery(results, featureLayer.objectIdField);
 
                     featureLayer.definitionExpression=defExp;
-                    console.log(featureLayer)
+                    featureLayer.id=name;
                     map.add(featureLayer,90);
-                    var layerAdd = map.on('update-end', function(){
-                        console.log("Capa agregada");
-                        loadFetureTable(featureLayer, name, noResults)
-                        layerAdd.remove();
-                    })
+                    // var layerAdd = map.load().then(function(){
+                    //     console.log("Capa agregada");
+                    //     //loadFetureTable(featureLayer, name, noResults)
+                    //     layerAdd.remove();
+                    // })
                 }
             });
         });

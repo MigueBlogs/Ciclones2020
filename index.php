@@ -16,7 +16,8 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="./css/styles.css">
     <!--JS IONICON-->
-    <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
+    <!-- <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script> -->
+    <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Handlebars -->
@@ -254,7 +255,7 @@
                         </td>
                         <td id="Aeropuertos">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Aeropuertos">
                                     <ion-icon name="airplane-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -264,7 +265,7 @@
                         </td>
                         <td id="Presas">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Presas">
                                     <ion-icon name="water-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -274,7 +275,7 @@
                         </td>
                         <td id="Colonias">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Colonias">
                                     <ion-icon name="map-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -296,7 +297,7 @@
                         </td>
                         <td id="Hospitales">
                             <div class="row">
-                                <div class="column1 clickable" id="Hospitales" data-sources="Hospitales">
+                                <div class="column1 clickable" data-sources="Hospitales">
                                     <ion-icon name="medkit-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -306,7 +307,7 @@
                         </td>
                         <td id="Supermercados">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Supermercados">
                                     <ion-icon name="cart-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -316,7 +317,7 @@
                         </td>
                         <td id="Hoteles">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Hoteles">
                                     <ion-icon name="business-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -326,7 +327,7 @@
                         </td>
                         <td id="Gasolineras">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Gasolineras">
                                     <span class="material-icons">
                                     local_gas_station
                                     </span>
@@ -338,7 +339,7 @@
                         </td>
                         <td id="Ganadero">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Ganadero">
                                 <span class="material-icons">
                                 agriculture
                                 </span>

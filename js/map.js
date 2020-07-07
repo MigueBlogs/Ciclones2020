@@ -21,6 +21,42 @@ var timeExtentChanger;
 var nubes_error = false;
 
 $(function() {
+    var featureLayer_urls = {
+        "Hospitales": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/37",
+        "Escuelas": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/39",
+        "Supermercados": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/10",
+        "Aeropuertos": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/41",
+        "Hoteles": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/10",
+        "Bancos": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/10",
+        "Gasolineras": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/10",
+        "Presas": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/43",
+        "Ganadero": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/45",
+        "Colonias": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/6",
+        "Población Urbana": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/7",
+        "Población Rural": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/12",
+        "Zona Arqueológica": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/50",
+        "Patrimonio Mundial": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/49",
+        "Monumentos Históricos": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/51",
+        "Museos": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/48",
+        "Bibliotecas": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/47",
+        "Álgica": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/15",
+        "Yuto-Nahua": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/17",
+        "Cochimí-Yumana": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/19",
+        "Seri": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/21",
+        "Oto-Mangue": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/23",
+        "Maya": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/25",
+        "Totonaco-Tepehua": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/27",
+        "Tarasca": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/29",
+        "Mixe-Zoque": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/31",
+        "Chonatal": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/33",
+        "Huave": "http://rmgir.proyectomesoamerica.org/server/rest/services/analysis/Analisis/MapServer/35"
+    }
+    function borrarCapas(){
+        Object.keys(featureLayer_urls).forEach(function(key){
+            if(map.findLayerById(key))
+                map.remove(map.findLayerById(key));
+        })
+    }
     function changeTimeExtent(){
         let today = new Date();
         let end = new Date(today);
@@ -61,7 +97,8 @@ $(function() {
             "esri/geometry/support/geodesicUtils",
             "esri/geometry/support/webMercatorUtils",
             "esri/geometry/Polygon",
-            "esri/Graphic"
+            "esri/Graphic",
+            "esri/geometry/geometryEngine"
         ], function(
             Map,
             MapView,
@@ -75,7 +112,8 @@ $(function() {
             geodesicUtils,
             webMercatorUtils,
             Polygon,
-            Graphic
+            Graphic,
+            geometryEngine
         ) {
             esriConfig.request.proxyUrl = "http://rmgir.cenapred.gob.mx/proxy/proxy.php";
             const layer = new GraphicsLayer({
@@ -233,9 +271,12 @@ $(function() {
                 creationMode: "single"
             });           
             
-      
+            var creando = false;
             view.ui.add(sketch, "top-right");
                 sketch.on("create", function(event) {
+                    $("#mensaje").remove();
+                    //console.log("estoy creando:!",event)
+                    creando=true;                
                     if(event.tool=="circle" || event.tool=="rectangle" || event.tool=="polygon"){
                         if (event.state === "complete") {
                             //previene que el usuario siga generando polígonos hasta que haya terminado de procesar y analisar la figura dibujada
@@ -270,13 +311,11 @@ $(function() {
                             setTimeout(function(){ 
                                 map.findLayerById("tempGraphics").add(graphic);
                                 
-                                //previene que el usuario elimine el análisis actual
-                                $(".esri-icon-trash").addClass("sketchDisabled")
-                                $(".esri-icon-trash").attr("disabled","");
                             }, 666);  
                             
                             $("#analisis").slideDown(3000);
                             createRandomText();
+                            creando=false;
                         }
                     }else if(event.tool=="point"){
                         if(event.state === "complete"){
@@ -303,12 +342,15 @@ $(function() {
                             
                             setTimeout(function(){ 
                                 map.findLayerById("tempGraphics").add(graphic);
-                                //previene que el usuario elimine el análisis actual
-                                $(".esri-icon-trash").addClass("sketchDisabled")
-                                $(".esri-icon-trash").attr("disabled","");
+                                // //previene que el usuario elimine el análisis actual
+                                // $(".esri-icon-trash").addClass("sketchDisabled")
+                                // $(".esri-icon-trash").attr("disabled","");
                             }, 666);
                             $("#analisis").slideDown(3000);
                             createRandomText();
+                            creando=false;
+                        }else if(event.state === "cancel"){
+                            creando=false;
                         }
                     }else if(event.tool=="polyline"){
                         if (event.state === "complete") {
@@ -342,31 +384,33 @@ $(function() {
                             setTimeout(function(){ 
                                 map.findLayerById("tempGraphics").add(graphic);
                                 //debugger
-                                //previene que el usuario elimine el análisis actual
-                                $(".esri-icon-trash").addClass("sketchDisabled")
-                                $(".esri-icon-trash").attr("disabled","");
+                                // //previene que el usuario elimine el análisis actual
+                                // $(".esri-icon-trash").addClass("sketchDisabled")
+                                // $(".esri-icon-trash").attr("disabled","");
                             }, 666);  
                             
                             $("#analisis").slideDown(3000);
                             createRandomText();
+                            creando=false;
                         }
                     }
                     
                 }
             );
-
+            
             sketch.on("update", function(event){
+                
+                //console.log("este es update: ",event);
                 //previene que el usuario siga generando polígonos hasta que haya terminado de procesar y analisar la figura dibujada
-                $(".esri-sketch__button").addClass("sketchDisabled")
-                $(".esri-sketch__button").attr("disabled","");
-                 //previene que el usuario elimine el análisis actual
-                 $(".esri-icon-trash").addClass("sketchDisabled")
-                 $(".esri-icon-trash").attr("disabled","");
-                // check if the graphics are done being moved, printout dx, dy parameters to the console.
+                // debugger
+                // $(".esri-sketch__button").addClass("sketchDisabled")
+                // $(".esri-sketch__button").attr("disabled","");
                 const eventInfo = event.toolEventInfo;
-                //console.log(event);
                 //Evento cuando se mueve una gráfica de lugar sobre el mapa
                 if (eventInfo && eventInfo.type.includes("move")){
+                     //previene que el usuario elimine el análisis actual
+                 $(".esri-icon-trash").addClass("sketchDisabled")
+                 $(".esri-icon-trash").attr("disabled","");
                   //se verifica el caso cuando es el movimiento de un punto
                   if(event.graphics[0].geometry.type=="point"){
                     if(eventInfo.type=="move-stop"){
@@ -444,6 +488,9 @@ $(function() {
                 }
                 //evento para cuando se modifica un polígono ya dibujado sobre el mapa
                 if (eventInfo && eventInfo.type.includes("reshape")){
+                     //previene que el usuario elimine el análisis actual
+                 $(".esri-icon-trash").addClass("sketchDisabled")
+                 $(".esri-icon-trash").attr("disabled","");
                    //console.log(eventInfo.type, eventInfo, eventInfo.dy);
                     if(eventInfo.type=="reshape-stop"){
                         // ocultar capa de municipios
@@ -502,6 +549,9 @@ $(function() {
                   }
                 //evento para cuando se reescala un polígono de análisis
                 if (eventInfo && eventInfo.type.includes("scale")){
+                     //previene que el usuario elimine el análisis actual
+                    $(".esri-icon-trash").addClass("sketchDisabled")
+                    $(".esri-icon-trash").attr("disabled","");
                     //console.log(eventInfo.type, eventInfo.dx, eventInfo.dy);
                     // if(eventInfo.type=="scale-stop"){
                     // // ocultar capa de municipios
@@ -567,10 +617,11 @@ $(function() {
                         $("#analisis").slideDown(3000);
                     }
                 }
-
+                
               });
             
             sketch.on("delete", function(event) {
+                borrarCapas();
                 $("#analisis").slideUp(3000);
                 // ocultar capa de municipios
                 let layerColor = map.findLayerById("municipios");
@@ -593,9 +644,73 @@ $(function() {
                             }
                         });
                     }
-                  console.log("deleted", graphic)
+                  //console.log("deleted", graphic)
                 });
             });
+
+            view.on("click", function(mapClick) {
+                //console.log("creando: ",creando);
+                setTimeout(function(){
+                    if(!creando){
+                        $("#mensaje").remove();
+                        var currentPoint = view.toMap(mapClick);
+                        var tamano = layer.graphics.items.length-1;
+                        //console.log("este es el tamaño del array: ",tamano);
+                        layer.graphics.items.forEach(function(grafico,index){
+                            // console.log("Estoy revisando el elemento: ",index)
+                            // console.log(grafico.geometry);
+                            // console.log(currentPoint);
+                            if(grafico.geometry.type=="polygon" || grafico.geometry.type=="circle" || grafico.geometry.type=="rectangle" ){
+                                var intersects = geometryEngine.intersects(grafico.geometry, currentPoint);
+                                if(intersects){
+                                    //mantiene selección
+                                    // console.log("El punto intersecciona con el polígono: ",grafico.id)
+                                    return true;
+                                    
+                                }else{
+                                    // console.log("El punto no intersecciona")
+                                    //pregunta si ya se han revisado todos los elementos del array
+                                    if(index>=tamano){
+                                        //si ya se revisaron todos y ninguno intersecta entonces:
+                                        
+                                        //Deselecciona
+                                        setTimeout(function(){
+                                            $("#mensaje").remove();
+                                            document.querySelector('[aria-label="Dibujar punto"]').click();
+                                            document.querySelector('[aria-label="Transformar"]').click();
+                                        },6);
+                                        //Vulve a funcionar el sketch
+                                        $(".esri-sketch__button").removeClass("sketchDisabled");
+                                        $(".esri-sketch__button").removeAttr("disabled","");
+                                        $(".esri-icon-trash").removeClass("sketchDisabled")
+                                        $(".esri-icon-trash").removeAttr("disabled","");
+                                        $('.loading-gif img').hide();
+                                        
+                                    }else{
+                                        // console.log("sigo buscando...")
+                                    }
+                                    
+                                } 
+                            }else{
+                                if($("#mensaje").length){
+                                    //no hacer nada
+                                }else{
+                                    $(".esri-sketch__info-panel").append("<p style='font-size: small;' id='mensaje'>Presiona ESC para <br> cancelar selección actual</p>");
+                                }
+                                $(document).on('keydown', function(event) {
+                                    if (event.key == "Escape") {
+                                        $("#mensaje").remove();
+                                    }
+                                });
+                            }
+                        });
+                        mapClick.preventDefault()
+                        mapClick.stopPropagation();
+                    }
+                },50);
+                
+            });
+
             view["ui"]["components"] = ["attributtion"];
             view.when(function() {
                 loadCiclones(map);

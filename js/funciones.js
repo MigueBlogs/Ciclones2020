@@ -39,6 +39,6 @@ $(function(){
     //Elimina los elementos de "title" de ionicon de todos los elementos
     setTimeout(function(){
         $("ion-icon").each(function(){this.shadowRoot.querySelector('div').querySelector('svg').querySelector('title').remove()});
-      }, 2000);
+      }, 3000);
 });
 

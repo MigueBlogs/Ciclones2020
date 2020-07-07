@@ -24,6 +24,11 @@ ion-icon {
     font-size: 26px;
   }
 
+.clickable :hover{
+    background-color: #999;
+    cursor: pointer;
+}
+
 .buttonCloseTable{
     position: absolute;
     top: 0%;
@@ -327,6 +332,9 @@ optgroup[label="Pacífico"] {
     padding: 0.2rem;
 }
 @media(max-width: 500px) {
+    #mensaje{
+        display:none;
+    }
     #dataSection{
         position: unset;
         width: 100%;
