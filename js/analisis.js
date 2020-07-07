@@ -497,6 +497,8 @@ function obtenMunicipios(geometry) {
                 //Vulve a funcionar el sketch
                 $(".esri-sketch__button").removeClass("sketchDisabled");
                 $(".esri-sketch__button").removeAttr("disabled","");
+                $(".esri-icon-trash").removeClass("sketchDisabled")
+                $(".esri-icon-trash").removeAttr("disabled","");
                 $('.loading-gif img').hide();
             });
         }).catch(function(error){

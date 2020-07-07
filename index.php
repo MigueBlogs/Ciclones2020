@@ -16,7 +16,8 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="./css/styles.css">
     <!--JS IONICON-->
-    <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
+    <!-- <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script> -->
+    <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Handlebars -->
@@ -320,7 +321,7 @@
                         </td>
                         <td id="Aeropuertos">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Aeropuertos">
                                     <ion-icon name="airplane-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -330,7 +331,7 @@
                         </td>
                         <td id="Presas">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Presas">
                                     <ion-icon name="water-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -340,7 +341,7 @@
                         </td>
                         <td id="Colonias">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Colonias">
                                     <ion-icon name="map-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -362,7 +363,7 @@
                         </td>
                         <td id="Hospitales">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Hospitales">
                                     <ion-icon name="medkit-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -372,7 +373,7 @@
                         </td>
                         <td id="Supermercados">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Supermercados">
                                     <ion-icon name="cart-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -382,7 +383,7 @@
                         </td>
                         <td id="Hoteles">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Hoteles">
                                     <ion-icon name="business-outline"></ion-icon>
                                 </div>
                                 <div class="column2">
@@ -392,7 +393,7 @@
                         </td>
                         <td id="Gasolineras">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Gasolineras">
                                     <span class="material-icons">
                                     local_gas_station
                                     </span>
@@ -404,7 +405,7 @@
                         </td>
                         <td id="Ganadero">
                             <div class="row">
-                                <div class="column1">
+                                <div class="column1 clickable" data-sources="Ganadero">
                                 <span class="material-icons">
                                 agriculture
                                 </span>
@@ -442,6 +443,35 @@
     </div>
     
     <button id="botonTop" type="button" class="boton-volver" style="display: none;"><ion-icon name="arrow-up-outline"></ion-icon></button>
+    <!-- Feature Table template  -->
+  <script id="featureTable-template" type="text/x-handlebars-template">
+    <a title="Cerrar" href="#" class="ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-notext closeFeatures" style="border:none;margin:0"></a>
+    <div class="tabs-container">
+      <ul class="tabs">
+        {{#each features}}
+          {{#if @first}}
+            <li class="tabs__item active" data-feature="{{this.shortName}}" data-parent="{{this.parent}}" data-layerId="{{this.layerId}}">{{this.name}}</li>
+          {{else}}
+            <li class="tabs__item" data-feature="{{this.shortName}}" data-parent="{{this.parent}}" data-layerId="{{this.layerId}}">{{this.name}}</li>
+          {{/if}}
+        {{/each}}
+      </ul>
+      <div class="panels">
+        {{#each features}}
+          {{#if @first}}
+            <div class="panels__item active">
+              <div id="panels__item-{{this.shortName}}"></div>
+            </div>
+          {{else}}
+            <div class="panels__item">
+              <div id="panels__item-{{this.shortName}}"></div>
+            </div>
+          {{/if}}
+        {{/each}}
+      </div>
+    </div>
+    <div><a href='#' id="downloadFeature">Descargar CSV</a></div>
+  </script>
     <script id="stormsActiveEP-template" type="text/x-handlebars-template">
 		{{#each storms as |storm|}}
 			{{#if @first}}
@@ -464,7 +494,7 @@
 	</script>
     <script src="js/map.js"></script>	
     <script src="js/funciones.js"></script>
-    <!-- <script src="js/TOC.js"></script> -->
+    <script src="js/features.js"></script>
     <script src="js/analisis.js"></script>
     <script src="js/csv.js"></script>
     <script>
