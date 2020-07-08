@@ -697,6 +697,24 @@ $(function() {
             });
 
             view.on("click", function(mapClick) {
+                // console.log("le di click a algo");
+                setTimeout(function(){
+                    function openBox(){
+                        if((document.querySelector(".esri-popup__header-container--button") !== null) && ($(window).width()<500)){
+                            if(!$(".esri-popup__content").is(":visible")){
+                                document.querySelector(".esri-popup__header-container--button").click(); 
+                                setTimeout(function(){
+                                    openBox();
+                                },1500)
+                            }else{
+                                return 0;
+                            }
+                        }else{
+                            return 0;
+                        }
+                    }
+                    openBox();
+                },1000);
                 //console.log("creando: ",creando);
                 setTimeout(function(){
                     if(!creando){
@@ -758,6 +776,7 @@ $(function() {
                 },50);
                 
             });
+
 
             view["ui"]["components"] = ["attributtion"];
             view.when(function() {

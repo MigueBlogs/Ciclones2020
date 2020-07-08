@@ -254,7 +254,7 @@ optgroup[label="Pacífico"] {
     margin: 0;
     padding-top: 5px;
     text-align: center;
-    display: none;
+
 }
 .switch {
     position: relative;
@@ -354,7 +354,26 @@ optgroup[label="Pacífico"] {
     color: white;
     padding: 0.2rem;
 }
+
 @media(max-width: 500px) {
+    #timeDiv{
+        display:none;
+    }
+    #titleDesktop{
+        display:none;
+    }
+    #titleMobile{
+        display: block !important;
+    }
+    #gridOpciones{
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 33% 33% 32% !important;
+        height: 40px !important;
+    }
+    #clouds-div{
+        display: grid !important;
+    }
     #mensaje{
         display:none;
     }
@@ -368,7 +387,7 @@ optgroup[label="Pacífico"] {
     }
     #map-container{
         width: 100%;
-        height: calc(100vh) !important;
+        height: calc(90vh - 70px) !important;
         position: relative;
     }
     #stormSelection, #stormSelection2 {
@@ -403,7 +422,7 @@ optgroup[label="Pacífico"] {
         margin: 0;
         padding-top: 5px;
         text-align: center;
-        display: block;
+    
     }
     #refugios-select {
         padding: 0 5px;
@@ -420,5 +439,8 @@ optgroup[label="Pacífico"] {
     .cnpc-logos img {
         height: 1em;
         width: 100%;
+    }
+    #analisis{
+        bottom: calc(-50% + 100px);
     }
 }

@@ -100,6 +100,7 @@ $(function(){
                 //showElem();
                 sourcesClicked.split("/").forEach(function(source){
                     mostrarFeaturesDentro(lastGeometry, featureLayer_urls[source], source, true);
+                    
                 });
                 //hideElem();
             }
@@ -289,7 +290,8 @@ function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
             // autocasts as new PopupTemplate()
             title: "Detalles:",
             content: getInfo,
-            outFields: ["*"]
+            outFields: ["*"],
+            collapseEnabled: false
             };
         function getInfo(feature) {
             var graphic, attributes, content;
@@ -316,6 +318,8 @@ function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
         featureLayer.on("error", function(error){
             console.log("Ocurrió un error", error);
         })
+
+        
         
         featureLayer.load().then(function(){
             
@@ -365,10 +369,20 @@ function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
                     //     //loadFetureTable(featureLayer, name, noResults)
                     //     layerAdd.remove();
                     // })
+                    // debugger
+                    // if(featureLayer.id=="Hospitales"){
+                    //     map.findLayerById("Hospitales").on("click",function(event){
+                    //     console.log("hola perros",event);
+                    //     debugger
+                    //     });
+                    // }
+                    
                 }
             });
         });
+        
     })
+    
 }
 
 function getQuery(array, objectidName = "OBJECTID"){
