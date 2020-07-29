@@ -139,12 +139,12 @@ $(function() {
                 type: "text",  // autocasts as new TextSymbol()
                 color: "white",
                 haloColor: "black",
-                haloSize: "4px",
+                haloSize: "2px",
                 text: "",
-                xoffset: 3,
-                yoffset: 3,
+                xoffset: 1.5,
+                yoffset: 1.5,
                 font: {  // autocast as new Font()
-                  size: 20,
+                  size: 13,
                   family: "sans-serif",
                   weight: "bold"
                 }
@@ -215,6 +215,7 @@ $(function() {
                     noDataInterpretation: "any",
                     pixelFilter: colorize,
                     useViewTime: false,
+                    visible:false
                 });
                 weather.when(
                     function(){
@@ -323,8 +324,16 @@ $(function() {
             
             var creando = false;
             view.ui.add(sketch, "top-right");
+                setTimeout(function(){ 
+                    // $(".esri-sketch__info-panel").css("height","20px");
+                    $(".esri-sketch__info-panel").append("<h2 style='font-size: small; padding-left:20px;' id='mensaje'> Herramientas de análisis</h2>");
+                }, 666); 
+                
                 sketch.on("create", function(event) {
-                    $("#mensaje").remove();
+                    //$("#mensaje").remove();
+                    // if(event.state="start"){
+                    //     $("#mensaje").remove();
+                    // }
                     //console.log("estoy creando:!",event)
                     creando=true;                
                     if(event.tool=="circle" || event.tool=="rectangle" || event.tool=="polygon"){
@@ -364,6 +373,9 @@ $(function() {
                             }, 666);  
                             
                             $("#analisis").slideDown(3000);
+                            //selecciona automaticamente la tabla de análisis
+                            document.querySelector('[href="#tab1"]').click();
+                            $("#openBtn").show();
                             createRandomText();
                             creando=false;
                         }
@@ -397,6 +409,9 @@ $(function() {
                                 // $(".esri-icon-trash").attr("disabled","");
                             }, 666);
                             $("#analisis").slideDown(3000);
+                            //selecciona automaticamente la tabla de análisis
+                            document.querySelector('[href="#tab1"]').click();
+                            $("#openBtn").show();
                             createRandomText();
                             creando=false;
                         }else if(event.state === "cancel"){
@@ -440,6 +455,9 @@ $(function() {
                             }, 666);  
                             
                             $("#analisis").slideDown(3000);
+                            //selecciona automaticamente la tabla de análisis
+                            document.querySelector('[href="#tab1"]').click();
+                            $("#openBtn").show();
                             createRandomText();
                             creando=false;
                         }
@@ -488,6 +506,7 @@ $(function() {
                           realizarAnalisis(event.graphics[0].geometry, exceptLayers);
                           createRandomText();
                           $("#analisis").slideDown(3000);
+                          $("#openBtn").show();
                         }
                   }else if(event.graphics[0].geometry.type=="circle" || event.graphics[0].geometry.type=="rectangle" || event.graphics[0].geometry.type=="polygon"){
                     if(eventInfo.type=="move-stop"){
@@ -505,6 +524,7 @@ $(function() {
                         realizarAnalisis(event.graphics[0].geometry, exceptLayers);
                         createRandomText();
                         $("#analisis").slideDown(3000);
+                        $("#openBtn").show();
                     } 
                   }else if(event.graphics[0].geometry.type=="polyline"){
                         if(eventInfo.type=="move-stop"){
@@ -533,6 +553,7 @@ $(function() {
                             realizarAnalisis(event.graphics[0].geometry, exceptLayers);
                             createRandomText();
                             $("#analisis").slideDown(3000);
+                            $("#openBtn").show();
                         }
                   } 
                 }
@@ -595,6 +616,7 @@ $(function() {
                         realizarAnalisis(event.graphics[0].geometry, exceptLayers);
                         createRandomText();
                         $("#analisis").slideDown(3000);
+                        $("#openBtn").show();
                     }
                   }
                 //evento para cuando se reescala un polígono de análisis
@@ -665,14 +687,26 @@ $(function() {
                         realizarAnalisis(event.graphics[0].geometry, exceptLayers);
                         createRandomText();
                         $("#analisis").slideDown(3000);
+                        $("#openBtn").show();
                     }
                 }
                 
               });
             
             sketch.on("delete", function(event) {
+                $("#mensaje").remove();
                 borrarCapas();
                 $("#analisis").slideUp(3000);
+                //vacía tabla en el caso de un análisis previo o de otro tipo
+                $('#tableDiv').empty();
+                $('#tableDivPobUrb').empty();
+                $('#tableDivPobUrb').text("No hay resultados de población Urbana en el área de búsqueda");
+                $('#tableDivPobRur').empty();
+                $('#tableDivPobRur').text("No hay resultados de población Rural en el área de búsqueda");
+                $('#poblacion').hide();
+                //borra contenido actual y reescribe la tabla
+                $("#defaultMsj").show()
+                $('#escuelas_type').text('');
                 // ocultar capa de municipios
                 let layerColor = map.findLayerById("municipios");
                 layerColor.opacity = 0;
@@ -716,23 +750,23 @@ $(function() {
                         }
                     }
                     openBox();
+                    // $("#mensaje").remove();
                 },1000);
                 //console.log("creando: ",creando);
                 setTimeout(function(){
                     if(!creando){
-                        $("#mensaje").remove();
+                        //$("#mensaje").remove();
                         var currentPoint = view.toMap(mapClick);
                         var tamano = layer.graphics.items.length-1;
-                        //console.log("este es el tamaño del array: ",tamano);
                         layer.graphics.items.forEach(function(grafico,index){
-                            // console.log("Estoy revisando el elemento: ",index)
-                            // console.log(grafico.geometry);
-                            // console.log(currentPoint);
                             if(grafico.geometry.type=="polygon" || grafico.geometry.type=="circle" || grafico.geometry.type=="rectangle" ){
                                 var intersects = geometryEngine.intersects(grafico.geometry, currentPoint);
                                 if(intersects){
                                     //mantiene selección
                                     // console.log("El punto intersecciona con el polígono: ",grafico.id)
+                                    if(!$("#mensaje").length){
+                                        $(".esri-sketch__info-panel").append("<p style='font-size: small; padding-left:10px;' id='mensaje'>Presiona ESC para <br> cancelar selección actual</p>");
+                                    }
                                     return true;
                                     
                                 }else{
@@ -753,7 +787,6 @@ $(function() {
                                         $(".esri-icon-trash").removeClass("sketchDisabled")
                                         $(".esri-icon-trash").removeAttr("disabled","");
                                         $('.loading-gif img').hide();
-                                        
                                     }else{
                                         // console.log("sigo buscando...")
                                     }
@@ -761,13 +794,16 @@ $(function() {
                                 } 
                             }else{
                                 if($("#mensaje").length){
-                                    //no hacer nada
-                                }else{
-                                    $(".esri-sketch__info-panel").append("<p style='font-size: small;' id='mensaje'>Presiona ESC para <br> cancelar selección actual</p>");
+                                    $("#mensaje").remove();
                                 }
                                 $(document).on('keydown', function(event) {
                                     if (event.key == "Escape") {
-                                        $("#mensaje").remove();
+                                        if($("#mensaje").length){
+                                            $("#mensaje").remove();
+                                        }
+                                        if(document.querySelector(".esri-icon-close")!==null){
+                                             document.querySelector(".esri-icon-close").click();
+                                        }
                                     }
                                 });
                             }
@@ -775,8 +811,8 @@ $(function() {
                         mapClick.preventDefault()
                         mapClick.stopPropagation();
                     }
+                    
                 },50);
-                
             });
 
 
@@ -2064,6 +2100,25 @@ $(function() {
     });
 
     $('#nubes-checkbox, #nubes-checkbox2').on('change', function(){
+        if (nubes_error) {
+            return;
+        }
+        let layer = map.findLayerById("TopClouds");
+        if (layer == undefined){
+            return;
+        }
+        layer.visible = this.checked;
+        $('#timeDiv span.material-icons').toggleClass("dorado");
+        $('#timeDiv p').text("Capa \nApagada");
+        if (this.checked){
+            $('#timeDiv p').text("Cargando \n capa");
+            timeExtentChanger = setInterval(changeTimeExtent, 2000);
+        }
+        else {
+            clearInterval(timeExtentChanger);
+        }
+    });
+    $('#nubes-checkbox-mobile').on('change', function(){
         if (nubes_error) {
             return;
         }

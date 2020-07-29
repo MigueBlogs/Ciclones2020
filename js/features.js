@@ -49,16 +49,16 @@ $(function(){
             if($(el).hasClass("clicked") && $(el).attr("id") != $(clicked).attr("id")) $(el).removeClass("clicked");
         })
         borrarCapas();
-        if(featureTables.length > 0){
-            featureTables.forEach(function(ft){
-                ft.destroy();
-            })
-            $(".closeFeatures").on('click', function(event){
-                $(".clicked").click();
+        // if(featureTables.length > 0){
+        //     featureTables.forEach(function(ft){
+        //         ft.destroy();
+        //     })
+        //     $(".closeFeatures").on('click', function(event){
+        //         $(".clicked").click();
 
-                removeClassification("#escuelas_type");
-            });
-        }
+        //         removeClassification("#escuelas_type");
+        //     });
+        // }
         if($(clicked).hasClass("clicked") && lastGeometry){
             //showElem();
             var sourcesClicked = $(clicked).attr("data-sources");
@@ -67,6 +67,16 @@ $(function(){
             if(sourcesClicked == "Escuelas") {
                 $(this).parent().addClass("col-2");
                 getSchoolTypes(featureLayer_urls[sourcesClicked], lastGeometry, sources);
+                 //vacía tabla en el caso de un análisis previo o de otro tipo
+                 $('#tableDiv').empty();
+                 $('#tableDivPobUrb').empty();
+                 $('#tableDivPobUrb').text("No hay resultados de población Urbana en el área de búsqueda");
+                 $('#tableDivPobRur').empty();
+                 $('#tableDivPobRur').text("No hay resultados de población Rural en el área de búsqueda");
+                 $('#poblacion').hide();
+                 //borra contenido actual y reescribe la tabla
+                 $("#defaultMsj").show()
+                 $('#escuelas_type').text('');
             } else {
 
                 removeClassification("#escuelas_type");
@@ -78,15 +88,15 @@ $(function(){
 
                 sistemaExpuestoActivo = $(".tabs__item.active").text();
 
-                $(".tabs__item").on("click", function(){
-                    var tab = $(".tabs__item").index(this);
-                    $(".tabs__item").removeClass("active");
-                    $(".panels__item").removeClass("active");
-                    $(this).addClass("active");
-                    var panel = $(".panels__item")[tab];
-                    $(panel).addClass("active");
-                    sistemaExpuestoActivo = $(this).text();
-                });
+                // $(".tabs__item").on("click", function(){
+                //     var tab = $(".tabs__item").index(this);
+                //     $(".tabs__item").removeClass("active");
+                //     $(".panels__item").removeClass("active");
+                //     $(this).addClass("active");
+                //     var panel = $(".panels__item")[tab];
+                //     $(panel).addClass("active");
+                //     sistemaExpuestoActivo = $(this).text();
+                // });
 
                 $("#downloadFeature").on("click", function(){
                     var activeFeature = $(".tabs__item.active").attr("data-feature");
@@ -141,8 +151,8 @@ function removeClassification(element){
 function getSchoolTypes(url, geometry, sources){
     require([
         "esri/tasks/QueryTask",
-        "esri/tasks/query",
-        "esri/tasks/StatisticDefinition"
+        "esri/tasks/support/Query",
+        "esri/tasks/support/StatisticDefinition"
     ], function(
         QueryTask,
         Query,
@@ -164,7 +174,7 @@ function getSchoolTypes(url, geometry, sources){
         query.outFields = outFields;
         query.outStatistics = [statistics];
 
-        queryTask.execute(query, function(queryResults){
+        queryTask.execute(query).then(function(queryResults){
             var types = queryResults.features.map(function(type){
                 return {
                     tipo: type["attributes"]["NIVEL"],
@@ -186,9 +196,14 @@ function getSchoolTypes(url, geometry, sources){
             var templateSource = $("#layersResultsType-template").html();
             var template = Handlebars.compile(templateSource);
             var outputHTML = template(types);
+            //borra contenido actual y reescribe la tabla
+            $("#defaultMsj").hide()
+            $('#escuelas_type').html('');
             $('#escuelas_type').html(outputHTML);
+            //selecciona automaticamente la tabla de atributos
+            document.querySelector('[href="#tab2"]').click();
 
-            hideElem();
+            // hideElem();
 
             $(".resultType").on("click", function(){
                 var filter = $(this).attr("data-type");
@@ -201,7 +216,7 @@ function getSchoolTypes(url, geometry, sources){
                         ft.destroy();
                     });
                 }
-
+                //debugger
                 crearTablaSeleccion(url, geometry, sources, filter);
             });
         });
@@ -209,7 +224,7 @@ function getSchoolTypes(url, geometry, sources){
 }
 
 function crearTablaSeleccion(url, geometry, sources, filter) {
-    // debugger
+    debugger
     var templateSource = $("#featureTable-template").html();
     var template = Handlebars.compile(templateSource);
     var outputHTML = template({features: sources});
@@ -243,6 +258,12 @@ function crearTablaSeleccion(url, geometry, sources, filter) {
     
     hideElem();
 }
+
+// function addLayer(layerItemPromise, index) {
+//     return layerItemPromise.then(function (layer) {
+//       map.add(layer, index);
+//     });
+//   }
 
 function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
     
@@ -312,75 +333,180 @@ function mostrarFeaturesDentro(geometry, url, name, visible = false, filter){
             attributes["definitionExpression"] = "NIVEL = '" + filter + "'";
         }
 
-        var featureLayer = new FeatureLayer(url);
-        featureLayer.popupTemplate = template;
+        var featureLayer = new FeatureLayer({
+            url: url,
+            outFields: ["*"]
+          });
+        featureLayer.popupTemplate = template;      
         
-        featureLayer.on("error", function(error){
-            console.log("Ocurrió un error", error);
-        })
-
+        //map.add(featureLayer,90);
         
-        
-        featureLayer.load().then(function(){
-            
-            var queryTask = new QueryTask(url);
-            var queryFeature = new Query();
-            queryFeature.geometry = geometry;
-            queryFeature.returnGeometry = false;
-            queryFeature.maxAllowableOffset = 10;
-            var act = "";
-            switch(name){
-                case "Bancos":
-                    act = "CODIGO_ACT = '521110' OR CODIGO_ACT = '522110'"
-                break;
-                case "Hoteles":
-                    act = "CODIGO_ACT = '721111' OR CODIGO_ACT = '721112' OR CODIGO_ACT = '721113' OR CODIGO_ACT = '721190' OR CODIGO_ACT = '721210' OR CODIGO_ACT = '721311' OR CODIGO_ACT = '721312'"
-                break;
-                case "Gasolineras":
-                    act = "CODIGO_ACT = '468411'"
-                break;
-                case "Supermercados":
-                    act = "CODIGO_ACT = '462111' OR CODIGO_ACT = '462112' OR CODIGO_ACT = '462210'"
-                break;
-                case "Escuelas":
-                    act = "NIVEL = '" + filter + "'";
-            }
-            queryFeature.where = act;
-
-            // queryTask.on("error", function(error){
-            //     alert("Ocurrió un error", error);
-            // })
-            
-            queryTask.executeForIds(queryFeature).then(function(results){
+        featureLayer.load().then(
+            function(){
                 
-                if(!results){
-                    console.log("Sin resultados", name.split(" ").join(""));
-                    $("#panels__item-" + name.split(" ").join("")).text("Sin resultados");
-                    return;
-                } else {
-                    var noResults = results.length;
-                    var defExp = getQuery(results, featureLayer.objectIdField);
-
-                    featureLayer.definitionExpression=defExp;
-                    featureLayer.id=name;
-                    map.add(featureLayer,90);
-                    // var layerAdd = map.load().then(function(){
-                    //     console.log("Capa agregada");
-                    //     //loadFetureTable(featureLayer, name, noResults)
-                    //     layerAdd.remove();
-                    // })
-                    // debugger
-                    // if(featureLayer.id=="Hospitales"){
-                    //     map.findLayerById("Hospitales").on("click",function(event){
-                    //     console.log("hola perros",event);
-                    //     debugger
-                    //     });
-                    // }
-                    
+                var queryTask = new QueryTask(url);
+                var queryFeature = new Query();
+                queryFeature.geometry = geometry;
+                queryFeature.returnGeometry = false;
+                queryFeature.maxAllowableOffset = 10;
+                var act = "";
+                switch(name){
+                    case "Bancos":
+                        act = "CODIGO_ACT = '521110' OR CODIGO_ACT = '522110'"
+                    break;
+                    case "Hoteles":
+                        act = "CODIGO_ACT = '721111' OR CODIGO_ACT = '721112' OR CODIGO_ACT = '721113' OR CODIGO_ACT = '721190' OR CODIGO_ACT = '721210' OR CODIGO_ACT = '721311' OR CODIGO_ACT = '721312'"
+                    break;
+                    case "Gasolineras":
+                        act = "CODIGO_ACT = '468411'"
+                    break;
+                    case "Supermercados":
+                        act = "CODIGO_ACT = '462111' OR CODIGO_ACT = '462112' OR CODIGO_ACT = '462210'"
+                    break;
+                    case "Escuelas":
+                        act = "NIVEL = '" + filter + "'";
+                    default:
+                        act = "1=1";
                 }
-            });
-        });
-        
+                queryFeature.where = act;
+
+                // queryTask.on("error", function(error){
+                //     alert("Ocurrió un error", error);
+                // })
+                
+                queryTask.executeForIds(queryFeature).then(function(results){
+                    if(!results){
+                        if(name== "Población Urbana"){
+                                $('#tableDivPobUrb').text("No hay resultados de población Urbana en el área de búsqueda");
+                                debugger
+                        }else if(name == "Población Rural"){
+                                $('#tableDivPobRur').text("No hay resultados de población Rural en el área de búsqueda");
+                        }
+                        console.log("Sin resultados", name.split(" ").join(""));
+                        return;
+                    } else {
+                        var noResults = results.length;
+                        var defExp = getQuery(results, featureLayer.objectIdField);
+
+                        featureLayer.definitionExpression=defExp;
+                        featureLayer.id=name;
+                        
+                        map.add(featureLayer,90);
+                        //Idea para hacer que se genere correctamente la tabla:
+                        // 1.- ejecutar funcion que genera tabla
+                        // 2.- verifica que tenga renglones
+                        // 3.- si no tiene rengliones dejar pasar 1 segundo y ejectutar nuevamente la función
+                        // 4.- ejecutar los pasos anteriores y hasta verificar que existan renglones y se de un fin de ciclo.
+                        function esperaRecursiva(time){
+                            //console.log(name);
+                            loadFetureTable(featureLayer, name, noResults);
+                            setTimeout(function(){
+                                if($('#tableDiv').find('vaadin-checkbox').length <= 2){
+                                    $('#tableDiv').html('');
+                                    time+=500;
+                                    esperaRecursiva(time);
+                                }else{
+                                    //selecciona automaticamente la tabla de atributos
+                                    document.querySelector('[href="#tab2"]').click();
+                                    return 0;
+                                }
+                            },  time);
+                        }
+                        function esperaRecursivaPobUrb(time){
+                            $('#PobUrb').show();
+                            $('#PobRur').show();
+                            loadFetureTable(featureLayer, name, noResults);
+                            setTimeout(function(){
+                                if($('#tableDivPobUrb').find('vaadin-checkbox').length <= 2){
+                                    $('#tableDivPobUrb').html('');
+                                    time+=500;
+                                    //console.log("Falla en Pob Urbana, le doy mas tiempo: ",time/1000," segundos");
+                                    esperaRecursivaPobUrb(time);
+                                }else{
+                                    // //selecciona automaticamente la tabla de atributos
+                                    // document.querySelector('[href="#tab2"]').click();
+                                    // //selecciona automaticamente la tabla de Pob Urbana
+                                    document.querySelector('[href="#PobUrb"]').click();
+                                    console.log("Éxito en Pob Urbana, tiempo total: ",time/1000," segundos");                                     
+                                    return 0;
+                                }
+                            },  time);
+                        }
+                        function esperaRecursivaPobRur(time){
+                            $('#PobUrb').show();
+                            $('#PobRur').show();
+                            loadFetureTable(featureLayer, name, noResults);
+                            setTimeout(function(){
+                                if($('#tableDivPobRur').find('vaadin-checkbox').length <= 2){
+                                    $('#tableDivPobRur').html('');
+                                    time+=500;
+                                    //onsole.log("Falla en Pob Rural, le doy mas tiempo: ",time/1000," segundos");
+                                    esperaRecursivaPobRur(time);
+                                }else{
+                                    // //selecciona automaticamente la tabla de atributos
+                                    // document.querySelector('[href="#tab2"]').click();
+                                    // //selecciona automaticamente la tabla de Pob Urbana
+                                    document.querySelector('[href="#PobRur"]').click();  
+                                    console.log("Éxito en Pob Rural, tiempo total: ",time/1000," segundos");                                  
+                                    return 0;
+                                }
+                            },  time);
+                        }
+                        //vacía tabla en el caso de un análisis previo o de otro tipo
+                        $('#tableDiv').empty();
+                        $('#tableDivPobUrb').empty();
+                        $('#tableDivPobUrb').text("No hay resultados de población Urbana en el área de búsqueda");
+                        $('#tableDivPobRur').empty();
+                        $('#tableDivPobRur').text("No hay resultados de población Rural en el área de búsqueda");
+                        $('#poblacion').hide();
+                        //borra contenido actual y reescribe la tabla
+                        $("#defaultMsj").hide()
+                        $('#escuelas_type').html('');
+                        if(name== "Población Urbana"){
+                            $('#poblacion').show();
+                            //selecciona automaticamente la tabla de atributos
+                            document.querySelector('[href="#tab2"]').click();
+                            //selecciona automaticamente la tabla de Pob Urbana
+                            loadFetureTable(featureLayer, name, noResults);
+                            setTimeout(function(){
+                                var time=1000;
+                                if($('#tableDivPobUrb').find('vaadin-checkbox').length <= 2){
+                                    $('#tableDivPobUrb').html('');
+                                    time+=500;
+                                    //console.log("Falla en Pob Urbana, le doy mas tiempo: ",time/1000," segundos");
+                                    esperaRecursivaPobUrb(time);
+                                }
+                            });
+                            // document.querySelector('[href="#PobUrb"]').click(); 
+                            //esperaRecursivaPobUrb(1000);
+                        }else if(name == "Población Rural"){
+                            $('#poblacion').show();
+                            //selecciona automaticamente la tabla de atributos
+                            document.querySelector('[href="#tab2"]').click();
+                            //selecciona automaticamente la tabla de Pob Urbana
+                            // loadFetureTable(featureLayer, name, noResults);
+                            // document.querySelector('[href="#PobRur"]').click();
+                            //esperaRecursivaPobRur(1000)
+
+                            loadFetureTable(featureLayer, name, noResults);
+                            setTimeout(function(){
+                                var time=1000;
+                                if($('#tableDivPobRur').find('vaadin-checkbox').length <= 2){
+                                    $('#tableDivPobRur').html('');
+                                    time+=500;
+                                    //console.log("Falla en Pob Urbana, le doy mas tiempo: ",time/1000," segundos");
+                                    esperaRecursivaPobRur(time);
+                                }
+                            });
+                        }else{
+                            //selecciona automaticamente la tabla de atributos
+                            document.querySelector('[href="#tab2"]').click();
+                            esperaRecursiva(2000);
+                        }
+                    };
+                });
+            }
+        );
     })
     
 }
@@ -395,10 +521,10 @@ function getQuery(array, objectidName = "OBJECTID"){
 function loadFetureTable(featureLayer, name, noItems){
     require([
         "esri/layers/FeatureLayer",
-        "esri/dijit/FeatureTable",
-        "esri/tasks/query",
+        "esri/widgets/FeatureTable",
+        "esri/tasks/support/Query",
         "esri/tasks/QueryTask",
-        "esri/graphic",
+        "esri/Graphic",
         "esri/symbols/PictureMarkerSymbol",
         "esri/symbols/SimpleMarkerSymbol",
         "esri/symbols/SimpleLineSymbol",
@@ -418,90 +544,139 @@ function loadFetureTable(featureLayer, name, noItems){
             SimpleRenderer,
             Color
         ){
-        var featureTable = new FeatureTable({
-            featureLayer : featureLayer,
-            map : map, 
-            editable: false,
-            syncSelection: true,
-            batchCount: noItems,
-            dateOptions: {
-                datePattern: 'M/d/y', 
-                timeEnabled: true,
-                timePattern: 'H:mm',
-            }
-        }, "panels__item-" + name.split(" ").join(""));
-        featureTables.push(featureTable);
-
-        featureTable.on("row-select", function(e){
-            var featureId = e.rows[0].data[featureLayer.objectIdField];
-
-            var query = new Query();
-            query.returnGeometry = false;
-            query.objectIds = [featureId];
-            query.where = "1=1";
-            
-            map.getLayer(name).queryFeatures(query, function(featureSet){
-                if(featureSet.features[0].geometry.type === "polygon"){
-                    var selectionSymbol =  new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
-                        new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-                        new Color([0, 255, 17]), 4), // Color contorno
-                        new Color([0, 255, 17, 0.4])  // Color fondo
-                    );
-                    map.getLayer(name).setSelectionSymbol(selectionSymbol);
-                    map.getLayer(name).selectFeatures(query, FeatureLayer.SELECTION_NEW);
-                    // map.setExtent(featureSet.features[0].geometry.getExtent().expand(2.5));
-                } else if(featureSet.features[0]._graphicsLayer.renderer.getSymbol(featureSet.features[0])){
-                    var imageUrl = featureSet.features[0]._graphicsLayer.renderer.getSymbol(featureSet.features[0]).url;
-                    var selectionSymbol = new PictureMarkerSymbol(imageUrl, 48 ,48);
-                    map.getLayer(name).setSelectionSymbol(selectionSymbol);
-                    map.getLayer(name).selectFeatures(query, FeatureLayer.SELECTION_NEW);
-                    // map.centerAndZoom(featureSet.features[0].geometry, 16);
-                }
-            })
-            
-        })
-
-        featureTable.on("load", function(){
-            hideElem();
-            map.getLayer(name).on("click", function(evt){
-                if(evt.graphic.geometry.type == "polygon"){
-                    var selectionSymbol =  new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
-                        new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-                        new Color([0, 255, 17]), 4), // Color contorno
-                        new Color([0, 255, 17, 0.4])  // Color fondo
-                    );
-                    map.getLayer(name).setSelectionSymbol(selectionSymbol);
-                } else {
-                    var imageUrl = evt.toElement.attributes["xlink:href"].value
-                    var selectionSymbol = new PictureMarkerSymbol(imageUrl, 48 ,48);
-                    map.getLayer(name).setSelectionSymbol(selectionSymbol);
-                }
-
-                if (evt.graphic && evt.graphic.attributes) {
-                    var feature = evt.graphic
-                    var featureId = feature.attributes[evt.graphic.getLayer().objectIdField];
         
-                    var query = new Query();
-                    query.returnGeometry = false;
-                    query.objectIds = [featureId];
-                    query.where = "1=1";
-        
-                    map.getLayer(name).selectFeatures(query, FeatureLayer.SELECTION_NEW);
-                    // featureTable.centerOnSelection();
-                }                   
+        if(name== "Población Urbana"){
+            var featureTable = new FeatureTable({
+                view:view,
+                layer:featureLayer,
+                container: document.getElementById("tableDivPobUrb")
             });
-        })
+            
+        }else if(name == "Población Rural"){
+            var featureTable = new FeatureTable({
+                view:view,
+                layer:featureLayer,
+                container: document.getElementById("tableDivPobRur")
+            });  
+        }else{
+            //caso de otros (bancos, presas, aeropuertos, etc...)
+            var featureTable = new FeatureTable({
+                view:view,
+                layer:featureLayer,
+                container: document.getElementById("tableDiv")
+            });
+        }
+        
+        
+        //featureTables.push(featureTable);
 
-        featureTable.on("error", function(){
-            hideElem();
-            alert("Ocurrió un error", error);
-            featureTable.sort("OBJECTID", true);
-        })
 
-        featureTable.startup();
+        //Listen for the table's selection-change event
+        // featureTable.on("selection-change", function (changes) {
+        //     // If the selection is removed, remove the feature from the array
+        //     changes.removed.forEach(function (item) {
+        //       const data = features.find(function (data) {
+        //         return data.feature === item.feature;
+        //       });
+        //       if (data) {
+        //         features.splice(features.indexOf(data), 1);
+        //       }
+        //     });
 
-        $("#featureTable").css("display", "block");
-    })
+        //     // If the selection is added, push all added selections to array
+        //     changes.added.forEach(function (item) {
+        //       const feature = item.feature;
+        //       features.push({
+        //         feature: feature
+        //       });
+        //     });
+        // });
+
+        // // Listen for the click on the view and select any associated row in the table
+        // view.on("immediate-click", function (event) {
+        // view.hitTest(event).then(function (response) {
+        //     const candidate = response.results.find(function (result) {
+        //     return (
+        //         result.graphic &&
+        //         result.graphic.layer &&
+        //         result.graphic.layer === featureLayer
+        //     );
+        //     });
+        //     // Select the rows of the clicked feature
+        //     candidate && featureTable.selectRows(candidate.graphic);
+        // });
+        // });
+
+        // featureTable.on("row-select", function(e){
+        //     var featureId = e.rows[0].data[featureLayer.objectIdField];
+
+        //     var query = new Query();
+        //     query.returnGeometry = false;
+        //     query.objectIds = [featureId];
+        //     query.where = "1=1";
+            
+        //     map.getLayer(name).queryFeatures(query, function(featureSet){
+        //         if(featureSet.features[0].geometry.type === "polygon"){
+        //             var selectionSymbol =  new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+        //                 new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+        //                 new Color([0, 255, 17]), 4), // Color contorno
+        //                 new Color([0, 255, 17, 0.4])  // Color fondo
+        //             );
+        //             map.getLayer(name).setSelectionSymbol(selectionSymbol);
+        //             map.getLayer(name).selectFeatures(query, FeatureLayer.SELECTION_NEW);
+        //             // map.setExtent(featureSet.features[0].geometry.getExtent().expand(2.5));
+        //         } else if(featureSet.features[0]._graphicsLayer.renderer.getSymbol(featureSet.features[0])){
+        //             var imageUrl = featureSet.features[0]._graphicsLayer.renderer.getSymbol(featureSet.features[0]).url;
+        //             var selectionSymbol = new PictureMarkerSymbol(imageUrl, 48 ,48);
+        //             map.getLayer(name).setSelectionSymbol(selectionSymbol);
+        //             map.getLayer(name).selectFeatures(query, FeatureLayer.SELECTION_NEW);
+        //             // map.centerAndZoom(featureSet.features[0].geometry, 16);
+        //         }
+        //     })
+            
+        // })
+
+        // featureTable.on("load", function(){
+        //     //hideElem();
+        //     map.getLayer(name).on("click", function(evt){
+        //         if(evt.graphic.geometry.type == "polygon"){
+        //             var selectionSymbol =  new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+        //                 new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+        //                 new Color([0, 255, 17]), 4), // Color contorno
+        //                 new Color([0, 255, 17, 0.4])  // Color fondo
+        //             );
+        //             map.getLayer(name).setSelectionSymbol(selectionSymbol);
+        //         } else {
+        //             var imageUrl = evt.toElement.attributes["xlink:href"].value
+        //             var selectionSymbol = new PictureMarkerSymbol(imageUrl, 48 ,48);
+        //             map.getLayer(name).setSelectionSymbol(selectionSymbol);
+        //         }
+
+        //         if (evt.graphic && evt.graphic.attributes) {
+        //             var feature = evt.graphic
+        //             var featureId = feature.attributes[evt.graphic.getLayer().objectIdField];
+        
+        //             var query = new Query();
+        //             query.returnGeometry = false;
+        //             query.objectIds = [featureId];
+        //             query.where = "1=1";
+        
+        //             map.getLayer(name).selectFeatures(query, FeatureLayer.SELECTION_NEW);
+        //             // featureTable.centerOnSelection();
+        //         }                   
+        //     });
+        // })
+
+        // featureTable.on("error", function(){
+        //     hideElem();
+        //     alert("Ocurrió un error", error);
+        //     featureTable.sort("OBJECTID", true);
+        // })
+
+        // featureTable.startup();
+
+        //$("#featureTable").css("display", "block");
+    });
 }
 
 $("#BtnLimpiar").on("click", function(){
