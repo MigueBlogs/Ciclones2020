@@ -24,8 +24,8 @@ ion-icon {
     font-size: 26px;
   }
 
-.clickable :hover{
-    background-color: #999;
+.clickable:hover{
+    color:#B38E5D;
     cursor: pointer;
 }
 
@@ -156,10 +156,26 @@ flex: 30%;
     width: 100%;
     padding:.5em;
     position:absolute;
+    z-index:2;
+    overflow-y: auto;
+    max-height: 50%;
+}
+
+#openBtn{
+    background:#fff;
+    left: 50%;
+    bottom: 0%;
+    position:absolute;
     z-index:1;
     overflow-y: auto;
     max-height: 50%;
 }
+
+#openBtn:hover{
+    color:#B38E5D;
+    cursor: pointer;
+}
+
 
 .collapsible {
     background-color: #777;
@@ -295,15 +311,15 @@ optgroup[label="Pacífico"] {
     transition: .4s;
 }
 
-#nubes-checkbox:checked + .slider, #refugios-checkbox:checked + .slider, #vientos-checkbox:checked + .slider {
+#nubes-checkbox-mobile:checked + .slider, #nubes-checkbox:checked + .slider, #refugios-checkbox:checked + .slider, #vientos-checkbox:checked + .slider {
     background-color: #9D2449;
 }
 
-#nubes-checkbox:focus + .slider, #refugios-checkbox:focus + .slider, #vientos-checkbox:focus + .slider {
+#nubes-checkbox-mobile:focus + .slider, #nubes-checkbox:focus + .slider, #refugios-checkbox:focus + .slider, #vientos-checkbox:focus + .slider {
     box-shadow: 0 0 1px #9D2449;
 }
 
-#nubes-checkbox:checked + .slider:before, #refugios-checkbox:checked +.slider:before, #vientos-checkbox:checked +.slider:before {
+#nubes-checkbox-mobile:checked + .slider:before, #nubes-checkbox:checked + .slider:before, #refugios-checkbox:checked +.slider:before, #vientos-checkbox:checked +.slider:before {
     -webkit-transform: translateX(1rem);
     -ms-transform: translateX(1rem);
     transform: translateX(1rem);
@@ -331,7 +347,7 @@ optgroup[label="Pacífico"] {
     max-width: 50%;
 }
 .cnpc-logos img {
-    height:2em;
+    height:4em;
 }
 .tabla-datos {
     background-color:teal;
@@ -355,7 +371,92 @@ optgroup[label="Pacífico"] {
     padding: 0.2rem;
 }
 
+ul.tabs{
+    width: 30%;
+    list-style: none;
+    display: flex;
+    padding-left: 0;
+    margin: 0px;
+}
+ul.tabs li{
+    width: 100%;
+}
+
+ul.tabs li a{
+    display: block;
+    padding: 10px 0px;
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px 20px 0px 0px
+}
+
+ul.tabsPob{
+    width: 25%;
+    list-style: none;
+    display: flex;
+    padding-left: 0;
+    margin: 0px;
+}
+ul.tabsPob li{
+    width: 100%;
+}
+
+ul.tabsPob li a{
+    display: block;
+    padding: 5px 0px;
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    border-radius: 15px 15px 0px 0px
+}
+
+.active{
+    background: #9D2449 ;
+}
+
+.inactive{
+    background-color: gray; 
+}
+.secciones{
+    border: solid;
+    border-color: #9D2449;
+    padding: 8px;
+    background: #fff;
+}
+
+.seccionesPob{
+    border: solid;
+    border-color: #9D2449;
+    padding: 5px;
+    background: #fff;
+}
+
+.esri-feature-table {
+    border: none !important;
+}
+/* .secciones article{
+    padding: 1em;
+} */
+/* #tableDiv{
+    display: unset !important;
+} */
+.esri-feature-table__content{
+    flex: unset !important;
+    height: 200px !important;
+}
+.container {
+    height: 50%;
+    width: 100%;
+  }
+
 @media(max-width: 500px) {
+    .secciones{
+        padding: 4px;
+    }
+    ul.tabs{
+        width: 100%;
+    }
     #timeDiv{
         display:none;
     }
@@ -437,10 +538,13 @@ optgroup[label="Pacífico"] {
         max-width: 50%;
     }
     .cnpc-logos img {
-        height: 1em;
+        height: 2em;
         width: 100%;
     }
     #analisis{
-        bottom: calc(-50% + 100px);
+        bottom: calc(-50% + 106px);
+    }
+    #openBtn{
+        bottom: calc(-50% + 106px);
     }
 }

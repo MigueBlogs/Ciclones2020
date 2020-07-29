@@ -16,7 +16,10 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="./css/styles.css">
     <!--JS IONICON-->
-    <!-- <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script> -->
+    <!-- se deahabilita el unpkg  porque da errores al cargar los ionicons -->
+    <!-- <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script> -->
+    <script type="module" src="https://unpkg.com/ionicons@5.1.2/dist/ionicons/ionicons.esm.js" data-stencil-namespace="ionicons"></script><script nomodule="" src="https://unpkg.com/ionicons@5.1.2/dist/ionicons/ionicons.js" data-stencil-namespace="ionicons"></script></head>
+    <body translate="no">
     <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -31,6 +34,7 @@
 </head>
 <body>
     <?php includeNav(); ?>
+    
     <div id="mapaDiv" style="margin-top: 70px;">
         <div id="dataSection">
             <div class="title">Ciclones tropicales</div>
@@ -225,9 +229,9 @@
                         <div style="padding: 2px;">
                             <span class="material-icons dorado">wb_cloudy</span>
                         </div>
-                        <div style="padding: 5px;">
+                        <div style="padding: 5px;">&nbsp;
                             <label class="switch" style="vertical-align: middle;">
-                                <input type="checkbox" id="nubes-checkbox" checked> 
+                                <input type="checkbox" id="nubes-checkbox-mobile" > 
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -278,171 +282,209 @@
                     </div>
                     <div style="padding: 5px;">&nbsp;
                         <label class="switch" style="vertical-align: middle;">
-                            <input type="checkbox" id="nubes-checkbox" checked> 
+                            <input type="checkbox" id="nubes-checkbox" > 
                             <span class="slider round"></span>
                         </label>
                     </div>
                 </div>
-                <p style="margin: 0; padding: 5px; font-size: smaller;">Cargando...</p>
+                <p style="margin: 0; padding: 5px; font-size: smaller;">Capa<br>Apagada</p>
             </div>
             <div id="analisis" style="display:none;">
-                <center> Análisis de Exposición </center><ion-icon class="buttonCloseTable" name="close-circle-outline" title="Cerrar Análisis"></ion-icon>
-                <div style="overflow-x:auto;">
-                    <table>
-                        <tr>
-                            <th rowspan="2" id="Poblacion">
-                                <div class="row">
-                                    <div class="column1">
-                                        <ion-icon style="font-size: 70px;" name="people-outline"></ion-icon>
-                                    </div>
-                                    <div class="column2">
-                                        Población: <span class="resultNumber"></span><br><button id="muestraTabla" class="buttonGreen">+Población por edo.</button><button id="muestraTablaEdos" class="buttonGreen">+Lista de Municipios</button>
-                                    </div>
-                                </div>
-                            </th>
-                            <td id="pob_f_t">
-                                <div class="row">
-                                    <div class="column1">
-                                        <ion-icon name="woman-outline"></ion-icon>
-                                    </div>
-                                    <div class="column2">
-                                    Pob. Fem:<br><span class="resultNumber"></span>
-                                    </div>
-                                </div>    
-                        </td>
-                            <td id="Viviendas">
-                                <div class="row">
-                                    <div class="column1">
-                                        <ion-icon name="home-outline"></ion-icon>
-                                    </div>
-                                    <div class="column2">
-                                    Viviendas:<br><span class="resultNumber"></span>
-                                    </div>
-                                </div>     
-                            </td>
-                            <td id="Escuelas">
-                                <div class="row">
-                                    <div class="column1">
-                                        <ion-icon name="school-outline"></ion-icon>
-                                    </div>
-                                    <div class="column2">
-                                    Escuelas:<br><span class="resultNumber"></span>
-                                    </div>
-                                </div>     
-                            </td>
-                            <td id="Aeropuertos">
-                                <div class="row">
-                                    <div class="column1 clickable" data-sources="Aeropuertos">
-                                        <ion-icon name="airplane-outline"></ion-icon>
-                                    </div>
-                                    <div class="column2">
-                                    Aeropuertos:<br><span class="resultNumber"></span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td id="Presas">
-                                <div class="row">
-                                    <div class="column1 clickable" data-sources="Presas">
-                                        <ion-icon name="water-outline"></ion-icon>
-                                    </div>
-                                    <div class="column2">
-                                    Presas:<br><span class="resultNumber"></span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td id="Colonias">
-                                <div class="row">
-                                    <div class="column1 clickable" data-sources="Colonias">
-                                        <ion-icon name="map-outline"></ion-icon>
-                                    </div>
-                                    <div class="column2">
-                                    Colonias:<br><span class="resultNumber"></span>
-                                    </div>
-                                </div>    
-                            </td>
-                        </tr>
-                        <tr>
-                            <td id="pob_m_t">
-                                <div class="row">
-                                    <div class="column1">
-                                        <ion-icon name="man-outline"></ion-icon>
-                                    </div>
-                                    <div class="column2">
-                                    Pob. Mas.<br><span class="resultNumber"></span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td id="Hospitales">
-                                <div class="row">
-                                    <div class="column1 clickable" data-sources="Hospitales">
-                                        <ion-icon name="medkit-outline"></ion-icon>
-                                    </div>
-                                    <div class="column2">
-                                    Estab. de Salud:<br><span class="resultNumber"></span>
-                                    </div>
-                                </div>    
-                            </td>
-                            <td id="Supermercados">
-                                <div class="row">
-                                    <div class="column1 clickable" data-sources="Supermercados">
-                                        <ion-icon name="cart-outline"></ion-icon>
-                                    </div>
-                                    <div class="column2">
-                                    Supermercados:<br><span class="resultNumber"></span>
-                                    </div>
-                                </div> 
-                            </td>
-                            <td id="Hoteles">
-                                <div class="row">
-                                    <div class="column1 clickable" data-sources="Hoteles">
-                                        <ion-icon name="business-outline"></ion-icon>
-                                    </div>
-                                    <div class="column2">
-                                    Hoteles:<br><span class="resultNumber"></span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td id="Gasolineras">
-                                <div class="row">
-                                    <div class="column1 clickable" data-sources="Gasolineras">
-                                        <span class="material-icons">
-                                        local_gas_station
-                                        </span>
-                                    </div>
-                                    <div class="column2">
-                                    Gasolineras:<br><span class="resultNumber"></span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td id="Ganadero">
-                                <div class="row">
-                                    <div class="column1 clickable" data-sources="Ganadero">
-                                    <span class="material-icons">
-                                    agriculture
-                                    </span>
-                                    </div>
-                                    <div class="column2">
-                                    Ganaderías:<br><span class="resultNumber"></span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+                <ion-icon title="Minimizar Análisis" class="buttonCloseTable" name="remove-circle-outline"></ion-icon>
+                <div class="wrap">
+                    <ul class="tabs">
+                        <li><a href="#tab1"><span>Análisis de Exposición</span></a></li>
+                        <li id="attr"><a href="#tab2"><span>Atributos</span></a></li>
+                    </ul>
+                </div>
+                <div class="secciones">
+                    <article id="tab1">
+                        <div style="overflow-x:auto;">
+                            <table>
+                                <tr>
+                                    <th rowspan="2" id="Poblacion">
+                                        <div class="row">
+                                            <div class="column1">
+                                                <ion-icon style="font-size: 70px;" name="people-outline"></ion-icon>
+                                            </div>
+                                            <div class="column2">
+                                                Población: <span class="resultNumber"></span><br><button id="muestraTabla" class="buttonGreen">+Población por edo.</button><button id="muestraTablaEdos" class="buttonGreen">+Lista de Municipios</button>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <td id="pob_f_t">
+                                        <div class="row">
+                                            <div class="column1">
+                                                <ion-icon name="woman-outline"></ion-icon>
+                                            </div>
+                                            <div class="column2">
+                                            Pob. Fem:<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div>    
+                                </td>
+                                    <td id="Viviendas">
+                                        <div class="row">
+                                            <div class="column1 clickable" id="Viviendas" data-sources="Población Urbana/Población Rural">
+                                                <ion-icon name="home-outline"></ion-icon>
+                                            </div>
+                                            <div class="column2">
+                                            Viviendas:<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div>     
+                                    </td>
+                                    <td id="Escuelas">
+                                        <div class="row">
+                                            <!-- <div id="escuelas_type"></div> -->
+                                            <div class="column1 clickable" data-sources="Escuelas">
+                                                <ion-icon name="school-outline"></ion-icon>
+                                            </div>
+                                            <div class="column2">
+                                            Escuelas:<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div>     
+                                    </td>
+                                    <td id="Aeropuertos">
+                                        <div class="row">
+                                            <div class="column1 clickable" data-sources="Aeropuertos">
+                                                <ion-icon name="airplane-outline"></ion-icon>
+                                            </div>
+                                            <div class="column2">
+                                            Aeropuertos:<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="Presas">
+                                        <div class="row">
+                                            <div class="column1 clickable" data-sources="Presas">
+                                                <ion-icon name="water-outline"></ion-icon>
+                                            </div>
+                                            <div class="column2">
+                                            Presas:<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="Colonias">
+                                        <div class="row">
+                                            <div class="column1 clickable" data-sources="Colonias">
+                                                <ion-icon name="map-outline"></ion-icon>
+                                            </div>
+                                            <div class="column2">
+                                            Colonias:<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div>    
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td id="pob_m_t">
+                                        <div class="row">
+                                            <div class="column1">
+                                                <ion-icon name="man-outline"></ion-icon>
+                                            </div>
+                                            <div class="column2">
+                                            Pob. Mas.<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="Hospitales">
+                                        <div class="row">
+                                            <div class="column1 clickable" data-sources="Hospitales">
+                                                <ion-icon name="medkit-outline"></ion-icon>
+                                            </div>
+                                            <div class="column2">
+                                            Estab. de Salud:<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div>    
+                                    </td>
+                                    <td id="Supermercados">
+                                        <div class="row">
+                                            <div class="column1 clickable" data-sources="Supermercados">
+                                                <ion-icon name="cart-outline"></ion-icon>
+                                            </div>
+                                            <div class="column2">
+                                            Supermercados:<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div> 
+                                    </td>
+                                    <td id="Hoteles">
+                                        <div class="row">
+                                            <div class="column1 clickable" data-sources="Hoteles">
+                                                <ion-icon name="business-outline"></ion-icon>
+                                            </div>
+                                            <div class="column2">
+                                            Hoteles:<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="Gasolineras">
+                                        <div class="row">
+                                            <div class="column1 clickable" data-sources="Gasolineras">
+                                                <span class="material-icons">
+                                                local_gas_station
+                                                </span>
+                                            </div>
+                                            <div class="column2">
+                                            Gasolineras:<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="Ganadero">
+                                        <div class="row">
+                                            <div class="column1 clickable" data-sources="Ganadero">
+                                            <span class="material-icons">
+                                            agriculture
+                                            </span>
+                                            </div>
+                                            <div class="column2">
+                                            Ganaderías:<br><span class="resultNumber"></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div id="showTable" style="display:none">
+                            <br>
+                            <div id="table-container" class="tabla-datos" style="overflow-x:auto;">
+                            </div>
+                                <a href="#" id="csvPob" class="a-datos">Descarga esta información en formato .CSV</a>
+                        </div>
+                        <div id="showTableEdos" style="display:none">
+                            <div id="table-municipios" class="tabla-datos" style="text-align:center; overflow-x:auto;">
+                                <p style="background-color: white; color: black;">Lista de municipios por estado dentro del análisis</p>
+                                <label>Cargando.</label>
+                            </div>
+                            <a href="#" id="csvMun" class="a-datos">Descarga esta lista en formato .CSV</a>
+                        </div>
+                    </article>
+                    <article id="tab2">
+                        <div id="escuelas_type"></div>
+                        <div id="tableDiv"></div>
+                        <div id="poblacion" class="container" style="display: none;">
+                            <div class="wrap">
+                                <ul class="tabsPob">
+                                    <li><a href="#PobUrb"><span>Población urbana</span></a></li>
+                                    <li><a href="#PobRur"><span>Población rural</span></a></li>
+                                </ul>
+                            </div>
+                            <div class="seccionesPob">
+                                    <article id="PobUrb">
+                                        <div id="tableDivPobUrb"></div>
+                                    </article>
+                                    <article id="PobRur">
+                                        <div id="tableDivPobRur"></div>
+                                    </article>
+                            </div>
+                        </div>
+                        <span id="defaultMsj">
+                            Utiliza la "Herramienta de análisis" para obtener información de la zona o región que deseas analizar.
+                            También puedes dar click sobre los íconos de tu interés en la pestaña de "Análisis de Exposición".
+                        </span> 
+                    </article>
                 </div>
                 
-                <div id="showTable" style="display:none">
-                    <br>
-                    <div id="table-container" class="tabla-datos" style="overflow-x:auto;">
-                    </div>
-                        <a href="#" id="csvPob" class="a-datos">Descarga esta información en formato .CSV</a>
-                </div>
-                <div id="showTableEdos" style="display:none">
-                    <div id="table-municipios" class="tabla-datos" style="text-align:center; overflow-x:auto;">
-                        <p style="background-color: white; color: black;">Lista de municipios por estado dentro del análisis</p>
-                        <label>Cargando.</label>
-                    </div>
-                    <a href="#" id="csvMun" class="a-datos">Descarga esta lista en formato .CSV</a>
-                </div>
+            </div>
+            <div id="openBtn" style="display:none;" title="Mostrar análisis">
+                <ion-icon name="caret-up-outline"></ion-icon>
             </div>
             <div id="map">
                 <div class="loading-gif">
@@ -454,8 +496,20 @@
             </div>
         </div>
     </div>
-    
+    <!-- <div class="clickable">
+        <ion-icon name="medkit-outline"></ion-icon> 
+    </div> -->
     <button id="botonTop" type="button" class="boton-volver" style="display: none;"><ion-icon name="arrow-up-outline"></ion-icon></button>
+    <!-- Resultados de análisis por tipo Template -->
+    <script id="layersResultsType-template" type="text/x-handlebars-template">
+    <div class="layersResultsType-container">
+      <ul class="resultType-list">
+        {{#each this}}
+          <li class="resultType" data-type="{{this.tipo}}">{{this.tipo}}: <span class="typeNumber">{{this.total}}</span></li>
+        {{/each}}
+      </ul>
+    </div>
+  </script>
     <!-- Feature Table template  -->
   <script id="featureTable-template" type="text/x-handlebars-template">
     <a title="Cerrar" href="#" class="ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-notext closeFeatures" style="border:none;margin:0"></a>
