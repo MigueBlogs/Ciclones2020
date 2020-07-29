@@ -197,10 +197,10 @@
             <div id="refugiosDiv">
                 <!-- <p id="titleDesktop" class="refugios-titulo">Refugios temporales</p> -->
                 <p id="titleMobile" style="display:none;" class="refugios-titulo">Opciones de mapa</p>
-                <div id="gridOpciones" style="width: 168px; display: grid; grid-template-columns: 50% 50%; height: 40px;">
-                    <div class="refugios-iconos" id="refugios-div">
+                <div id="gridOpciones" style="width: 168px; display: grid; grid-template-columns: 50% 50%; height: 38px;">
+                    <div class="refugios-iconos" id="refugios-div" style="border-radius: 20px;">
                         <div style="padding: 2px;">
-                            <span class="material-icons">house</span>
+                            <img src="img/refugios.png" width="24px" height="24px">
                         </div>
                         <div style="padding: 5px;">&nbsp;
                             <label class="switch" style="vertical-align: middle;">
@@ -209,7 +209,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="refugios-iconos" style="padding: 2px; display:none;" id="vientos-div">
+                    <div class="refugios-iconos" style="padding: 3px 3px 0 0; display:none; border-radius:0 20px 20px 0;" id="vientos-div">
                         <div style="padding: 2px;">
                             <img src="img/wind.png" style="width: 30px; height: 30px;"></img>
                         </div>
@@ -223,11 +223,11 @@
                     </div>
                     <div class="refugios-iconos"  style="padding: 2px; display:none;" id="clouds-div">
                         <div style="padding: 2px;">
-                            <span class="material-icons dorado">wb_cloudy</span>
+                            <span class="material-icons">wb_cloudy</span>
                         </div>
                         <div style="padding: 5px;">
                             <label class="switch" style="vertical-align: middle;">
-                                <input type="checkbox" id="nubes-checkbox" checked> 
+                                <input type="checkbox" id="nubes-checkbox2"> 
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -274,11 +274,11 @@
             <div id="timeDiv">
                 <div style="display: grid; grid-template-columns: 20% 80%; text-align:center; padding: 3px;">
                     <div style="padding: 2px;">
-                        <span class="material-icons dorado">wb_cloudy</span>
+                        <span class="material-icons">wb_cloudy</span>
                     </div>
                     <div style="padding: 5px;">&nbsp;
                         <label class="switch" style="vertical-align: middle;">
-                            <input type="checkbox" id="nubes-checkbox" checked> 
+                            <input type="checkbox" id="nubes-checkbox"> 
                             <span class="slider round"></span>
                         </label>
                     </div>
@@ -332,7 +332,7 @@
                             </td>
                             <td id="Aeropuertos">
                                 <div class="row">
-                                    <div class="column1 clickable" data-sources="Aeropuertos">
+                                    <div class="column1 clickables" data-sources="Aeropuertos">
                                         <ion-icon name="airplane-outline"></ion-icon>
                                     </div>
                                     <div class="column2">
@@ -342,7 +342,7 @@
                             </td>
                             <td id="Presas">
                                 <div class="row">
-                                    <div class="column1 clickable" data-sources="Presas">
+                                    <div class="column1 clickables" data-sources="Presas">
                                         <ion-icon name="water-outline"></ion-icon>
                                     </div>
                                     <div class="column2">
@@ -352,7 +352,7 @@
                             </td>
                             <td id="Colonias">
                                 <div class="row">
-                                    <div class="column1 clickable" data-sources="Colonias">
+                                    <div class="column1 clickables" data-sources="Colonias">
                                         <ion-icon name="map-outline"></ion-icon>
                                     </div>
                                     <div class="column2">
@@ -374,7 +374,7 @@
                             </td>
                             <td id="Hospitales">
                                 <div class="row">
-                                    <div class="column1 clickable" data-sources="Hospitales">
+                                    <div class="column1 clickables" data-sources="Hospitales">
                                         <ion-icon name="medkit-outline"></ion-icon>
                                     </div>
                                     <div class="column2">
@@ -384,7 +384,7 @@
                             </td>
                             <td id="Supermercados">
                                 <div class="row">
-                                    <div class="column1 clickable" data-sources="Supermercados">
+                                    <div class="column1 clickables" data-sources="Supermercados">
                                         <ion-icon name="cart-outline"></ion-icon>
                                     </div>
                                     <div class="column2">
@@ -394,7 +394,7 @@
                             </td>
                             <td id="Hoteles">
                                 <div class="row">
-                                    <div class="column1 clickable" data-sources="Hoteles">
+                                    <div class="column1 clickables" data-sources="Hoteles">
                                         <ion-icon name="business-outline"></ion-icon>
                                     </div>
                                     <div class="column2">
@@ -404,7 +404,7 @@
                             </td>
                             <td id="Gasolineras">
                                 <div class="row">
-                                    <div class="column1 clickable" data-sources="Gasolineras">
+                                    <div class="column1 clickables" data-sources="Gasolineras">
                                         <span class="material-icons">
                                         local_gas_station
                                         </span>
@@ -416,7 +416,7 @@
                             </td>
                             <td id="Ganadero">
                                 <div class="row">
-                                    <div class="column1 clickable" data-sources="Ganadero">
+                                    <div class="column1 clickables" data-sources="Ganadero">
                                     <span class="material-icons">
                                     agriculture
                                     </span>
@@ -528,7 +528,7 @@
         window.onscroll = function() {scrollFunction()};
         
         function scrollFunction() {
-            if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+            if (document.body.scrollTop > 250 || document.documentElement.scrollTop > 250) {
                 $('#botonTop').show();
             } else {
                 $('#botonTop').hide();

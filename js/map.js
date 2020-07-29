@@ -218,7 +218,9 @@ $(function() {
                 });
                 weather.when(
                     function(){
-                        if (!$('#nubes-checkbox').is(":checked")){
+                        if (!$('#nubes-checkbox, #nubes-checkbox2').is(":checked")){
+                            $('#timeDiv p').text("Capa \nApagada");
+                            weather.visible = false;
                             return;
                         }
                         timeExtentChanger = setInterval(changeTimeExtent, 2000);
@@ -226,7 +228,7 @@ $(function() {
                     },
                     function(error){
                         nubes_error = true;
-                        $('#nubes-checkbox').prop("checked", false).attr("disabled", true);
+                        $('#nubes-checkbox, #nubes-checkbox2').prop("checked", false).attr("disabled", true);
                         $('#timeDiv p')
                             .css("background-color", "red")
                             .css("color", "white")
@@ -1276,10 +1278,12 @@ $(function() {
 
                     if (geometries.length == 0) {
                         $('#vientos-div').hide();
+                        $('#refugios-div').css("border-radius","20px");
                         map.findLayerById("area_34KtWinds").visible = false;
                         return;
                     }
                     $('#vientos-div').show();
+                    $('#refugios-div').css("border-radius","20px 0 0 20px");
                     if ($("#vientos-checkbox").is(":checked")){
                         map.findLayerById("area_34KtWinds").visible = true;
                     }
@@ -1337,6 +1341,7 @@ $(function() {
                 });
                 if (geometries.length > 0) {
                     $('#vientos-div').show();
+                    $('#refugios-div').css("border-radius","20px 0 0 20px");
                     $("#vientos-checkbox").prop("checked", true);
                     $("#vientos-div img").attr("src", "img/wind_dorado.png");
                     map.findLayerById("area_34KtWinds").visible = true;
@@ -1359,6 +1364,7 @@ $(function() {
                 }
                 else {
                     $('#vientos-div').hide();
+                    $('#refugios-div').css("border-radius","20px");
                     $("#vientos-checkbox").prop("checked", false);
                     map.findLayerById("area_34KtWinds").visible = false;
                 }
@@ -2057,7 +2063,7 @@ $(function() {
         }
     });
 
-    $('#nubes-checkbox').on('change', function(){
+    $('#nubes-checkbox, #nubes-checkbox2').on('change', function(){
         if (nubes_error) {
             return;
         }
@@ -2081,11 +2087,11 @@ $(function() {
         if (this.checked) {
             $('#refugios-select').css("opacity", 1);
             map.findLayerById("refugios").visible = true;
-            $('#refugios-div span.material-icons').addClass("dorado");
+            $('#refugios-div img').attr("src", "img/refugios_dorados.png");
         }
         else {
             $('#refugios-select').css("opacity", 0);
-            $('#refugios-div span.material-icons').removeClass("dorado");
+            $('#refugios-div img').attr("src", "img/refugios.png");
             map.findLayerById("refugios").visible = false;
         }
     });

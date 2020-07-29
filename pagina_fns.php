@@ -7,7 +7,15 @@
                 <label for="mainNavButton"><a href="http://www.preparados.gob.mx" target="_blank"><img src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/chimali.png" alt="CNPC"></a></label>
                 <ul>
                     <li><a href="http://www.preparados.gob.mx" target="_blank"><img src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/chimali.png" alt="CNPC"></a></li>
-                    <li><a href="index.php">Inicio</a></li>
+                    <?php $curPageName = substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);
+                        if ($curPageName == "evento.php") { ?>
+                            <li><a href="index.php">Inicio</a></li>
+                        <?php }
+                        else { ?>
+                            <li><a href="http://www.preparados.gob.mx">Inicio</a></li>
+                        <?php }
+                    ?>
+                    
                     <?php
                         if(isset($_SESSION['username'])) {
                     ?>

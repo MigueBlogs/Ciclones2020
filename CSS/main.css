@@ -106,16 +106,16 @@ flex: 30%;
 }
 
 #botonTop {
-    display: none; /* Hidden by default */
-    position: fixed; /* Fixed/sticky position */
-    bottom: 20px; /* Place the button at the bottom of the page */
-    right: 30px; /* Place the button 30px from the right */
-    z-index: 99; /* Make sure it does not overlap */
-    border: none; /* Remove borders */
-    outline: none; /* Remove outline */
-    cursor: pointer; /* Add a mouse pointer on hover */
-    padding: 15px; /* Some padding */
-    border-radius: 50%; /* Rounded corners */
+    display: none;
+    position: fixed;
+    bottom: 40%;
+    right: 15px;
+    z-index: 99;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
 }
   
 #botonTop:hover {
@@ -246,7 +246,7 @@ optgroup[label="Pacífico"] {
     display: grid; 
     grid-template-columns: 20% 80%; 
     text-align:center; 
-    padding: 3px; 
+    padding: 4px 0 0 3px; 
     background-color:white; 
     width: 84px;
 }
@@ -264,7 +264,7 @@ optgroup[label="Pacífico"] {
 }
 
 /* Hide default HTML checkbox */
-#nubes-checkbox, #refugios-checkbox, #vientos-checkbox {
+#nubes-checkbox, #nubes-checkbox2, #refugios-checkbox, #vientos-checkbox {
     opacity: 0;
     width: 0;
     height: 0;
@@ -295,15 +295,15 @@ optgroup[label="Pacífico"] {
     transition: .4s;
 }
 
-#nubes-checkbox:checked + .slider, #refugios-checkbox:checked + .slider, #vientos-checkbox:checked + .slider {
+#nubes-checkbox:checked + .slider, #nubes-checkbox2:checked +.slider, #refugios-checkbox:checked + .slider, #vientos-checkbox:checked + .slider {
     background-color: #9D2449;
 }
 
-#nubes-checkbox:focus + .slider, #refugios-checkbox:focus + .slider, #vientos-checkbox:focus + .slider {
+#nubes-checkbox:focus + .slider, #nubes-checkbox2:focus + .slider, #refugios-checkbox:focus + .slider, #vientos-checkbox:focus + .slider {
     box-shadow: 0 0 1px #9D2449;
 }
 
-#nubes-checkbox:checked + .slider:before, #refugios-checkbox:checked +.slider:before, #vientos-checkbox:checked +.slider:before {
+#nubes-checkbox:checked + .slider:before, #nubes-checkbox2:checked +.slider:before, #refugios-checkbox:checked +.slider:before, #vientos-checkbox:checked +.slider:before {
     -webkit-transform: translateX(1rem);
     -ms-transform: translateX(1rem);
     transform: translateX(1rem);
@@ -368,7 +368,7 @@ optgroup[label="Pacífico"] {
     #gridOpciones{
         width: 100% !important;
         display: grid !important;
-        grid-template-columns: 33% 33% 32% !important;
+        grid-template-columns: 33% 33% 34% !important;
         height: 40px !important;
     }
     #clouds-div{
@@ -409,6 +409,7 @@ optgroup[label="Pacífico"] {
         position: unset;
         background-color: teal;
         color: white;
+        padding: 0 5px;
     }
     #refugiosDiv .refugios-iconos {
         display: grid;
@@ -436,11 +437,7 @@ optgroup[label="Pacífico"] {
         left: 7px;
         max-width: 50%;
     }
-    .cnpc-logos img {
-        height: 1em;
-        width: 100%;
-    }
     #analisis{
-        bottom: calc(-50% + 100px);
+        bottom: calc(-50%);
     }
 }
