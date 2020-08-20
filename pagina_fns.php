@@ -4,15 +4,15 @@
         <header>
             <nav id="mainNavHeader">
                 <input class="trigger" type="checkbox" id="mainNavButton">
-                <label for="mainNavButton"><a href="http://www.preparados.gob.mx" target="_blank"><img src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/chimali.png" alt="CNPC"></a></label>
+                <label for="mainNavButton"><a href="http://www.preparados.cenapred.unam.mx" target="_blank"><img src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/chimali.png" alt="CNPC"></a></label>
                 <ul>
-                    <li><a href="http://www.preparados.gob.mx" target="_blank"><img src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/chimali.png" alt="CNPC"></a></li>
+                    <li><a href="http://www.preparados.cenapred.unam.mx" target="_blank"><img src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/chimali.png" alt="CNPC"></a></li>
                     <?php $curPageName = substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);
                         if ($curPageName == "evento.php") { ?>
                             <li><a href="index.php">Inicio</a></li>
                         <?php }
                         else { ?>
-                            <li><a href="http://www.preparados.gob.mx">Inicio</a></li>
+                            <li><a href="http://www.preparados.cenapred.unam.mx">Inicio</a></li>
                         <?php }
                     ?>
                     
@@ -36,7 +36,7 @@
         <footer>
             <div class="footer-container">
                 <div class="section logo">
-                    <h4><img src="http://www.preparados.gob.mx/blog/sites/default/files/inline-images/logofooter_0.png" alt="Gobierno de México"></h4>
+                    <h4><img src="http://www.preparados.cenapred.unam.mx/blog/sites/default/files/inline-images/logofooter_0.png" alt="Gobierno de México"></h4>
                 </div>
                 <div class="section">
                     <h4>¿QUÉ ES PREPARADOS?</h4>
