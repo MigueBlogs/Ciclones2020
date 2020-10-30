@@ -27,7 +27,7 @@
 	<script src="./lib/handlebars.js"></script>
     <!-- ARCGIS MAP's -->
 	<link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/css/main.css">
-    <script src="https://js.arcgis.com/4.15/"></script>
+    <script src="https://js.arcgis.com/4.15/dojo/dojo.js"></script>
     <!-- <script type="text/javascript" src="http://js.arcgis.com/3.20/"></script>
     <link rel="stylesheet" href="http://js.arcgis.com/3.20/dijit/themes/claro/claro.css">
     <link rel="stylesheet" href="http://js.arcgis.com/3.20/esri/css/esri.css"> -->
