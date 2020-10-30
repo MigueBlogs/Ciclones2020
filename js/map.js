@@ -99,7 +99,8 @@ $(function() {
             "esri/geometry/Polygon",
             "esri/Graphic",
             "esri/layers/FeatureLayer",
-            "esri/geometry/geometryEngine"
+            "esri/geometry/geometryEngine",
+            "esri/widgets/Zoom"
         ], function(
             Map,
             MapView,
@@ -115,7 +116,8 @@ $(function() {
             Polygon,
             Graphic,
             FeatureLayer,
-            geometryEngine
+            geometryEngine,
+            Zoom
         ) {
             esriConfig.request.proxyUrl = "http://rmgir.cenapred.gob.mx/proxy/proxy.php";
             const layer = new GraphicsLayer({
@@ -310,10 +312,11 @@ $(function() {
                     //pixelData.pixelBlock.addData({pixels: aBand})
                     pixelData.pixelBlock.pixelType = "u8"; // u8 is used for color
                 }
-
+                /* Capa apagada 
                 map.add(weather);
                 //le puse 80 como valor arbitrario para que siempre esté en el TOP esta capa y se puedan hacer figuras de análisis sin problemas
-                map.add(layer,80);
+                map.add(layer,80); 
+                */
             });
 
             const sketch = new Sketch({
@@ -839,6 +842,10 @@ $(function() {
                 }),
                 "top-right"
             );
+            var zoomWidget = new Zoom({
+                view: view
+            });
+            view.ui.add(zoomWidget, "top-right");
             // map.on("load", function (event){
                 
             //     search = new Search({

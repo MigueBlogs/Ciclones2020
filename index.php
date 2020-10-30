@@ -13,7 +13,7 @@
     <title>Temporada de Ciclones Tropicales 2020</title>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <!-- Styles -->
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="./css/styles.css">
     <!--JS IONICON-->
     <!-- se deahabilita el unpkg  porque da errores al cargar los ionicons -->
@@ -54,7 +54,7 @@
                                     <div class="boxInfo" style="display:none;">
                                         <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
                                         <p>Fecha término: <?=$e["FECHA_FIN"]?></p>
-                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]." L/m"."<sup>2</sup>":"Sin registro"?></p>
+                                        <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]." L/m<sup>2</sup>":"Sin registro"?></p>
                                         <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                         if (empty($decl)) { ?>
                                             <p>Sin declaratorias registradas</p> 
@@ -79,7 +79,7 @@
                             else if ($e["ACTIVO"]) { ?>
                                 <li class="activo"><span style="color:green;"><?=$e["NOMBRE"]?></span>
                                     <p>Fecha de inicio: <?=$e["FECHA_INICIO"]?></p>
-                                    <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]." L/m"."<sup>2</sup>":"Sin registro"?></p>
+                                    <p>Precipitación: <?=$e["LLUVIA"]? $e["LLUVIA"]." L/m<sup>2</sup>":"Sin registro"?></p>
                                     <?php $decl = getDeclaratoriasPorID($e["ID_CICLON"]);
                                     if (empty($decl)) { ?>
                                         <p>Sin declaratorias aún</p>    
@@ -225,7 +225,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="refugios-iconos"  style="padding: 2px; display:none;" id="clouds-div">
+                    <!-- <div class="refugios-iconos"  style="padding: 2px; display:none;" id="clouds-div">
                         <div style="padding: 2px;">
                             <span class="material-icons">wb_cloudy</span>
                         </div>
@@ -235,7 +235,7 @@
                                 <span class="slider round"></span>
                             </label>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div>
                     <select id="refugios-select" style="opacity: 0;">
@@ -275,7 +275,7 @@
                     </select>
                 </div>
             </div>
-            <div id="timeDiv">
+            <!-- <div id="timeDiv">
                 <div style="display: grid; grid-template-columns: 20% 80%; text-align:center; padding: 3px;">
                     <div style="padding: 2px;">
                         <span class="material-icons">wb_cloudy</span>
@@ -288,7 +288,7 @@
                     </div>
                 </div>
                 <p style="margin: 0; padding: 5px; font-size: smaller;">Capa<br>Apagada</p>
-            </div>
+            </div> -->
             <div id="analisis" style="display:none;">
                 <ion-icon title="Minimizar Análisis" class="buttonCloseTable" name="remove-circle-outline"></ion-icon>
                 <div class="wrap">
