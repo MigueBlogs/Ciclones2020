@@ -22,8 +22,9 @@
     
 </head>
 <body>
-    <div class="container">
-        <div class="center">
+    <iframe id="iFrame-nav-gob" src="/nav.html" frameborder="0" style="width: 100%;height: 60px;margin-bottom: -5px;"></iframe>
+    <div class="container" style="margin-bottom: 2em;">
+        <div class="center hide">
             <img style="max-width: 80%; height: auto;" src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/SSyPC_CNPC_h.png" alt="gob">
         </div>
         <h3 class="center">Sistema de Ciclones Tropicales 2021 de Protección Civil</h3>
@@ -57,12 +58,15 @@
                         </div>
                     </div>
                 </div>
-                <button class="center btn waves-effect waves-light" id="enviar" type="submit" name="action">Entrar
+                <button class="center btn waves-effect waves-light" id="enviar" type="submit" name="action" style="background-color: #9D2449;">Entrar
                     <i class="material-icons right">person</i>
                 </button>
             </form>
         </div>
     </div>
     <script src="./js/login.js"></script>
+    <iframe id="MyIframe" src="/footer.html" scrolling="no" width="100%" height="425.5px" style="border: 0px;"></iframe>
+    <script src="/js/nav-gob.js"></script>
+    <script src="/js/footer.js"></script>
 </body>
 </html>
