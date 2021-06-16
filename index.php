@@ -498,7 +498,7 @@
             </div>
         </div>
     </div>
-    <iframe id="MyIframe" src="/footer.html" scrolling="no" width="100%" height="425.5px" style="border: 0px;"></iframe>
+    <iframe id="MyIframe" src="/footer.html" scrolling="no" width="100%" height="425.5px" style="border: 0px; margin-bottom: -5px;"></iframe>
     <script src="/js/nav-gob.js"></script>
     <script src="/js/footer.js"></script>
     <script>

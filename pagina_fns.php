@@ -1,12 +1,27 @@
 <?php
     function includeNav() {
         ?>
-        <header>
-            <nav id="mainNavHeader">
-                <input class="trigger" type="checkbox" id="mainNavButton">
-                <label for="mainNavButton"><a href="http://www.preparados.cenapred.unam.mx" target="_blank"><img src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/chimali.png" alt="CNPC"></a></label>
-                <ul>
-                    <li><a href="http://www.preparados.cenapred.unam.mx" target="_blank"><img src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/chimali.png" alt="CNPC"></a></li>
+        <!-- IMPORTANTE AGREGAR REPARADOR DE ESTILOS -->
+        <link rel="stylesheet" href="/css/fixStylesAlternative.css">
+        <link rel="stylesheet" href="/css/onlyfornav.css">
+        <!-- se tuvo que agregar este elemento de CSS para modificar las propiedades de bootstrap 4.3.1 y que el sub Nav Bar tenga una vista correcta -->
+	    <link rel="stylesheet" href="./css/initialNav.css">
+        <!-- sección de sub NavBar -->
+        <nav id="mainNav" class="navbar navbar-inverse sub-navbar navbar-fixed-top">
+            <div class="container containerNavBar">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#subenlaces">
+                <span class="sr-only">Interruptor de Navegación</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                </button>
+                <a href="http://www.preparados.gob.mx/">
+                    <img id="chimali" src="http://www.atlasnacionalderiesgos.gob.mx/Imagenes/Logos/chimali.png" alt="Coordinación Nacional de Protección Civil">
+                </a>
+            </div>
+            <div class="collapse navbar-collapse fixPosition" id="subenlaces">
+                <ul class="nav navbar-nav navbar-right">
                     <?php $curPageName = substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);
                         if ($curPageName == "evento.php") { ?>
                             <li><a href="index.php">Inicio</a></li>
@@ -21,13 +36,16 @@
                     ?>
                         <!-- <li><a href="alta.php" class="sessionActive">Nuevo</a></li> -->
                         <li><a href="evento.php">Editar evento</a></li>
-                        <li><a href="logout.php" class="sessionActive logout">Salir</a></li>
+                        <li><a href="logout.php" class="sessionActive logout"  style="background-color:#9D2449;color:white;">Salir</a></li>
                     <?php
                         }
                     ?>
                 </ul>
-            </nav>
-        </header>
+            </div>
+            </div>
+        </nav>
+        <!-- myplugins.js complementa las funciones del toggle en el menú sel sub nav bar -->
+        <script src="/js/myplugins.js"></script>
         <?php
     }
 

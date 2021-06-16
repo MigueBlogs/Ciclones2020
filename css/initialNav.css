@@ -1,0 +1,51 @@
+/* *, ::after, ::before {
+  box-sizing: initial;
+} */
+
+.navbar {
+  position: initial;
+  display: block;
+  flex-wrap: initial;
+  align-items: initial;
+  justify-content: initial;
+  padding: initial;
+}
+
+.navbar>.container, .navbar>.container-fluid {
+  display: block;
+  flex-wrap: initial;
+  align-items: initial;
+  justify-content: initial;
+}
+
+@media (min-width: 1200px){
+  .container {
+      max-width: initial;
+  }
+}
+@media (min-width: 992px){
+  .container {
+      max-width: initial;
+  }
+}
+@media (min-width: 768px){
+  .container {
+      max-width: initial;
+  }
+}
+@media (min-width: 576px){
+  .container {
+      max-width: initial;
+  }
+}
+
+.navbar-collapse {
+  flex-basis: initial;
+  flex-grow: initial;
+  align-items: initial;
+}
+
+.navbar-nav {
+  display: initial;
+  flex-direction: initial;
+}
